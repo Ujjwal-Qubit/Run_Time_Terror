@@ -30,6 +30,9 @@ from src.frame.data_contracts import (
     ROI,
     DetectionResult,
     TrackingStateResult,
+    GroundTruth,
+    TelemetryRecord,
+    MetricsSummary,
 )
 
 
@@ -396,4 +399,58 @@ class IFrameProvider(ABC):
 
     def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
         self.close()
+
+
+class IMetricsEngine(ABC):
+    """
+    Strategy interface for Metrics Engine (Module 15).
+    Architecture v1.2 §13.1.
+
+    Responsibilities:
+      - Compute running spatial accuracy (centroiding error, tracking error, RMSE)
+      - Track operational timing (acquisition time, reacquisition time episodes)
+      - Track retention metrics (lock retention rate, target loss rate)
+      - Measure processing latency and frame rate
+      - Produce per-frame TelemetryRecord and end-of-run MetricsSummary
+    """
+
+    @abstractmethod
+    def update(
+        self,
+        frame_packet: FramePacket,
+        track_result: Optional[TrackResult],
+        state_result: TrackingStateResult,
+        centroid_result: Optional[CentroidResult] = None,
+        detection_result: Optional[DetectionResult] = None,
+        ptz_command: Optional[PTZCommand] = None,
+        ground_truth: Optional[GroundTruth] = None,
+        camera_pan_deg: float = 0.0,
+        camera_tilt_deg: float = 0.0,
+        processing_time_ms: float = 0.0,
+    ) -> TelemetryRecord:
+        """
+        Record a processed frame, compute errors and running metrics,
+        and return the comprehensive per-frame TelemetryRecord.
+        """
+        ...
+
+    @abstractmethod
+    def get_current_summary(self) -> MetricsSummary:
+        """Return running aggregate metrics up to the current frame."""
+        ...
+
+    @abstractmethod
+    def finalize(self) -> MetricsSummary:
+        """Compute final aggregate statistics for the completed run."""
+        ...
+
+    @abstractmethod
+    def reset(self) -> None:
+        """Reset all metric accumulators, episodes, and running state."""
+        ...
+
+    @abstractmethod
+    def get_name(self) -> str:
+        """Return human-readable algorithm/engine name."""
+        ...
 

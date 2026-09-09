@@ -16,6 +16,7 @@ import sys
 
 from src.app.app_controller import AppController
 from src.config.config_manager import ConfigManager
+from src.evaluation.benchmark_manager import BenchmarkManager
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,6 +42,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--config", type=str, default=None,
         help="Path to a JSON configuration file",
+    )
+    parser.add_argument(
+        "--eval-scenarios", type=str, default=None,
+        help="Batch evaluate all JSON scenario files in the given directory",
+    )
+    parser.add_argument(
+        "--eval-mp4s", type=str, default=None,
+        help="Batch evaluate all MP4/video files in the given directory",
     )
     return parser.parse_args()
 
@@ -309,7 +318,24 @@ def main() -> None:
         success = validate_foundation()
         sys.exit(0 if success else 1)
 
-    # Normal application startup
+    # Batch evaluation workflows (Phase 5.9 / Module 17)
+    if args.eval_scenarios:
+        bm = BenchmarkManager()
+        grand_summary = bm.evaluate_batch_scenarios(
+            scenario_dir=args.eval_scenarios,
+            base_config_path=args.config,
+        )
+        sys.exit(0 if grand_summary.failed_runs == 0 else 1)
+
+    if args.eval_mp4s:
+        bm = BenchmarkManager()
+        grand_summary = bm.evaluate_batch_mp4s(
+            mp4_dir=args.eval_mp4s,
+            base_config_path=args.config,
+        )
+        sys.exit(0 if grand_summary.failed_runs == 0 else 1)
+
+    # Normal single-run application startup
     app = AppController()
 
     if args.config:
@@ -328,7 +354,7 @@ def main() -> None:
     app.initialize()
     
     if args.gui:
-        from src.app.gui_controller import launch_gui
+        from src.app.gui import launch_gui
         launch_gui(app)
     else:
         app.run()

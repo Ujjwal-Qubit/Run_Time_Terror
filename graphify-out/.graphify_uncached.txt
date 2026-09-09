@@ -1,6 +1,0 @@
-E:\Newfolder\Project2O\Projects\SIH '26\external\PRD.md
-E:\Newfolder\Project2O\Projects\SIH '26\external\PS.md
-E:\Newfolder\Project2O\Projects\SIH '26\external\SIH_26_Engineering_Context_Technical_Model.md
-E:\Newfolder\Project2O\Projects\SIH '26\external\algorithm_selection_experimental_design.md
-E:\Newfolder\Project2O\Projects\SIH '26\external\analysis.md
-E:\Newfolder\Project2O\Projects\SIH '26\external\system_architecture.md

@@ -158,6 +158,9 @@ class ProportionalDeadbandPTZController(IPTZController):
         frame_num = track_result.frame_number if track_result else 0
         timestamp = track_result.timestamp if track_result else 0.0
 
+        if not isinstance(tracking_state, TrackingState):
+            raise TypeError(f"tracking_state must be a TrackingState enum, got {type(tracking_state).__name__}")
+
         # Defensive checks on frame dimensions
         if frame_width <= 0 or frame_height <= 0:
             elapsed_ms = (time.perf_counter() - t0) * 1000.0

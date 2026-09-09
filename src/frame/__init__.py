@@ -23,6 +23,7 @@ from src.frame.data_contracts import (
     ROI,
     TelemetryRecord,
     DetectionResult,
+    MetricsSummary,
 )
 
 __all__ = [
@@ -46,6 +47,7 @@ __all__ = [
     "ROI",
     "TelemetryRecord",
     "DetectionResult",
+    "MetricsSummary",
     "SimulationFrameProvider",
     "MP4FrameProvider",
 ]

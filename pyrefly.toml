@@ -1,0 +1,12 @@
+# Pyrefly Configuration for SIH '26 Project
+
+python-interpreter-path = "C:\\Users\\sanje\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
+
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
+search-path = [
+    ".",
+]

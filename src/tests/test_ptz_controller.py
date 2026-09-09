@@ -589,3 +589,24 @@ class TestPTZControllerClosedLoopIntegration:
         cam_x, cam_y = sim_provider._camera_model.world_position
         assert 990.0 <= cam_x <= 1050.0
         assert 990.0 <= cam_y <= 1050.0
+
+# ---------------------------------------------------------------------------
+# 8. Type Safety Regression Test
+# ---------------------------------------------------------------------------
+
+class TestPTZControllerTypeSafety:
+    def test_type_mismatch_raises_error(self):
+        """Passing StateDecision instead of TrackingState must raise TypeError."""
+        from src.frame.data_contracts import StateDecision
+        
+        controller = ProportionalDeadbandPTZController()
+        track = make_track(400.0, 300.0)
+        
+        invalid_state = StateDecision(
+            state=TrackingState.SEARCHING,
+            previous_state=TrackingState.SEARCHING,
+            transition_reason="init"
+        )
+        
+        with pytest.raises(TypeError, match="tracking_state must be a TrackingState enum"):
+            controller.compute(track, invalid_state, 640, 480, 0.0333) # type: ignore

@@ -137,11 +137,16 @@ class TargetManager:
         self._time = 0.0
         # Determine initial position
         if self._target_cfg.initial_position.lower() == "random":
-            # Random position within scene margin
-            low_x = self._margin
-            high_x = self._scene_w - self._margin
-            low_y = self._margin
-            high_y = self._scene_h - self._margin
+            # Random position constrained to a central region to ensure
+            # initial visibility for typical camera FOV at scene center.
+            # (e.g., +/- 150 pixels from center)
+            center_x = self._scene_w / 2.0
+            center_y = self._scene_h / 2.0
+            spawn_range = 150.0
+            low_x = max(self._margin, center_x - spawn_range)
+            high_x = min(self._scene_w - self._margin, center_x + spawn_range)
+            low_y = max(self._margin, center_y - spawn_range)
+            high_y = min(self._scene_h - self._margin, center_y + spawn_range)
             self._init_x = float(self._rng.uniform(low_x, high_x))
             self._init_y = float(self._rng.uniform(low_y, high_y))
         else:
@@ -269,29 +274,43 @@ class TargetManager:
             self._vy = 2.0 * self._fig8_ry * self._fig8_omega * math.cos(2.0 * theta)
 
         elif m_type in (MotionType.RANDOM.value, "RANDOM"):
-            # Bounded random walk
-            max_disp = self._motion_cfg.random_max_displacement
-            dx = float(self._rng.uniform(-max_disp, max_disp))
-            dy = float(self._rng.uniform(-max_disp, max_disp))
-            new_x = self._x + dx
-            new_y = self._y + dy
+            # Temporally coherent random motion (stochastic acceleration)
+            # random_max_displacement is repurposed here as max delta_v per frame
+            max_dv = self._motion_cfg.random_max_displacement
+            dvx = float(self._rng.uniform(-max_dv, max_dv))
+            dvy = float(self._rng.uniform(-max_dv, max_dv))
+            
+            self._vx += dvx
+            self._vy += dvy
+            
+            # Constrain to configured speed limit
+            current_speed = math.hypot(self._vx, self._vy)
+            if current_speed > self._speed and current_speed > 0:
+                scale = self._speed / current_speed
+                self._vx *= scale
+                self._vy *= scale
+                
+            self._x += self._vx * dt
+            self._y += self._vy * dt
 
-            # Clamp / bounce within boundaries
+            # Specular bounce off scene margins
             min_bound_x = self._margin
             max_bound_x = self._scene_w - self._margin
             min_bound_y = self._margin
             max_bound_y = self._scene_h - self._margin
 
-            if min_bound_x <= new_x <= max_bound_x:
-                self._x = new_x
-                self._vx = dx / dt if dt > 0 else 0.0
-            else:
+            if self._x <= min_bound_x:
+                self._x = min_bound_x + (min_bound_x - self._x)
+                self._vx = -self._vx
+            elif self._x >= max_bound_x:
+                self._x = max_bound_x - (self._x - max_bound_x)
                 self._vx = -self._vx
 
-            if min_bound_y <= new_y <= max_bound_y:
-                self._y = new_y
-                self._vy = dy / dt if dt > 0 else 0.0
-            else:
+            if self._y <= min_bound_y:
+                self._y = min_bound_y + (min_bound_y - self._y)
+                self._vy = -self._vy
+            elif self._y >= max_bound_y:
+                self._y = max_bound_y - (self._y - max_bound_y)
                 self._vy = -self._vy
 
         return self.target_state

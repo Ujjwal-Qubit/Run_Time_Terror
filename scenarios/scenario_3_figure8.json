@@ -1,0 +1,114 @@
+{
+  "scene": {
+    "width": 2000,
+    "height": 2000,
+    "background_intensity": 30
+  },
+  "camera": {
+    "width": 640,
+    "height": 480,
+    "fov_h_deg": 4.0,
+    "fov_v_deg": 3.0,
+    "update_rate_hz": 30,
+    "initial_x": null,
+    "initial_y": null
+  },
+  "target": {
+    "count": 1,
+    "size": 10,
+    "shape": "square",
+    "intensity": 220,
+    "initial_position": "random",
+    "initial_x": null,
+    "initial_y": null,
+    "speed": 50.0
+  },
+  "motion": {
+    "motion_type": "FIGURE_8",
+    "circle_radius": 200.0,
+    "figure8_radius_x": 300.0,
+    "figure8_radius_y": 150.0,
+    "random_max_displacement": 10.0,
+    "straight_line_angle_deg": 45.0
+  },
+  "ptz": {
+    "max_pan_speed_deg_s": 5.0,
+    "max_tilt_speed_deg_s": 5.0,
+    "update_rate_hz": 20,
+    "proportional_gain": 0.5,
+    "deadband_px": 5.0
+  },
+  "noise": {
+    "sp_enabled": false,
+    "sp_density": 0.1,
+    "gaussian_enabled": false,
+    "gaussian_sigma": 10.0,
+    "poisson_enabled": false
+  },
+  "atmospheric": {
+    "condition": "CLEAR",
+    "contrast_factor": null,
+    "brightness_offset": null
+  },
+  "jitter": {
+    "enabled": false,
+    "max_px_per_frame": 5.0
+  },
+  "platform_motion": {
+    "enabled": false,
+    "motion_type": "LINEAR",
+    "max_px_per_frame": 5.0
+  },
+  "detector": {
+    "bg_kernel_size": 51,
+    "threshold_multiplier": 3.0,
+    "threshold_offset": 20,
+    "min_candidate_area": 4,
+    "max_candidate_area": 500,
+    "min_candidate_intensity": 50,
+    "median_kernel_size": 3,
+    "min_local_contrast": 1.0
+  },
+  "identifier": {
+    "intensity_weight": 0.3,
+    "size_weight": 0.3,
+    "contrast_weight": 0.2,
+    "proximity_weight": 0.2,
+    "expected_beacon_size": 10,
+    "min_confidence": 0.1
+  },
+  "centroid": {
+    "bg_margin": 5,
+    "min_signal_weight": 1.0,
+    "bg_method": "annulus"
+  },
+  "tracker": {
+    "process_noise_pos": 1.0,
+    "process_noise_vel": 5.0,
+    "measurement_noise": 2.0,
+    "initial_covariance_pos": 100.0,
+    "initial_covariance_vel": 1000.0,
+    "roi_min_size": 60,
+    "roi_max_size": 300,
+    "roi_margin_factor": 3.0,
+    "gate_max_distance": 50.0
+  },
+  "state": {
+    "lock_threshold": 0.6,
+    "loss_threshold": 0.3,
+    "lock_confirm_frames": 3,
+    "loss_confirm_frames": 5,
+    "reacquire_confirm_frames": 3
+  },
+  "logging": {
+    "csv_enabled": true,
+    "json_summary_enabled": true,
+    "output_dir": "output"
+  },
+  "simulation": {
+    "duration_s": 30.0,
+    "random_seed": 42,
+    "mode": "SIMULATION",
+    "mp4_path": null
+  }
+}

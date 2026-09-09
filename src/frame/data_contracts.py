@@ -379,12 +379,28 @@ class TelemetryRecord:
     # Performance
     processing_time_ms: float = 0.0
     fps: float = 0.0
+    # Enriched diagnostic fields (Phase 5.8)
+    target_visible: bool = True
+    centroid_valid: bool = False
+    tracking_error_optical_axis: Optional[float] = None
+    tracking_error_gt: Optional[float] = None
+    is_coasting: bool = False
+    ptz_pan_velocity: float = 0.0
+    ptz_tilt_velocity: float = 0.0
+    ptz_in_deadband: bool = False
+    ptz_is_saturated: bool = False
+    time_detection_ms: float = 0.0
+    time_centroid_ms: float = 0.0
+    time_tracking_ms: float = 0.0
+    time_state_ms: float = 0.0
+    time_ptz_ms: float = 0.0
+    time_metrics_ms: float = 0.0
 
 
 @dataclass
 class MetricsSummary:
     """
-    Aggregate metrics summary for a run. Per Stage 4 §7.
+    Aggregate metrics summary for a run. Per Stage 4 §7 and Architecture v1.2 §13.
 
     All metric definitions are PROVISIONAL — the PS does not fully
     define every metric. Definitions must remain replaceable.
@@ -401,26 +417,124 @@ class MetricsSummary:
     mean_centroid_error: float = 0.0
     median_centroid_error: float = 0.0
     rmse_centroid: float = 0.0
+    rmse_centroid_ideal: float = 0.0
+    rmse_centroid_rendered: float = 0.0
     max_centroid_error: float = 0.0
     pct_within_1px: float = 0.0
     pct_within_2px: float = 0.0
     pct_within_5px: float = 0.0
     # Tracking
     mean_tracking_error: float = 0.0
+    mean_tracking_error_optical_axis: float = 0.0
+    mean_tracking_error_gt: float = 0.0
     max_tracking_error: float = 0.0
+    max_tracking_error_optical_axis: float = 0.0
+    max_tracking_error_gt: float = 0.0
+    rmse_tracking_optical_axis: float = 0.0
+    rmse_tracking_gt: float = 0.0
     lock_retention_rate: float = 0.0
+    lock_retention_post_acq_pct: float = 0.0
+    lock_retention_all_pct: float = 0.0
+    lock_retention_visible_pct: float = 0.0
     target_loss_rate: float = 0.0
     track_continuity: float = 0.0
     # Acquisition
     acquisition_time_s: Optional[float] = None
+    acquisition_time_from_detect_s: Optional[float] = None
+    acquisition_time_total_s: Optional[float] = None
     reacquisition_events: int = 0
     mean_reacquisition_time_s: Optional[float] = None
     max_reacquisition_time_s: Optional[float] = None
+    # Counts
+    frames_evaluated_count: int = 0
+    frames_tracked_count: int = 0
+    frames_lost_count: int = 0
     # Performance
     mean_fps: float = 0.0
     mean_latency_ms: float = 0.0
+    min_latency_ms: float = 0.0
+    p50_latency_ms: float = 0.0
     p95_latency_ms: float = 0.0
+    p99_latency_ms: float = 0.0
     max_latency_ms: float = 0.0
     # PTZ
     mean_steady_state_error: float = 0.0
     oscillation_measure: float = 0.0
+    frames_in_deadband_pct: float = 0.0
+
+
+@dataclass
+class BatchRunItem:
+    """Individual run outcome within a batch evaluation."""
+    item_id: str                          # scenario name or mp4 filename
+    source_path: str                      # full path or relative path
+    success: bool = True
+    error_message: Optional[str] = None
+    summary: Optional[MetricsSummary] = None
+
+
+@dataclass
+class GrandEvaluationSummary:
+    """
+    Aggregated evaluator scorecard across a batch of scenarios or MP4 sequences.
+    Per Architecture v1.2 §17 and Module 17 specifications.
+    """
+    batch_id: str = ""
+    batch_type: str = "SCENARIOS"          # "SCENARIOS" or "MP4"
+    total_runs: int = 0
+    successful_runs: int = 0
+    failed_runs: int = 0
+    run_items: List[BatchRunItem] = field(default_factory=list)
+    # Aggregated Macro Metrics (averaged across successful runs)
+    mean_fps: float = 0.0
+    mean_latency_ms: float = 0.0
+    p95_latency_ms: float = 0.0
+    mean_acquisition_time_s: Optional[float] = None
+    mean_rmse_centroid: float = 0.0
+    mean_rmse_centroid_rendered: float = 0.0
+    mean_tracking_error: float = 0.0
+    mean_lock_retention_pct: float = 0.0
+    mean_target_loss_rate_pct: float = 0.0
+    total_frames_processed: int = 0
+    total_duration_s: float = 0.0
+    # PS 26169 Compliance Flags
+    passed_fps_spec: bool = True          # >= 20 FPS
+    passed_acquisition_spec: bool = True  # <= 2.0 s
+    passed_tracking_error_spec: bool = True # <= 10.0 px
+    passed_loss_rate_spec: bool = True    # < 5.0 %
+    overall_compliance: bool = True
+    timestamp: float = 0.0
+
+
+@dataclass
+class VisualizationState:
+    """
+    Contract for data sent from the backend to the frontend renderers (2D and future 3D).
+    Contains only what is necessary for visualization, separating tracking state
+    from simulator internals per Phase 5.10 design.
+    """
+    frame_number: int
+    timestamp: float
+    
+    # Camera Pose / Telemetry
+    pan_angle_deg: float
+    tilt_angle_deg: float
+    camera_fov: float
+    
+    # Visualization Frame
+    display_image: object  # Reference to np.ndarray for GUI
+    
+    # Tracking Overlays
+    estimated_centroid_x: Optional[float] = None
+    estimated_centroid_y: Optional[float] = None
+    tracking_state: str = "SEARCHING"
+    tracking_error_px: Optional[float] = None
+    roi: Optional[ROI] = None
+    
+    # Dashboard Telemetry
+    processing_latency_ms: float = 0.0
+    fps: float = 0.0
+    
+    # Visualization-only Truth (Debug Mode)
+    ground_truth_x: Optional[float] = None
+    ground_truth_y: Optional[float] = None

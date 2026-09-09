@@ -37,6 +37,8 @@ class AIClassifier(CandidateIdentifier):
                 data = json.load(f)
                 self.weights = np.array(data["weights"], dtype=np.float32)
                 self.bias = float(data["bias"])
+                self.mean = np.array(data.get("mean", [0.0, 0.0, 0.0, 0.0]), dtype=np.float32)
+                self.std = np.array(data.get("std", [1.0, 1.0, 1.0, 1.0]), dtype=np.float32)
             self.is_trained = True
         else:
             self._train_synthetic_model()
