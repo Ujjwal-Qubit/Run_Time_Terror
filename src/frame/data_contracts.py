@@ -449,6 +449,8 @@ class MetricsSummary:
     frames_evaluated_count: int = 0
     frames_tracked_count: int = 0
     frames_lost_count: int = 0
+    reference_frames_matched: int = 0
+    reference_frame_coverage_pct: float = 0.0
     # Performance
     mean_fps: float = 0.0
     mean_latency_ms: float = 0.0

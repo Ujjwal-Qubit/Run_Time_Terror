@@ -244,9 +244,10 @@ class TestDefaults:
         assert defaults.TARGET_DEFAULT_INTENSITY == 220
         # Kalman parameters are engineering defaults
         assert defaults.KALMAN_PROCESS_NOISE_POS == 1.0
-        # PTZ gain and deadband are engineering defaults
-        assert defaults.PTZ_DEFAULT_PROPORTIONAL_GAIN == 0.5
-        assert defaults.PTZ_DEFAULT_DEADBAND_PX == 5.0
+        # PTZ gain and deadband are engineering defaults (tuned for SIH accuracy <= 10 px)
+        assert defaults.PTZ_DEFAULT_PROPORTIONAL_GAIN == 8.0
+        assert defaults.PTZ_DEFAULT_DEADBAND_PX == 1.0
+        assert defaults.PTZ_DEFAULT_INTEGRAL_GAIN == 2.0
 
     def test_mandatory_motion_types(self):
         from src.config import defaults

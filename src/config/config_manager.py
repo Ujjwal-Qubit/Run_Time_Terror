@@ -68,6 +68,17 @@ class MotionConfig:
     random_max_displacement: float = defaults.MOTION_RANDOM_MAX_DISPLACEMENT
     # Direction for straight line (angle in degrees, 0 = right)
     straight_line_angle_deg: float = 45.0
+    # Optional parameters for extended/AI-assisted trajectories
+    spiral_r0: float = 30.0
+    spiral_expansion_rate: float = 8.0
+    sinusoidal_amplitude: float = 80.0
+    sinusoidal_frequency: float = 0.3
+    polygon_sides: int = 4
+    polygon_radius: float = 180.0
+    zigzag_width: float = 400.0
+    zigzag_height: float = 200.0
+    is_ai_generated: bool = False
+    ai_prompt: Optional[str] = None
 
 
 @dataclass
@@ -78,6 +89,7 @@ class PTZConfig:
     update_rate_hz: int = defaults.PTZ_DEFAULT_UPDATE_RATE_HZ
     proportional_gain: float = defaults.PTZ_DEFAULT_PROPORTIONAL_GAIN
     deadband_px: float = defaults.PTZ_DEFAULT_DEADBAND_PX
+    integral_gain: float = defaults.PTZ_DEFAULT_INTEGRAL_GAIN
 
 
 @dataclass
@@ -358,6 +370,26 @@ class ConfigManager:
         ):
             errors.append(
                 f"Unknown motion type '{cfg.motion.motion_type}'"
+            )
+
+        # Camera parameters validation
+        if cfg.camera.width <= 0 or cfg.camera.height <= 0:
+            errors.append(
+                f"Camera resolution {cfg.camera.width}x{cfg.camera.height} must be positive"
+            )
+        if cfg.camera.update_rate_hz <= 0:
+            errors.append(
+                f"Camera update rate {cfg.camera.update_rate_hz} must be positive"
+            )
+
+        # PTZ gains validation
+        if cfg.ptz.proportional_gain < 0.0:
+            errors.append(
+                f"PTZ proportional gain {cfg.ptz.proportional_gain} cannot be negative"
+            )
+        if cfg.ptz.integral_gain < 0.0:
+            errors.append(
+                f"PTZ integral gain {cfg.ptz.integral_gain} cannot be negative"
             )
 
         return errors

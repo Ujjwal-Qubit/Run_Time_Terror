@@ -1,0 +1,12 @@
+.agentic-awesome-skills/
+.git/
+.pytest_cache/
+__pycache__/
+build/
+dist/
+output/
+scratch/
+docs/archive/
+Imp. .md/
+step_*.txt
+td.txt

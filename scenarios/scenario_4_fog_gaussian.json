@@ -35,8 +35,9 @@
     "max_pan_speed_deg_s": 5.0,
     "max_tilt_speed_deg_s": 5.0,
     "update_rate_hz": 20,
-    "proportional_gain": 0.5,
-    "deadband_px": 5.0
+    "proportional_gain": 8.0,
+    "integral_gain": 2.0,
+    "deadband_px": 1.0
   },
   "noise": {
     "sp_enabled": false,
@@ -91,7 +92,7 @@
     "roi_min_size": 60,
     "roi_max_size": 300,
     "roi_margin_factor": 3.0,
-    "gate_max_distance": 50.0
+    "gate_max_distance": 120.0
   },
   "state": {
     "lock_threshold": 0.6,

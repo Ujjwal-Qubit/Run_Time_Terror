@@ -187,7 +187,7 @@ class TestPTZControllerFunctional:
 
     def test_proportional_scaling_below_saturation(self):
         """Below rate limits, doubling error must double commanded angular velocity."""
-        cfg = PTZConfig(proportional_gain=0.5, deadband_px=0.0, max_pan_speed_deg_s=20.0)
+        cfg = PTZConfig(proportional_gain=0.5, deadband_px=0.0, max_pan_speed_deg_s=20.0, integral_gain=0.0)
         controller = ProportionalDeadbandPTZController(ptz_config=cfg)
 
         cmd1 = controller.compute(make_track(330.0, 240.0), TrackingState.TRACKING, 640, 480, 0.0333)
@@ -296,7 +296,7 @@ class TestPTZControllerGeometry:
     def test_default_resolution_and_fov(self):
         """640x480 resolution with 4°x3° FOV: scale is 4/640 = 0.00625 deg/px."""
         cam_cfg = CameraConfig(width=640, height=480, fov_h_deg=4.0, fov_v_deg=3.0)
-        ptz_cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0)
+        ptz_cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0, integral_gain=0.0)
         controller = ProportionalDeadbandPTZController(ptz_cfg, cam_cfg)
 
         cmd = controller.compute(make_track(340.0, 240.0), TrackingState.TRACKING, 640, 480, 0.0333)
@@ -307,7 +307,7 @@ class TestPTZControllerGeometry:
     def test_hd_resolution_and_fov(self):
         """1280x720 resolution with 8°x4.5° FOV: scale is 8/1280 = 0.00625 deg/px."""
         cam_cfg = CameraConfig(width=1280, height=720, fov_h_deg=8.0, fov_v_deg=4.5)
-        ptz_cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0)
+        ptz_cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0, integral_gain=0.0)
         controller = ProportionalDeadbandPTZController(ptz_cfg, cam_cfg)
 
         cmd = controller.compute(make_track(680.0, 360.0), TrackingState.TRACKING, 1280, 720, 0.0333)
@@ -610,3 +610,70 @@ class TestPTZControllerTypeSafety:
         
         with pytest.raises(TypeError, match="tracking_state must be a TrackingState enum"):
             controller.compute(track, invalid_state, 640, 480, 0.0333) # type: ignore
+
+
+# ---------------------------------------------------------------------------
+# 9. PI Control & SIH Sub-10px Alignment Performance Regression Tests
+# ---------------------------------------------------------------------------
+
+class TestPTZIntegralAndSIHPerformance:
+    def test_integral_action_accumulates_and_eliminates_lag(self):
+        """Constant persistent offset should cause integral term to ramp up actuation velocity."""
+        cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0, max_pan_speed_deg_s=20.0, integral_gain=5.0)
+        controller = ProportionalDeadbandPTZController(ptz_config=cfg)
+        track = make_track(330.0, 240.0)  # +10 px pan error
+
+        cmd1 = controller.compute(track, TrackingState.TRACKING, 640, 480, 0.0333)
+        cmd2 = controller.compute(track, TrackingState.TRACKING, 640, 480, 0.0333)
+        cmd3 = controller.compute(track, TrackingState.TRACKING, 640, 480, 0.0333)
+
+        assert cmd2.pan_velocity_deg_s > cmd1.pan_velocity_deg_s
+        assert cmd3.pan_velocity_deg_s > cmd2.pan_velocity_deg_s
+        assert controller._integral_pan > 0.0
+
+    def test_anti_windup_clamping(self):
+        """Integral term must clamp at anti-windup ceiling (1.0 deg)."""
+        cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0, max_pan_speed_deg_s=20.0, integral_gain=5.0)
+        controller = ProportionalDeadbandPTZController(ptz_config=cfg)
+        track = make_track(400.0, 240.0)  # +80 px pan error
+
+        for _ in range(100):
+            controller.compute(track, TrackingState.TRACKING, 640, 480, 0.1)
+
+        assert abs(controller._integral_pan) <= 1.0001
+
+    def test_integral_reset_on_lost_state(self):
+        """Integral accumulator must reset to zero when transitioning to LOST or SEARCHING."""
+        cfg = PTZConfig(proportional_gain=1.0, deadband_px=0.0, integral_gain=5.0)
+        controller = ProportionalDeadbandPTZController(ptz_config=cfg)
+        track = make_track(340.0, 240.0)
+
+        controller.compute(track, TrackingState.TRACKING, 640, 480, 0.0333)
+        assert controller._integral_pan > 0.0
+
+        controller.compute(track, TrackingState.LOST, 640, 480, 0.0333)
+        assert controller._integral_pan == 0.0
+
+    def test_circular_tracking_sub_10px_sih_requirement(self):
+        """
+        Verify that circular tracking achieves <= 10 px mean alignment error,
+        satisfying the core SIH 2026 performance requirement.
+        """
+        from src.app.app_controller import AppController
+        from src.config.config_manager import ConfigManager
+        from src.evaluation.benchmark_manager import BenchmarkManager
+
+        cm = ConfigManager()
+        cm.load_from_file("scenarios/scenario_2_circular.json")
+        app = AppController()
+        app.initialize(cm.config)
+        bm = BenchmarkManager(app)
+        summary = bm.run_benchmark(max_frames=150)
+
+        assert summary.total_frames == 150
+        assert summary.lock_retention_rate >= 95.0
+        assert summary.mean_tracking_error_optical_axis <= 10.0, (
+            f"Mean tracking error {summary.mean_tracking_error_optical_axis:.2f} px exceeds 10 px target!"
+        )
+        assert summary.mean_steady_state_error <= 10.0
+

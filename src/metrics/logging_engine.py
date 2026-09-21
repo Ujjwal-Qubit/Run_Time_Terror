@@ -284,9 +284,10 @@ class LoggingEngine:
             if item.success and item.summary:
                 s = item.summary
                 acq_val = f"{s.acquisition_time_s:.2f}" if s.acquisition_time_s is not None else "N/A"
+                rmse_val = s.rmse_centroid if s.rmse_centroid > 0.0 else s.rmse_centroid_rendered
                 lines.append(
                     f"| `{item.item_id}` | SUCCESS | `{s.total_frames}` | `{s.mean_fps:.1f}` | "
-                    f"`{acq_val}` | `{s.rmse_centroid_rendered:.3f}` | `{s.mean_tracking_error:.2f}` | "
+                    f"`{acq_val}` | `{rmse_val:.3f}` | `{s.mean_tracking_error:.2f}` | "
                     f"`{s.lock_retention_post_acq_pct:.1f}%` |"
                 )
             else:

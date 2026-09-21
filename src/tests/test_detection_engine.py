@@ -37,6 +37,7 @@ from src.frame.data_contracts import (
     FrameSource,
     CandidateRegion,
     DetectionResult,
+    ROI,
 )
 from src.config.config_manager import DetectorConfig, SystemConfig
 from src.tracker.detection_engine import P0ThresholdDetector, DetectionEngine
@@ -390,3 +391,20 @@ class TestFrameProviderIntegration:
 
             assert res.frame_number == 0
             assert len(res.candidates) >= 1
+
+    def test_detect_large_target_in_small_roi_no_self_masking(self):
+        """Verifies that a 20x20 target occupying 11% of a 60x60 ROI does not self-mask."""
+        img = np.full((480, 640), 30, dtype=np.uint8)
+        # Place 20x20 bright beacon at (320, 240)
+        img[230:250, 310:330] = 220
+
+        detector = P0ThresholdDetector()
+        roi = ROI(x=290, y=210, width=60, height=60)
+        packet = FramePacket(frame_number=1, timestamp=0.033, image=img, width=640, height=480)
+
+        res = detector.detect(packet, roi=roi)
+        assert len(res.candidates) >= 1
+        cand = res.candidates[0]
+        assert abs(cand.bbox_w - 20) <= 2
+        assert abs(cand.bbox_h - 20) <= 2
+

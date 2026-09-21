@@ -80,6 +80,7 @@ class MetricsEngine(IMetricsEngine):
         self._centroid_err_within_2px: int = 0
         self._centroid_err_within_5px: int = 0
         self._centroid_samples: List[float] = []
+        self._reference_frames_matched: int = 0
 
         # Tracking metrics
         self._tracking_optical_axis_sum: float = 0.0
@@ -247,6 +248,8 @@ class MetricsEngine(IMetricsEngine):
             if camera_pan_deg == 0.0 and camera_tilt_deg == 0.0:
                 camera_pan_deg = ground_truth.camera_pan_deg
                 camera_tilt_deg = ground_truth.camera_tilt_deg
+            if rend_x is not None and rend_y is not None:
+                self._reference_frames_matched += 1
 
         # -------------------------------------------------------------------
         # 4. Spatial Accuracy: Centroiding Error
@@ -524,6 +527,8 @@ class MetricsEngine(IMetricsEngine):
             frames_evaluated_count=self._total_frames,
             frames_tracked_count=self._frames_in_tracking,
             frames_lost_count=self._frames_in_lost,
+            reference_frames_matched=self._reference_frames_matched,
+            reference_frame_coverage_pct=(self._reference_frames_matched / self._total_frames * 100.0) if self._total_frames > 0 else 0.0,
             mean_fps=mean_fps,
             mean_latency_ms=mean_lat,
             min_latency_ms=min_lat,

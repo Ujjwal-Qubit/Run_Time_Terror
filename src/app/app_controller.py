@@ -15,7 +15,10 @@ Phase 5.3 connects FrameProvider (Module 8):
 
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any, List, Union
+from pathlib import Path
+import logging
+import math
 import threading
 import queue
 import time
@@ -52,7 +55,30 @@ from src.tracker.candidate_identifier import CandidateIdentifier
 from src.tracker.ai_classifier import AIClassifier
 from src.tracker.temporal_tracker import ConstantVelocityKalmanTracker
 from src.tracker.state_manager import TrackingStateManager
-from src.frame.data_contracts import FramePacket, GroundTruth, DetectionResult, VisualizationState, TrackerOutput, FrameSource
+from src.frame.data_contracts import (
+    FramePacket,
+    GroundTruth,
+    DetectionResult,
+    VisualizationState,
+    TrackerOutput,
+    FrameSource,
+    ROI,
+    TrackResult,
+    TrackingState,
+    TrackingStateResult,
+    CentroidResult,
+    CandidateRegion,
+)
+from src.api.v1 import (
+    ITrackingAlgorithm,
+    FramePacket as PublicFramePacket,
+    TrackingResult as PublicTrackingResult,
+)
+from src.plugins.loader import PluginLoader
+from src.plugins.models import DiscoveredPlugin, LoadedPlugin
+from src.plugins.algorithms.baseline_tracker.baseline_tracker import BaselineTracker
+
+logger = logging.getLogger(__name__)
 
 
 class AppController:
@@ -66,7 +92,7 @@ class AppController:
       - Manage start/stop/reset lifecycle
     """
 
-    def __init__(self) -> None:
+    def __init__(self, plugins_dir: Optional[Union[str, Path]] = None) -> None:
         # Module 2 — Configuration Manager
         self._config_manager = ConfigManager()
 
@@ -75,6 +101,13 @@ class AppController:
 
         # Module 16 — Logging Engine
         self._logging_engine = LoggingEngine()
+
+        # Phase 6.4 — Algorithm Plugin Management
+        self._plugin_loader = PluginLoader(plugins_dir=plugins_dir)
+        self._active_algorithm: Optional[ITrackingAlgorithm] = None
+        self._active_algorithm_name: Optional[str] = None
+        self._active_plugin: Optional[LoadedPlugin] = None
+        self._algorithm_error: Optional[str] = None
 
         # --- Module slots ---
         # Module 4  — SceneManager (Sim domain)
@@ -118,6 +151,98 @@ class AppController:
         # Phase 5.10 internal execution mechanism
         self._sim_thread: Optional[threading.Thread] = None
         self._viz_queue: queue.Queue = queue.Queue(maxsize=30)
+
+    @property
+    def plugin_loader(self) -> PluginLoader:
+        return self._plugin_loader
+
+    @property
+    def active_algorithm(self) -> Optional[ITrackingAlgorithm]:
+        return self._active_algorithm
+
+    @property
+    def active_algorithm_name(self) -> Optional[str]:
+        return self._active_algorithm_name
+
+    @property
+    def active_plugin(self) -> Optional[LoadedPlugin]:
+        return self._active_plugin
+
+    @property
+    def algorithm_error(self) -> Optional[str]:
+        return self._algorithm_error
+
+    def discover_algorithms(self) -> Dict[str, DiscoveredPlugin]:
+        """Discover available tracking algorithm plugins via PluginLoader."""
+        res = self._plugin_loader.discover()
+        return res.discovered
+
+    def get_available_algorithms(self) -> List[str]:
+        """Return list of discovered algorithm plugin names in deterministic alphabetical order."""
+        discovered = self.discover_algorithms()
+        return sorted(list(discovered.keys()))
+
+    def _build_algorithm_config(self) -> Dict[str, Any]:
+        """Build dictionary configuration from SystemConfig for algorithm plugins."""
+        cfg = self._config_manager.config
+        return {
+            "detector": vars(cfg.detector) if hasattr(cfg.detector, "__dict__") else {},
+            "centroid": vars(cfg.centroid) if hasattr(cfg.centroid, "__dict__") else {},
+            "identifier": vars(cfg.identifier) if hasattr(cfg.identifier, "__dict__") else {},
+            "tracker": vars(cfg.tracker) if hasattr(cfg.tracker, "__dict__") else {},
+            "state": vars(cfg.state) if hasattr(cfg.state, "__dict__") else {},
+            "use_ai_classifier": True,
+        }
+
+    def select_algorithm(
+        self,
+        plugin_name: str,
+        config: Optional[Dict[str, Any]] = None,
+    ) -> bool:
+        """
+        Loads and activates an algorithm plugin by name.
+        Instantiates via PluginLoader and initializes with configuration.
+        """
+        try:
+            loaded = self._plugin_loader.load_plugin(plugin_name)
+            instance = loaded.instance
+
+            if config is None:
+                config = self._build_algorithm_config()
+
+            init_ok = instance.initialize(config)
+            if not init_ok:
+                err_msg = f"Algorithm '{plugin_name}' initialize() returned False."
+                self._algorithm_error = err_msg
+                logger.error(err_msg)
+                return False
+
+            self._active_algorithm = instance
+            self._active_algorithm_name = plugin_name
+            self._active_plugin = loaded
+            self._algorithm_error = None
+
+            # Maintain backward compatibility with legacy stage inspection
+            if type(instance).__name__ == "BaselineTracker" or hasattr(instance, "_detector"):
+                self._detection_engine = getattr(instance, "_detector", None)
+                self._centroid_estimator = getattr(instance, "_centroid_estimator", None)
+                self._candidate_identifier = getattr(instance, "_identifier", None)
+                self._tracking_engine = getattr(instance, "_tracker", None)
+                self._tracking_state_manager = getattr(instance, "_state_manager", None)
+            else:
+                self._detection_engine = None
+                self._centroid_estimator = None
+                self._candidate_identifier = None
+                self._tracking_engine = None
+                self._tracking_state_manager = None
+
+            logger.info(f"Successfully selected and initialized algorithm plugin: '{plugin_name}'")
+            return True
+        except Exception as e:
+            err_msg = f"Failed to select algorithm '{plugin_name}': {e}"
+            self._algorithm_error = err_msg
+            logger.error(err_msg)
+            return False
 
     @property
     def config_manager(self) -> ConfigManager:
@@ -186,6 +311,18 @@ class AppController:
     @property
     def benchmark_manager(self) -> Optional[BenchmarkManager]:
         return self._benchmark_manager
+
+    @property
+    def is_running(self) -> bool:
+        return self._running
+
+    @property
+    def is_paused(self) -> bool:
+        return self._paused
+
+    @property
+    def frame_count(self) -> int:
+        return self._frame_count
 
 
 
@@ -265,22 +402,6 @@ class AppController:
         else:
             raise ValueError(f"Unsupported simulation mode: {mode}")
 
-        # Instantiate Module 9: DetectionEngine (runs in both SIMULATION and MP4 modes)
-        self._detection_engine = P0ThresholdDetector(cfg.detector)
-
-        # Instantiate Module 10: CentroidEstimator (runs in both SIMULATION and MP4 modes)
-        self._centroid_estimator = IntensityWeightedCentroidEstimator(cfg.centroid)
-
-        # Instantiate Module 11: CandidateIdentifier (runs in both SIMULATION and MP4 modes)
-        # We use the AI Augmentation instead of the baseline
-        self._candidate_identifier = AIClassifier(cfg.identifier)
-
-        # Instantiate Module 12: TrackingEngine / TemporalTracker (runs in both SIMULATION and MP4 modes)
-        self._tracking_engine = ConstantVelocityKalmanTracker(cfg.tracker)
-
-        # Instantiate Module 13: TrackingStateManager (runs in both SIMULATION and MP4 modes)
-        self._tracking_state_manager = TrackingStateManager(cfg.state)
-
         # Instantiate Module 14: PTZController (runs in both SIMULATION and MP4 modes; actuation bypassed in MP4)
         pm = self._camera_model.projection_model if self._camera_model else None
         self._ptz_controller = ProportionalDeadbandPTZController(
@@ -291,6 +412,26 @@ class AppController:
 
         self._metrics_engine = MetricsEngine(run_id=self._logging_engine.run_id)
         self._benchmark_manager = BenchmarkManager(self)
+
+        # Initialize or select tracking algorithm plugin (Phase 6.4)
+        if self._active_algorithm is None:
+            self.discover_algorithms()
+            avail = self.get_available_algorithms()
+            default_algo = "baseline_tracker" if "baseline_tracker" in avail else (avail[0] if avail else None)
+            if default_algo:
+                self.select_algorithm(default_algo, config=self._build_algorithm_config())
+            else:
+                logger.warning("No algorithm plugins discovered in plugins directory.")
+        else:
+            self._active_algorithm.initialize(self._build_algorithm_config())
+
+        # Fallback to direct stage instantiation if no plugin was loaded
+        if self._active_algorithm is None:
+            self._detection_engine = P0ThresholdDetector(cfg.detector)
+            self._centroid_estimator = IntensityWeightedCentroidEstimator(cfg.centroid)
+            self._candidate_identifier = AIClassifier(cfg.identifier)
+            self._tracking_engine = ConstantVelocityKalmanTracker(cfg.tracker)
+            self._tracking_state_manager = TrackingStateManager(cfg.state)
 
         self._frame_count = 0
         self._sim_time = 0.0
@@ -307,6 +448,130 @@ class AppController:
             self._frame_count = packet.frame_number
             self._sim_time = packet.timestamp
         return packet
+
+    def step_algorithm(
+        self, packet: FramePacket
+    ) -> Tuple[PublicTrackingResult, float, Optional[TrackResult], TrackingStateResult, Optional[CentroidResult], Optional[DetectionResult]]:
+        """
+        Executes the active algorithm on a frame through the public API firewall.
+        
+        Args:
+            packet: Internal FramePacket from FrameProvider.
+            
+        Returns:
+            Tuple of:
+              - public_result: PublicTrackingResult from algorithm
+              - latency_ms: Measured execution time of process_frame() in ms
+              - track_result: Bridge TrackResult for PTZ/Metrics
+              - state_result: Bridge TrackingStateResult for PTZ/Metrics
+              - centroid_result: Bridge CentroidResult for Metrics
+              - detection_result: Bridge DetectionResult for Metrics
+        """
+        if self._active_algorithm is None:
+            raise RuntimeError("No algorithm plugin selected. Call select_algorithm() or initialize() first.")
+
+        # 1. Convert to public observable contract (Enforce Ground-Truth Firewall)
+        fov = None
+        if self._camera_model and hasattr(self._config_manager.config, "camera"):
+            fov = (self._config_manager.config.camera.fov_h_deg, self._config_manager.config.camera.fov_v_deg)
+
+        public_packet = PublicFramePacket(
+            image=packet.image,
+            timestamp=packet.timestamp,
+            frame_number=packet.frame_number,
+            resolution=(packet.width, packet.height),
+            fov=fov,
+        )
+
+        # 2. Execute Algorithm with Failure Isolation
+        t0 = time.perf_counter()
+        try:
+            public_res = self._active_algorithm.process_frame(public_packet)
+            if not isinstance(public_res, PublicTrackingResult):
+                raise TypeError(f"Algorithm returned {type(public_res).__name__}, expected PublicTrackingResult")
+        except Exception as e:
+            err_str = str(e)
+            logger.error(f"Algorithm '{self._active_algorithm_name}' error on frame {packet.frame_number}: {err_str}")
+            self._algorithm_error = err_str
+            public_res = PublicTrackingResult(
+                algorithm_is_tracking=False,
+                centroid_x=None,
+                centroid_y=None,
+                confidence=0.0,
+                roi=None,
+            )
+        t_elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        # 3. Derive Bridge Data Contracts for Downstream Platform Systems (PTZ & Metrics)
+        is_tracking = bool(public_res.algorithm_is_tracking)
+        cent_x = public_res.centroid_x
+        cent_y = public_res.centroid_y
+        conf = public_res.confidence if public_res.confidence is not None else (1.0 if is_tracking else 0.0)
+
+        # Coordinate sanity check
+        coords_valid = False
+        if is_tracking and cent_x is not None and cent_y is not None:
+            if math.isfinite(cent_x) and math.isfinite(cent_y):
+                coords_valid = True
+            else:
+                logger.warning(f"Algorithm '{self._active_algorithm_name}' returned non-finite coordinates: ({cent_x}, {cent_y})")
+                is_tracking = False
+
+        state = TrackingState.TRACKING if is_tracking else TrackingState.SEARCHING
+        state_res = TrackingStateResult(state=state, confidence_level=conf)
+
+        roi_contract = None
+        if public_res.roi:
+            rx, ry, rw, rh = public_res.roi
+            roi_contract = ROI(x=rx, y=ry, width=rw, height=rh)
+
+        track_res = None
+        centroid_res = None
+        if coords_valid:
+            track_res = TrackResult(
+                estimated_x=float(cent_x),
+                estimated_y=float(cent_y),
+                confidence=conf,
+                frame_number=packet.frame_number,
+                timestamp=packet.timestamp,
+                measurement_valid=True,
+                is_coasting=False,
+            )
+            centroid_res = CentroidResult(
+                x=float(cent_x),
+                y=float(cent_y),
+                valid=True,
+                frame_number=packet.frame_number,
+                processing_time_ms=t_elapsed_ms,
+            )
+
+        cand_list = []
+        if coords_valid and cent_x is not None and cent_y is not None:
+            bx, by, bw, bh = (roi_contract.x, roi_contract.y, roi_contract.width, roi_contract.height) if roi_contract else (int(cent_x - 5), int(cent_y - 5), 10, 10)
+            cand_list.append(
+                CandidateRegion(
+                    bbox_x=int(bx),
+                    bbox_y=int(by),
+                    bbox_w=int(bw),
+                    bbox_h=int(bh),
+                    peak_intensity=255.0,
+                    mean_intensity=200.0,
+                    area=int(bw * bh),
+                    raw_centroid_x=float(cent_x),
+                    raw_centroid_y=float(cent_y),
+                    detection_score=conf,
+                )
+            )
+
+        detection_res = DetectionResult(
+            frame_number=packet.frame_number,
+            timestamp=packet.timestamp,
+            candidates=cand_list,
+            processing_time_ms=0.0,
+            roi=roi_contract,
+        )
+
+        return (public_res, t_elapsed_ms, track_res, state_res, centroid_res, detection_res)
 
     def step_simulation(self, dt: float) -> Tuple[np.ndarray, GroundTruth, np.ndarray]:
         """
@@ -411,44 +676,46 @@ class AppController:
                 self._running = False
                 break
 
-            t_start = time.perf_counter()
+            # Execute active algorithm via public API
+            (
+                public_res,
+                t_elapsed_ms,
+                track_res,
+                state_res,
+                centroid_res,
+                detection_res,
+            ) = self.step_algorithm(packet)
 
-            # Tracking Pipeline
-            roi = self.tracking_engine.get_roi(packet.width, packet.height) if self.tracking_engine else None
-            detection_res = self.detection_engine.detect(packet, roi=roi)
-            ident_res = self.candidate_identifier.identify(detection_res.candidates)
-            
-            centroid_res = None
-            if ident_res.valid and ident_res.selected_candidate is not None:
-                centroid_res = self.centroid_estimator.estimate(packet, ident_res.selected_candidate)
-            
-            track_res = self.tracking_engine.update(centroid_res, frame_number=packet.frame_number, timestamp=packet.timestamp)
-            state_res = self.tracking_state_manager.update(track_res)
-
-            # Control
+            # Control (PTZ) — only active in SIMULATION mode
             ptz_cmd = None
             if self.ptz_controller and packet.source == FrameSource.SIMULATION:
                 dt = 1.0 / self.config_manager.config.camera.update_rate_hz
-                ptz_cmd = self.ptz_controller.compute(track_res, state_res.state, packet.width, packet.height, dt)
+                pm = self.camera_model.projection_model if self.camera_model else None
+                ptz_cmd = self.ptz_controller.compute(
+                    track_res,
+                    state_res.state,
+                    packet.width,
+                    packet.height,
+                    dt=dt,
+                    projection_model=pm,
+                )
                 if self.camera_model and ptz_cmd.valid:
                     self.camera_model.apply_pan_tilt(ptz_cmd.delta_pan_deg, ptz_cmd.delta_tilt_deg)
-
-            t_elapsed_ms = (time.perf_counter() - t_start) * 1000.0
 
             # Telemetry/Metrics update
             tracker_output = TrackerOutput(
                 frame_number=packet.frame_number,
                 timestamp=packet.timestamp,
                 state=state_res.state,
-                previous_state=state_res.previous_state,
-                transition_reason=state_res.transition_reason,
+                previous_state=state_res.previous_state if hasattr(state_res, "previous_state") else None,
+                transition_reason=state_res.transition_reason if hasattr(state_res, "transition_reason") else "",
                 centroid=centroid_res,
                 track=track_res,
-                detection_valid=ident_res.valid,
-                candidate_count=len(detection_res.candidates),
+                detection_valid=bool(public_res.algorithm_is_tracking),
+                candidate_count=1 if public_res.algorithm_is_tracking else 0,
                 confidence=state_res.confidence_level,
-                roi=roi,
-                processing_time_ms=t_elapsed_ms
+                roi=ROI(x=public_res.roi[0], y=public_res.roi[1], width=public_res.roi[2], height=public_res.roi[3]) if public_res.roi else None,
+                processing_time_ms=t_elapsed_ms,
             )
 
             gt = None
@@ -476,6 +743,10 @@ class AppController:
             # Build VisualizationState for frontend
             cam_fov = self.config_manager.config.camera.fov_h_deg
 
+            roi_contract = None
+            if public_res.roi:
+                roi_contract = ROI(x=public_res.roi[0], y=public_res.roi[1], width=public_res.roi[2], height=public_res.roi[3])
+
             viz_state = VisualizationState(
                 frame_number=packet.frame_number,
                 timestamp=packet.timestamp,
@@ -487,7 +758,7 @@ class AppController:
                 estimated_centroid_y=centroid_res.y if centroid_res and centroid_res.valid else None,
                 tracking_state=state_res.state.name,
                 tracking_error_px=None, # Computed in UI or later if needed
-                roi=roi,
+                roi=roi_contract,
                 processing_latency_ms=t_elapsed_ms,
                 fps=1000.0 / t_elapsed_ms if t_elapsed_ms > 0 else 0.0,
                 ground_truth_x=gt.ideal_projected_x if gt else None,
@@ -541,6 +812,8 @@ class AppController:
             except queue.Empty:
                 break
 
+        if self._active_algorithm:
+            self._active_algorithm.reset()
         if self._frame_provider:
             self._frame_provider.reset()
         if self._scene_manager:

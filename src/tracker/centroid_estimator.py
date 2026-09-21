@@ -129,8 +129,8 @@ class IntensityWeightedCentroidEstimator(ICentroidEstimator):
         # -------------------------------------------------------------------
         # Geometry-aware margin: at least the configured minimum, but scaling with object size
         # to prevent background pollution by anti-aliased edge glow on large targets (e.g. Size 20).
-        # We use a 1.0x multiplier to give a generous border.
-        dynamic_margin = max(self._bg_margin, int(max(bw, bh) * 1.0))
+        # We use a 0.2x multiplier to preserve noise immunity while scaling for large targets.
+        dynamic_margin = max(self._bg_margin, int(max(bw, bh) * 0.2))
         margin = dynamic_margin
         
         x0 = max(0, bx - margin)

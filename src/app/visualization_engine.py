@@ -104,4 +104,7 @@ class VisualizationEngine:
             put_text(f"LATENCY: {state.processing_latency_ms:.1f} ms", (200, 200, 200))
             put_text(f"FPS: {state.fps:.1f}", (200, 200, 200))
 
+        if state.pan_angle_deg is not None and state.tilt_angle_deg is not None:
+            put_text(f"PTZ: P {state.pan_angle_deg:+.2f}deg / T {state.tilt_angle_deg:+.2f}deg", (200, 200, 200))
+
         return display

@@ -2,14 +2,13 @@
 
 ## Title of Problem Statement
 
-Development of an AI-Based Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space  
-Optical Communication (FSOC) Terminals
+Development of an AI-Based Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space Optical Communication (FSOC) Terminals
 
 ## Description (Background, Detailed Description and Expected Solution):
 
 ### Background:
 
-Free Space Optical Communication (FSOC) offers unprecedented advantages for next-generation mobile networks, including gigabit-to-terabit data rates, license-free spectrum operation, high immunity to electromagnetic interference, etc. However, deploying FSOC links between mobile platforms (satellites, UAVs presents a severe challenge of pointing, acquisition and tracking (PAT) of highly narrow laser beams. PAT typically happens in two stages: coarse alignment and fine alignment. Coarse alignment is one of the key challenges of PAT, where the transmitting terminal must first locate and maintain the remote terminal within its camera Field-of-View (FOV).
+Free Space Optical Communication (FSOC) offers unprecedented advantages for next-generation mobile networks, including gigabit-to-terabit data rates, license-free spectrum operation, high immunity to electromagnetic interference, etc. However, deploying FSOC links between mobile platforms satellites, UAVs presents a severe challenge of pointing, acquisition and tracking (PAT) of highly narrow laser beams. PAT typically happens in two stages: coarse alignment and fine alignment. Coarse alignment is one of the key challenges of PAT, where the transmitting terminal must first locate and maintain the remote terminal within its camera Field-of-View (FOV).
 
 Developing and testing such algorithms on real hardware requires expensive cameras, pan-tilt mechanisms, and optical components & equipment. A software based virtual camera tracking provides an inexpensive and accessible platform for algorithm development and learning.
 

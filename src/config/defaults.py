@@ -142,9 +142,10 @@ PTZ_DEFAULT_TILT_SPEED_DEG_S = 5.0     # PS_DEFAULT
 PTZ_MIN_UPDATE_RATE_HZ = 20            # PS_REQUIRED
 PTZ_DEFAULT_UPDATE_RATE_HZ = 20        # PS_DEFAULT
 
-# Dead-band and gain — ENGINEERING_DEFAULT (PS does not specify)
-PTZ_DEFAULT_PROPORTIONAL_GAIN = 0.5    # ENGINEERING_DEFAULT
-PTZ_DEFAULT_DEADBAND_PX = 5.0          # ENGINEERING_DEFAULT — pixels
+# Dead-band and gain — ENGINEERING_DEFAULT (Tuned PI control law per SIH <= 10 px accuracy mandate)
+PTZ_DEFAULT_PROPORTIONAL_GAIN = 8.0    # ENGINEERING_DEFAULT — proportional tracking gain
+PTZ_DEFAULT_DEADBAND_PX = 1.0          # ENGINEERING_DEFAULT — tracking deadband in pixels
+PTZ_DEFAULT_INTEGRAL_GAIN = 2.0        # ENGINEERING_DEFAULT — anti-lag integral action
 
 
 # ==========================================================================
@@ -268,7 +269,7 @@ ROI_MAX_SIZE = 300                      # ENGINEERING_DEFAULT — pixels
 ROI_MARGIN_FACTOR = 3.0                 # ENGINEERING_DEFAULT — multiplier
 
 # Candidate gating
-GATE_MAX_DISTANCE = 50.0                # ENGINEERING_DEFAULT — pixels
+GATE_MAX_DISTANCE = 120.0               # ENGINEERING_DEFAULT — pixels (robust tracking during camera motion)
 
 # State machine thresholds
 STATE_LOCK_THRESHOLD = 0.6              # ENGINEERING_DEFAULT

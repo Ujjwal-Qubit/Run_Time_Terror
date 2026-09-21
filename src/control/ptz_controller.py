@@ -75,6 +75,10 @@ class ProportionalDeadbandPTZController(IPTZController):
         self._deadband_commands: int = 0
         self._last_command: Optional[PTZCommand] = None
 
+        # Integral control accumulators for steady-state lag elimination
+        self._integral_pan: float = 0.0
+        self._integral_tilt: float = 0.0
+
     @property
     def config(self) -> PTZConfig:
         return self._ptz_cfg
@@ -99,11 +103,13 @@ class ProportionalDeadbandPTZController(IPTZController):
         return "ProportionalDeadbandPTZController"
 
     def reset(self) -> None:
-        """Reset internal diagnostics and state counters."""
+        """Reset internal diagnostics, state counters, and integral accumulators."""
         self._total_commands = 0
         self._saturated_commands = 0
         self._deadband_commands = 0
         self._last_command = None
+        self._integral_pan = 0.0
+        self._integral_tilt = 0.0
 
     def _convert_pixels_to_angles(
         self,
@@ -180,6 +186,8 @@ class ProportionalDeadbandPTZController(IPTZController):
             TrackingState.ACQUIRING,
             TrackingState.LOST,
         ):
+            self._integral_pan = 0.0
+            self._integral_tilt = 0.0
             elapsed_ms = (time.perf_counter() - t0) * 1000.0
             cmd = PTZCommand(
                 delta_pan_deg=0.0,
@@ -300,11 +308,27 @@ class ProportionalDeadbandPTZController(IPTZController):
         )
 
         # -------------------------------------------------------------------
-        # 6. Proportional Control Law
+        # 6. Proportional-Integral (PI) Control Law
         # -------------------------------------------------------------------
+        eff_dt = max(0.0, float(dt))
         kp = float(self._ptz_cfg.proportional_gain)
-        omega_pan_req = kp * theta_pan
-        omega_tilt_req = kp * theta_tilt
+        ki = float(getattr(self._ptz_cfg, "integral_gain", 0.0))
+
+        if ki > 0.0:
+            if not in_deadband:
+                self._integral_pan += theta_pan * eff_dt
+                self._integral_tilt += theta_tilt * eff_dt
+                # Anti-windup clamping (1.0 degree max accumulated error)
+                max_int = 1.0
+                self._integral_pan = max(-max_int, min(max_int, self._integral_pan))
+                self._integral_tilt = max(-max_int, min(max_int, self._integral_tilt))
+            else:
+                # Exponential decay in deadband to prevent steady-state limit cycling
+                self._integral_pan *= 0.95
+                self._integral_tilt *= 0.95
+
+        omega_pan_req = kp * theta_pan + ki * self._integral_pan
+        omega_tilt_req = kp * theta_tilt + ki * self._integral_tilt
 
         # -------------------------------------------------------------------
         # 7. Hard Rate Limiting (PS Rows 13–14)
@@ -357,3 +381,4 @@ class ProportionalDeadbandPTZController(IPTZController):
 
 # Production aliases per Architecture v1.2
 PTZController = ProportionalDeadbandPTZController
+PIDeadbandPTZController = ProportionalDeadbandPTZController

@@ -1,0 +1,12 @@
+{
+  "name": "baseline_tracker",
+  "version": "1.0.0",
+  "api_version": "v1",
+  "entry_point": "baseline_tracker:BaselineTracker",
+  "description": "SIH '26 Baseline Tracking Algorithm (P0 Threshold Detection + Intensity-Weighted Centroiding + AI Candidate Classification + Constant-Velocity Kalman Filtering + State Machine)",
+  "author": "SIH Evaluator Team",
+  "dependencies": [
+    "numpy",
+    "opencv-python"
+  ]
+}

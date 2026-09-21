@@ -2,7 +2,8 @@ from __future__ import annotations
 import os
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QGroupBox, 
-    QRadioButton, QButtonGroup, QFileDialog, QLineEdit, QLabel, QMessageBox
+    QRadioButton, QButtonGroup, QFileDialog, QLineEdit, QLabel, QMessageBox,
+    QComboBox, QInputDialog
 )
 from src.app.app_controller import AppController
 
@@ -18,8 +19,8 @@ class ControlPanel(QWidget):
         mode_layout = QVBoxLayout(mode_group)
         self.mode_btn_group = QButtonGroup()
         
-        self.radio_sim = QRadioButton("Simulation (Benchmark 1)")
-        self.radio_mp4 = QRadioButton("MP4 Video (Benchmark 2)")
+        self.radio_sim = QRadioButton("Developer / Simulation Mode (Interactive)")
+        self.radio_mp4 = QRadioButton("MP4 Evaluation (Benchmark 2)")
         self.radio_sim.setChecked(True)
         self.mode_btn_group.addButton(self.radio_sim, 0)
         self.mode_btn_group.addButton(self.radio_mp4, 1)
@@ -49,6 +50,39 @@ class ControlPanel(QWidget):
         
         self.mode_btn_group.idToggled.connect(self._on_mode_change)
         self._on_mode_change(0, self.radio_sim.isChecked())
+
+        # Algorithm Selection (Unit Under Test — Phase 6.4)
+        algo_group = QGroupBox("Algorithm (Unit Under Test)")
+        algo_layout = QVBoxLayout(algo_group)
+
+        self.algo_combo_layout = QHBoxLayout()
+        self.algo_combo_layout.addWidget(QLabel("Algorithm:"))
+        self.algo_combo = QComboBox()
+        self.algo_combo_layout.addWidget(self.algo_combo)
+        algo_layout.addLayout(self.algo_combo_layout)
+
+        self.algo_info_layout = QHBoxLayout()
+        self.lbl_algo_version = QLabel("v---")
+        self.lbl_algo_version.setStyleSheet("color: #666; font-size: 11px;")
+        self.lbl_algo_status = QLabel("Ready")
+        self.lbl_algo_status.setStyleSheet("color: #00aa00; font-weight: bold; font-size: 11px;")
+        self.algo_info_layout.addWidget(QLabel("Version:"))
+        self.algo_info_layout.addWidget(self.lbl_algo_version)
+        self.algo_info_layout.addSpacing(10)
+        self.algo_info_layout.addWidget(QLabel("Status:"))
+        self.algo_info_layout.addWidget(self.lbl_algo_status)
+        self.algo_info_layout.addStretch()
+        algo_layout.addLayout(self.algo_info_layout)
+
+        self.lbl_algo_desc = QLabel("")
+        self.lbl_algo_desc.setWordWrap(True)
+        self.lbl_algo_desc.setStyleSheet("color: #555; font-size: 10px;")
+        algo_layout.addWidget(self.lbl_algo_desc)
+
+        self.layout.addWidget(algo_group)
+
+        self._refresh_algorithms()
+        self.algo_combo.currentTextChanged.connect(self._on_algorithm_selected)
         
         # Controls
         ctrl_group = QGroupBox("Playback")
@@ -81,16 +115,7 @@ class ControlPanel(QWidget):
         ctrl_layout.addWidget(self.btn_reset)
         self.layout.addWidget(ctrl_group)
         
-        # Benchmark Integration
-        bench_group = QGroupBox("Benchmark & Reporting")
-        bench_layout = QVBoxLayout(bench_group)
-        self.btn_batch = QPushButton("Run Batch Scenarios")
-        self.btn_report = QPushButton("Generate Report")
-        self.btn_batch.clicked.connect(self._on_batch)
-        self.btn_report.clicked.connect(self._on_report)
-        bench_layout.addWidget(self.btn_batch)
-        bench_layout.addWidget(self.btn_report)
-        self.layout.addWidget(bench_group)
+        # Removed Benchmark Integration to EvaluationPanel
         
         self.layout.addStretch()
         
@@ -117,10 +142,35 @@ class ControlPanel(QWidget):
                 cp.cam_fov.setValue(cfg.camera.fov_h_deg)
                 cp.cam_fps.setValue(int(cfg.camera.update_rate_hz))
                 cp.tgt_size.setValue(cfg.target.size)
+                cp.tgt_speed.setValue(cfg.target.speed)
                 idx = cp.tgt_motion.findText(cfg.motion.motion_type)
                 if idx >= 0: cp.tgt_motion.setCurrentIndex(idx)
                 idx = cp.dist_atmos.findText(cfg.atmospheric.condition)
                 if idx >= 0: cp.dist_atmos.setCurrentIndex(idx)
+                
+                # Sync noise
+                if cfg.noise.gaussian_enabled:
+                    idx = cp.dist_noise.findText("GAUSSIAN")
+                elif cfg.noise.sp_enabled:
+                    idx = cp.dist_noise.findText("SALT_AND_PEPPER")
+                elif cfg.noise.poisson_enabled:
+                    idx = cp.dist_noise.findText("POISSON")
+                else:
+                    idx = cp.dist_noise.findText("NONE")
+                if idx >= 0: cp.dist_noise.setCurrentIndex(idx)
+
+                # Sync platform motion
+                if cfg.platform_motion.enabled:
+                    idx = cp.dist_platform.findText(cfg.platform_motion.motion_type)
+                    if idx >= 0: cp.dist_platform.setCurrentIndex(idx)
+                else:
+                    idx = cp.dist_platform.findText("NONE")
+                    if idx >= 0: cp.dist_platform.setCurrentIndex(idx)
+                cp.dist_platform_amp.setValue(cfg.platform_motion.max_px_per_frame)
+
+                # Sync jitter
+                cp.dist_jitter_enable.setChecked(cfg.jitter.enabled)
+                cp.dist_jitter_amp.setValue(cfg.jitter.max_px_per_frame)
             
     def _browse_mp4(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Select MP4 Video", "", "MP4 files (*.mp4);;All files (*.*)")
@@ -158,6 +208,7 @@ class ControlPanel(QWidget):
             if self.app.tracking_engine: self.app.tracking_engine.reset()
             if self.app.tracking_state_manager: self.app.tracking_state_manager.reset()
             if self.app.ptz_controller: self.app.ptz_controller.reset()
+            if self.app.active_algorithm: self.app.active_algorithm.reset()
             
             self.app.start_background_loop()
             
@@ -196,27 +247,56 @@ class ControlPanel(QWidget):
         self.btn_pause.setEnabled(False)
         self.btn_resume.setEnabled(False)
 
-    def _on_batch(self):
-        directory = QFileDialog.getExistingDirectory(self, "Select Scenario Directory")
-        if directory:
-            QMessageBox.information(self, "Batch Run", "Batch scenarios run started (see console).")
-            # Usually we'd run this in a thread too to not block GUI
-            self.app.benchmark_manager.evaluate_batch_scenarios(directory)
-            QMessageBox.information(self, "Batch Run", "Batch scenarios completed.")
-            
-    def _on_report(self):
+    def _refresh_algorithms(self):
         try:
-            if self.app.metrics_engine:
-                summary = self.app.metrics_engine.finalize()
-                json_path = self.app.logging_engine.write_summary(summary)
-                md_path = self.app.logging_engine.write_performance_report(summary)
-                self.app.logging_engine.finalize()
-                QMessageBox.information(
-                    self,
-                    "Report Generated",
-                    f"Performance Reports Generated Successfully:\n\nJSON:\n{json_path}\n\nMarkdown:\n{md_path}"
-                )
-            else:
-                QMessageBox.warning(self, "Report Warning", "Metrics engine not initialized.")
+            import logging
+            logger = logging.getLogger(__name__)
+            self.algo_combo.blockSignals(True)
+            self.algo_combo.clear()
+            algos = self.app.get_available_algorithms()
+            for algo in algos:
+                self.algo_combo.addItem(algo)
+            
+            # Select current active algorithm or baseline_tracker
+            current = self.app.active_algorithm_name or "baseline_tracker"
+            idx = self.algo_combo.findText(current)
+            if idx >= 0:
+                self.algo_combo.setCurrentIndex(idx)
+            self.algo_combo.blockSignals(False)
+            self._update_algorithm_info(self.algo_combo.currentText())
         except Exception as e:
-            QMessageBox.critical(self, "Report Error", f"Failed to generate report: {str(e)}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error refreshing algorithms: {e}")
+
+    def _on_algorithm_selected(self, algo_name: str):
+        if not algo_name:
+            return
+        success = self.app.select_algorithm(algo_name)
+        self._update_algorithm_info(algo_name, success)
+        if hasattr(self.main_window, 'telemetry_panel'):
+            self.main_window.telemetry_panel.set_algorithm(algo_name)
+
+    def _update_algorithm_info(self, algo_name: str, success: bool = True):
+        if not algo_name:
+            self.lbl_algo_version.setText("v---")
+            self.lbl_algo_status.setText("None")
+            self.lbl_algo_status.setStyleSheet("color: #888; font-weight: bold; font-size: 11px;")
+            self.lbl_algo_desc.setText("")
+            return
+
+        plugin = self.app.plugin_loader.get_plugin(algo_name)
+        if plugin:
+            self.lbl_algo_version.setText(f"v{plugin.manifest.version}")
+            self.lbl_algo_desc.setText(plugin.manifest.description or "")
+        else:
+            self.lbl_algo_version.setText("v---")
+            self.lbl_algo_desc.setText("")
+
+        if success and not self.app.algorithm_error:
+            self.lbl_algo_status.setText("Active")
+            self.lbl_algo_status.setStyleSheet("color: #00aa00; font-weight: bold; font-size: 11px;")
+        else:
+            self.lbl_algo_status.setText("Error")
+            self.lbl_algo_status.setStyleSheet("color: #cc0000; font-weight: bold; font-size: 11px;")
+

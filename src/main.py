@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from src.app.app_controller import AppController
@@ -19,7 +20,7 @@ from src.config.config_manager import ConfigManager
 from src.evaluation.benchmark_manager import BenchmarkManager
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(args=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="SIH 2026 — FSOC Virtual Camera Tracking System"
     )
@@ -51,7 +52,41 @@ def parse_args() -> argparse.Namespace:
         "--eval-mp4s", type=str, default=None,
         help="Batch evaluate all MP4/video files in the given directory",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--reference-csv", type=str, default=None,
+        help="Path to evaluator reference CSV (or directory) for Benchmark-2 centroid error comparison",
+    )
+    parser.add_argument(
+        "--algorithm", type=str, default="baseline_tracker",
+        help="Target tracking algorithm plugin under test (default: 'baseline_tracker')",
+    )
+    parser.add_argument(
+        "--matrix", type=str, default=None,
+        choices=["SMOKE", "CORE", "DISTURBANCE", "FULL"],
+        help="Execute a Standard Benchmark Matrix subset (SMOKE, CORE, DISTURBANCE, FULL)",
+    )
+    parser.add_argument(
+        "--ai-scenario", type=str, default=None,
+        help="Natural language description for AI-assisted scenario generation and evaluation",
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default="output",
+        help="Output destination directory for reports and telemetry (default: 'output')",
+    )
+    parser.add_argument(
+        "--plugins-dir", type=str, default=None,
+        help="Path to custom algorithm plugins directory",
+    )
+    parser.add_argument(
+        "--seed", type=int, default=42,
+        help="Deterministic random seed for simulation reproducibility (default: 42)",
+    )
+    parser.add_argument(
+        "--max-frames", type=int, default=None,
+        help="Maximum frames to process per scenario",
+    )
+    return parser.parse_args(args=args)
+
 
 
 def validate_foundation() -> bool:
@@ -304,15 +339,15 @@ def validate_foundation() -> bool:
     if errors:
         print(f"FOUNDATION VALIDATION: {len(errors)} FAILURE(S)")
         for err in errors:
-            print(f"  ✗ {err}")
+            print(f"  [X] {err}")
         return False
     else:
         print("FOUNDATION VALIDATION: ALL PASSED (8/8)")
         return True
 
 
-def main() -> None:
-    args = parse_args()
+def main(argv=None) -> None:
+    args = parse_args(args=argv)
 
     if args.validate:
         success = validate_foundation()
@@ -332,11 +367,100 @@ def main() -> None:
         grand_summary = bm.evaluate_batch_mp4s(
             mp4_dir=args.eval_mp4s,
             base_config_path=args.config,
+            reference_csv=args.reference_csv,
         )
         sys.exit(0 if grand_summary.failed_runs == 0 else 1)
 
+    # Benchmark Matrix workflow (Phase 6.6 / Module 17 — DEF-02 Fix)
+    if args.matrix:
+        app = AppController(plugins_dir=args.plugins_dir) if args.plugins_dir else None
+        bm = BenchmarkManager(app)
+        algo = args.algorithm or "baseline_tracker"
+        print("=" * 60)
+        print(f"LumiTrack Benchmark Matrix Execution: {args.matrix.upper()}")
+        print(f"Algorithm: {algo} | Seed: {args.seed} | Max Frames: {args.max_frames or 'Default'}")
+        print("=" * 60 + "\n")
+
+        try:
+            matrix_results = bm.run_benchmark_matrix(
+                subset=args.matrix,
+                algorithms=[algo],
+                random_seed=args.seed,
+                max_frames=args.max_frames,
+                output_dir=args.output_dir,
+            )
+
+            # Generate comprehensive reports (JSON, CSV, Markdown)
+            json_p, csv_p, md_p = bm.generate_comprehensive_report(
+                matrix_results=matrix_results,
+                output_dir=args.output_dir,
+                report_title=f"LumiTrack Benchmark Matrix — {args.matrix.upper()}",
+            )
+
+            print("\nBenchmark Matrix Complete:")
+            print(f"  Total Runs: {matrix_results.total_runs} (Success: {matrix_results.successful_runs}, Failed: {matrix_results.failed_runs}, Crashed: {matrix_results.crashed_runs})")
+            print(f"  Mean Algorithm FPS: {matrix_results.mean_algorithm_fps:.1f}")
+            rmse_str = f"{matrix_results.mean_rmse_centroid:.3f} px" if matrix_results.mean_rmse_centroid is not None else "N/A"
+            print(f"  Mean Centroid RMSE: {rmse_str}")
+            print(f"  SIH PS 26169 Threshold Verdict: {'PASS' if matrix_results.passed_sih_spec else 'FAIL'}")
+            print(f"\nReports generated in '{args.output_dir}':")
+            print(f"  JSON:     {json_p}")
+            print(f"  CSV:      {csv_p}")
+            print(f"  Markdown: {md_p}")
+            sys.exit(0 if matrix_results.passed_sih_spec else 1)
+        except Exception as e:
+            print(f"\n[ERROR] Benchmark Matrix execution failed: {e}")
+            sys.exit(1)
+
+    # AI-Assisted Scenario Workflow (Phase 6.7 / Module 17 — DEF-02 Fix)
+    if args.ai_scenario:
+        app = AppController(plugins_dir=args.plugins_dir) if args.plugins_dir else None
+        bm = BenchmarkManager(app)
+        algo = args.algorithm or "baseline_tracker"
+        print("=" * 60)
+        print("LumiTrack AI-Assisted Scenario Generation & Evaluation")
+        print(f"Prompt: \"{args.ai_scenario}\"")
+        print(f"Algorithm: {algo} | Seed: {args.seed} | Max Frames: {args.max_frames or 60}")
+        print("=" * 60 + "\n")
+
+        try:
+            ai_out_dir = os.path.join(args.output_dir, "ai_scenarios")
+            success, spec, res, errors = bm.run_ai_scenario(
+                prompt=args.ai_scenario,
+                algorithm_name=algo,
+                seed=args.seed,
+                max_frames=args.max_frames or 60,
+                output_dir=ai_out_dir,
+            )
+
+            if not success or spec is None:
+                print("[ERROR] AI Scenario rejected by validator:")
+                for err in errors:
+                    print(f"  [X] {err}")
+                sys.exit(1)
+
+            print(f"Scenario Validated and Generated: '{spec.scenario_id}'")
+            print(f"  Trajectory: {spec.trajectory_type} | Speed: {spec.target_speed} px/s")
+            print(f"  Atmospheric: {spec.atmospheric_condition}")
+            if res:
+                print(f"\nEvaluation Results:")
+                print(f"  Outcome: {res.outcome.value}")
+                print(f"  Total Frames: {res.total_frames}")
+                print(f"  Algorithm FPS: {res.algorithm_fps:.1f}")
+                rmse_str = f"{res.centroid_rmse:.3f} px" if res.centroid_rmse is not None else "N/A"
+                print(f"  Centroid RMSE: {rmse_str}")
+                print(f"  Target Loss Rate: {res.target_loss_rate:.1f}%")
+                if res.json_report_path:
+                    print(f"  Report: {res.json_report_path}")
+                sys.exit(0 if res.outcome.value == "SUCCESS" else 1)
+            else:
+                sys.exit(0)
+        except Exception as e:
+            print(f"\n[ERROR] AI Scenario execution failed: {e}")
+            sys.exit(1)
+
     # Normal single-run application startup
-    app = AppController()
+    app = AppController(plugins_dir=args.plugins_dir) if args.plugins_dir else AppController()
 
     if args.config:
         app.config_manager.load_from_file(args.config)
@@ -352,7 +476,18 @@ def main() -> None:
         )
 
     app.initialize()
-    
+
+    if args.algorithm and args.algorithm != "baseline_tracker":
+        app.select_algorithm(args.algorithm)
+
+    if args.mp4 and not args.gui and args.reference_csv:
+        bm = BenchmarkManager(app)
+        summary = bm.run_benchmark(reference_csv=args.reference_csv)
+        print(f"\n[BM2 Evaluator Summary] Total Frames: {summary.total_frames}, Speed: {summary.mean_fps:.1f} FPS")
+        print(f"  Centroid RMSE: {summary.rmse_centroid:.3f} px (Coverage: {summary.reference_frame_coverage_pct:.1f}%)")
+        print(f"  Mean Centroid Error: {summary.mean_centroid_error:.3f} px, Max: {summary.max_centroid_error:.3f} px")
+        sys.exit(0)
+
     if args.gui:
         from src.app.gui import launch_gui
         launch_gui(app)

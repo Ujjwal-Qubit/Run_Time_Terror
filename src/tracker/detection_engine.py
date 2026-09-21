@@ -157,11 +157,16 @@ class P0ThresholdDetector(IDetector):
         # -------------------------------------------------------------------
         # 3. Difference Enhancement & Thresholding
         # -------------------------------------------------------------------
-        # Compute positive difference above background
-        diff = np.maximum(0, filtered.astype(np.int16) - bg.astype(np.int16)).astype(np.float32)
+        # Compute positive difference above background via vectorized saturating subtraction
+        diff_u8 = cv2.subtract(filtered, bg)
+        diff = diff_u8.astype(np.float32)
 
-        # Estimate local noise standard deviation via robust standard deviation of diff
-        sigma = float(np.std(diff))
+        # Estimate local noise standard deviation via robust background difference
+        # Exclude upper quartile outliers (bright target) to prevent self-masking in small ROIs
+        sample_diff = diff[::2, ::2] if diff.size > 10000 else diff
+        p75 = float(np.percentile(sample_diff, 75))
+        noise_diff = diff[diff <= p75]
+        sigma = float(np.std(noise_diff)) if noise_diff.size > 0 else float(np.std(diff))
         # Adaptive threshold: baseline offset + k * sigma
         threshold = self._threshold_offset + self._threshold_multiplier * sigma
 
