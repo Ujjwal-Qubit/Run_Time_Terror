@@ -32,7 +32,7 @@ from src.metrics.logging_engine import LoggingEngine
 from src.metrics.metrics_engine import MetricsEngine
 from src.evaluation.benchmark_manager import BenchmarkManager
 from src.simulation.scene_manager import SceneManager
-from src.simulation.target_manager import TargetManager
+from src.simulation.target_manager import TargetManager, MultiBeaconManager
 from src.simulation.camera_model import CameraModel
 from src.simulation.disturbance_engine import DisturbanceEngine
 from src.simulation.ground_truth_provider import GroundTruthProvider
@@ -147,6 +147,10 @@ class AppController:
         self._paused = False
         self._frame_count = 0
         self._sim_time = 0.0
+
+        # Multi-beacon and PTZ actuation controls
+        self._multi_beacon_manager: Optional[MultiBeaconManager] = None
+        self._ptz_enabled: bool = True
 
         # Phase 5.10 internal execution mechanism
         self._sim_thread: Optional[threading.Thread] = None
@@ -265,6 +269,48 @@ class AppController:
         return self._target_manager
 
     @property
+    def multi_beacon_manager(self) -> Optional[MultiBeaconManager]:
+        return self._multi_beacon_manager
+
+    @property
+    def ptz_enabled(self) -> bool:
+        return self._ptz_enabled
+
+    def set_ptz_enabled(self, enabled: bool) -> None:
+        """Enable or disable PTZ camera actuation."""
+        self._ptz_enabled = bool(enabled)
+        logger.info(f"[AppController] PTZ tracking actuation: {self._ptz_enabled}")
+
+    def set_target_speed(self, speed: float) -> None:
+        """Dynamically update primary target speed in running simulation."""
+        sp = max(0.0, float(speed))
+        if self._config_manager and self._config_manager.config:
+            self._config_manager.config.target.speed = sp
+            if self._config_manager.config.beacons:
+                for b in self._config_manager.config.beacons:
+                    if getattr(b, "role", "primary") == "primary":
+                        b.speed = sp
+        if self._multi_beacon_manager is not None:
+            self._multi_beacon_manager.set_speed(sp)
+        elif self._target_manager is not None:
+            self._target_manager.set_speed(sp)
+
+    def set_secondary_beacon_speed(self, index: int, speed: float) -> None:
+        """Dynamically update secondary beacon speed by index (0-based)."""
+        sp = max(0.0, float(speed))
+        if self._config_manager and self._config_manager.config:
+            if self._config_manager.config.beacons:
+                sec_idx = 0
+                for b in self._config_manager.config.beacons:
+                    if getattr(b, "role", "primary") == "secondary":
+                        if sec_idx == index:
+                            b.speed = sp
+                            break
+                        sec_idx += 1
+        if self._multi_beacon_manager is not None:
+            self._multi_beacon_manager.set_secondary_speed(index, sp)
+
+    @property
     def camera_model(self) -> Optional[CameraModel]:
         return self._camera_model
 
@@ -346,6 +392,8 @@ class AppController:
         self._logging_engine = LoggingEngine(
             output_dir=cfg.logging.output_dir,
             run_id="",
+            csv_enabled=cfg.logging.csv_enabled,
+            json_summary_enabled=cfg.logging.json_summary_enabled,
         )
         self._logging_engine.initialize()
         self._logging_engine.write_config_snapshot(cfg.to_dict())
@@ -354,13 +402,29 @@ class AppController:
         mode = cfg.simulation.mode.upper()
         if mode == "SIMULATION":
             self._scene_manager = SceneManager(cfg.scene)
-            self._target_manager = TargetManager(
-                target_config=cfg.target,
-                motion_config=cfg.motion,
-                scene_width=cfg.scene.width,
-                scene_height=cfg.scene.height,
-                seed=cfg.simulation.random_seed,
-            )
+
+            # Multi-beacon support: if cfg.beacons is populated, use MultiBeaconManager
+            # for the full multi-target scenario; otherwise fall back to single TargetManager.
+            if cfg.beacons:
+                self._multi_beacon_manager = MultiBeaconManager(
+                    beacon_configs=cfg.beacons,
+                    motion_config=cfg.motion,
+                    scene_width=cfg.scene.width,
+                    scene_height=cfg.scene.height,
+                    seed=cfg.simulation.random_seed,
+                )
+                # Expose primary's TargetManager for backward-compat attribute access
+                self._target_manager = self._multi_beacon_manager._primary_manager
+            else:
+                self._multi_beacon_manager = None
+                self._target_manager = TargetManager(
+                    target_config=cfg.target,
+                    motion_config=cfg.motion,
+                    scene_width=cfg.scene.width,
+                    scene_height=cfg.scene.height,
+                    seed=cfg.simulation.random_seed,
+                )
+
             self._camera_model = CameraModel(
                 camera_config=cfg.camera,
                 scene_width=cfg.scene.width,
@@ -372,6 +436,7 @@ class AppController:
                 jitter_cfg=cfg.jitter,
                 atmos_cfg=cfg.atmospheric,
                 noise_cfg=cfg.noise,
+                local_contrast_cfg=cfg.local_contrast,
                 seed=cfg.simulation.random_seed,
             )
             self._ground_truth_provider = GroundTruthProvider(
@@ -379,6 +444,8 @@ class AppController:
             )
 
             # FrameProvider (Module 8) in simulation mode
+            # Pass multi_beacon_manager if available so SimulationFrameProvider
+            # can composite multiple beacons per frame.
             self._frame_provider = SimulationFrameProvider(
                 scene_manager=self._scene_manager,
                 target_manager=self._target_manager,
@@ -387,6 +454,7 @@ class AppController:
                 ground_truth_provider=self._ground_truth_provider,
                 fps=cfg.camera.update_rate_hz,
                 max_duration_s=cfg.simulation.duration_s,
+                multi_beacon_manager=self._multi_beacon_manager,
             )
         elif mode == "MP4":
             if not cfg.simulation.mp4_path:
@@ -394,6 +462,7 @@ class AppController:
             # In MP4 mode: simulation modules and ground truth provider do NOT exist (firewall guarantee)
             self._scene_manager = None
             self._target_manager = None
+            self._multi_beacon_manager = None
             self._camera_model = None
             self._disturbance_engine = None
             self._ground_truth_provider = None
@@ -670,6 +739,8 @@ class AppController:
                 time.sleep(0.01)
                 continue
 
+            loop_t0 = time.perf_counter()
+
             packet = self.get_next_frame()
             if packet is None:
                 # EOF
@@ -699,7 +770,7 @@ class AppController:
                     dt=dt,
                     projection_model=pm,
                 )
-                if self.camera_model and ptz_cmd.valid:
+                if self._ptz_enabled and self.camera_model and ptz_cmd.valid:
                     self.camera_model.apply_pan_tilt(ptz_cmd.delta_pan_deg, ptz_cmd.delta_tilt_deg)
 
             # Telemetry/Metrics update
@@ -747,6 +818,8 @@ class AppController:
             if public_res.roi:
                 roi_contract = ROI(x=public_res.roi[0], y=public_res.roi[1], width=public_res.roi[2], height=public_res.roi[3])
 
+            tgt_spd = self._config_manager.config.target.speed if (self._config_manager and self._config_manager.config and self._config_manager.config.target) else None
+
             viz_state = VisualizationState(
                 frame_number=packet.frame_number,
                 timestamp=packet.timestamp,
@@ -762,7 +835,9 @@ class AppController:
                 processing_latency_ms=t_elapsed_ms,
                 fps=1000.0 / t_elapsed_ms if t_elapsed_ms > 0 else 0.0,
                 ground_truth_x=gt.ideal_projected_x if gt else None,
-                ground_truth_y=gt.ideal_projected_y if gt else None
+                ground_truth_y=gt.ideal_projected_y if gt else None,
+                target_speed_px_s=tgt_spd,
+                ptz_enabled=self._ptz_enabled,
             )
 
             # Put in queue (discard oldest if full to avoid blocking processing)
@@ -775,8 +850,12 @@ class AppController:
                 except queue.Empty:
                     pass
             
-            # Yield slightly to allow other threads to run
-            time.sleep(0.001)
+            # Pace simulation loop to match camera update rate in real time
+            target_fps = float(self.config_manager.config.camera.update_rate_hz) if (self.config_manager and self.config_manager.config and self.config_manager.config.camera) else 30.0
+            target_period = 1.0 / max(1.0, min(120.0, target_fps))
+            loop_duration = time.perf_counter() - loop_t0
+            sleep_time = max(0.001, target_period - loop_duration)
+            time.sleep(sleep_time)
 
     def get_latest_visualization_state(self) -> Optional[VisualizationState]:
         """Called by GUI to drain the queue and get the freshest frame."""

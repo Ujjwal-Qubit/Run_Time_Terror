@@ -540,3 +540,7 @@ class VisualizationState:
     # Visualization-only Truth (Debug Mode)
     ground_truth_x: Optional[float] = None
     ground_truth_y: Optional[float] = None
+
+    # Motion & Control Telemetry for HUD
+    target_speed_px_s: Optional[float] = None
+    ptz_enabled: bool = True

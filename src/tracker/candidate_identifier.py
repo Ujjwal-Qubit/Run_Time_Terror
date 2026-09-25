@@ -52,12 +52,35 @@ class CandidateIdentifier(IBeaconIdentifier):
         self._min_confidence = getattr(cfg, "min_confidence", defaults.IDENTIFIER_MIN_CONFIDENCE)
         self._gate_distance = defaults.GATE_MAX_DISTANCE
 
+        # Hysteresis anti-switching state
+        # Prevents momentary noise-induced switches to secondary beacons.
+        self._switch_margin = getattr(
+            cfg, "switch_score_margin", defaults.IDENTIFIER_SWITCH_SCORE_MARGIN
+        )
+        self._switch_confirm_frames = int(getattr(
+            cfg, "switch_confirmation_frames", defaults.IDENTIFIER_SWITCH_CONFIRMATION_FRAMES
+        ))
+        # ID of the current tracked candidate (by candidate_id or None)
+        self._current_candidate_id: Optional[str] = None
+        # Current track's score in the most recent valid TRACKING frame
+        self._current_track_score: float = 0.0
+        # Challenger tracking (hysteresis buffer)
+        self._challenger_id: Optional[str] = None
+        self._challenger_frames: int = 0
+
     @property
     def config(self) -> IdentifierConfig:
         return self._cfg
 
     def get_name(self) -> str:
         return "CandidateIdentifier"
+
+    def reset(self) -> None:
+        """Reset hysteresis state. Call between benchmark runs for clean slate."""
+        self._current_candidate_id = None
+        self._current_track_score = 0.0
+        self._challenger_id = None
+        self._challenger_frames = 0
 
     def score_candidate(
         self,
@@ -183,9 +206,75 @@ class CandidateIdentifier(IBeaconIdentifier):
         scored_list.sort(key=lambda sc: sc.score, reverse=True)
 
         best_scored = scored_list[0]
+        is_tracking = current_state in (
+            TrackingState.TRACKING, TrackingState.ACQUIRING,
+        )
+
+        # ------------------------------------------------------------------
+        # Hysteresis anti-switching logic (TRACKING mode only)
+        # ------------------------------------------------------------------
+        if is_tracking and self._current_candidate_id is not None and len(scored_list) > 1:
+            # Find the current tracked candidate in scored list
+            current_in_list = next(
+                (sc for sc in scored_list
+                 if getattr(sc.candidate, "candidate_id", None) == self._current_candidate_id),
+                None,
+            )
+            top_challenger = scored_list[0]
+            top_challenger_id = getattr(top_challenger.candidate, "candidate_id", None)
+
+            if (
+                current_in_list is not None
+                and top_challenger_id != self._current_candidate_id
+            ):
+                # A challenger is trying to take over. Apply hysteresis.
+                required_margin = self._switch_margin
+                challenger_score = top_challenger.score
+                current_score = current_in_list.score
+                self._current_track_score = current_score
+
+                if challenger_score > current_score + required_margin:
+                    # Challenger qualifies — confirm for N consecutive frames
+                    if top_challenger_id == self._challenger_id:
+                        self._challenger_frames += 1
+                    else:
+                        self._challenger_id = top_challenger_id
+                        self._challenger_frames = 1
+
+                    if self._challenger_frames >= self._switch_confirm_frames:
+                        # Switch confirmed — challenger becomes the new current
+                        best_scored = top_challenger
+                        self._current_candidate_id = top_challenger_id
+                        self._challenger_id = None
+                        self._challenger_frames = 0
+                    else:
+                        # Not yet confirmed — hold current candidate
+                        best_scored = current_in_list
+                else:
+                    # Challenger does not beat margin — reset challenge counter
+                    self._challenger_id = None
+                    self._challenger_frames = 0
+                    best_scored = current_in_list
+            else:
+                # Top candidate IS the current tracked one — reset challenge counter
+                self._challenger_id = None
+                self._challenger_frames = 0
+                self._current_track_score = top_challenger.score
+
+        # Update current candidate ID on successful identification
         is_valid = bool(best_scored.score >= self._min_confidence)
         selected_cand = best_scored.candidate if is_valid else None
         selected_id = getattr(selected_cand, "candidate_id", None) if selected_cand else None
+
+        if is_valid:
+            self._current_candidate_id = selected_id
+        elif not is_tracking:
+            # In SEARCHING/REACQUIRING, clear hysteresis so it does not
+            # lock onto a stale candidate from a previous tracking session.
+            self._current_candidate_id = None
+            self._current_track_score = 0.0
+            self._challenger_id = None
+            self._challenger_frames = 0
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 

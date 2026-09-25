@@ -1,7 +1,23 @@
 import type { AlgorithmInfo, MatrixResult, AIScenarioOutcome, ReportItem, SystemConfig, VisualizationPacket } from '../types';
 
-const API_BASE = 'http://localhost:8000';
-const WS_BASE = 'ws://localhost:8000';
+/**
+ * API base URL. In production (served by FastAPI), use same-origin (empty string).
+ * In local Vite dev, use http://localhost:8000 or VITE_API_BASE_URL env variable.
+ */
+const API_BASE: string =
+  (import.meta as any).env?.VITE_API_BASE_URL ??
+  (typeof window !== 'undefined' && window.location.port === '5173'
+    ? 'http://localhost:8000'
+    : '');
+
+/**
+ * WebSocket base URL. Derived from API_BASE or window.location in production.
+ */
+const WS_BASE: string =
+  (import.meta as any).env?.VITE_WS_BASE_URL ??
+  (API_BASE
+    ? API_BASE.replace(/^http/, 'ws')
+    : `${typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws'}://${typeof window !== 'undefined' ? window.location.host : 'localhost:8000'}`);
 
 export async function fetchAlgorithms(): Promise<{ algorithms: AlgorithmInfo[]; active_algorithm: string; error: string | null }> {
   const res = await fetch(`${API_BASE}/api/v1/algorithms`);
@@ -34,6 +50,24 @@ export async function loadScenario(name: string): Promise<{ success: boolean; sc
     method: 'POST',
   });
   if (!res.ok) throw new Error(`Failed to load scenario: ${res.statusText}`);
+  return res.json();
+}
+
+export async function saveScenario(name: string): Promise<{ success: boolean; scenario: string }> {
+  const res = await fetch(`${API_BASE}/api/v1/scenarios/save`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) throw new Error(`Failed to save scenario: ${res.statusText}`);
+  return res.json();
+}
+
+export async function deleteScenario(name: string): Promise<{ success: boolean }> {
+  const res = await fetch(`${API_BASE}/api/v1/scenarios/${encodeURIComponent(name)}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error(`Failed to delete scenario: ${res.statusText}`);
   return res.json();
 }
 

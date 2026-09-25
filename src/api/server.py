@@ -43,10 +43,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# CORS configuration:
+# For local dev the wildcard is acceptable.
+# In production, set LUMITRACK_CORS_ORIGINS env var to a comma-separated list:
+#   LUMITRACK_CORS_ORIGINS=https://lumitrack.example.com
+_cors_origins_raw = os.environ.get("LUMITRACK_CORS_ORIGINS", "*")
+_cors_origins: list = (
+    [o.strip() for o in _cors_origins_raw.split(",")]
+    if _cors_origins_raw != "*"
+    else ["*"]
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    # credentials=True requires explicit origins, not "*"
+    allow_credentials=(_cors_origins != ["*"]),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -87,6 +98,8 @@ class ConfigUpdateRequest(BaseModel):
     platform_motion: Optional[Dict[str, Any]] = None
     ptz: Optional[Dict[str, Any]] = None
     simulation: Optional[Dict[str, Any]] = None
+    local_contrast: Optional[Dict[str, Any]] = None
+    beacons: Optional[List[Dict[str, Any]]] = None
 
 # ---------------------------------------------------------------------------
 # REST Endpoints: Algorithms
@@ -162,13 +175,36 @@ def update_config(req: ConfigUpdateRequest) -> Dict[str, Any]:
     with state_lock:
         cfg = controller.config_manager.config
         data = req.dict(exclude_unset=True)
+        unknown_fields: List[str] = []
 
         for section, values in data.items():
-            if hasattr(cfg, section) and isinstance(values, dict):
+            if section == "beacons" and isinstance(values, list):
+                # Multi-beacon list — handled specially
+                from src.config.config_manager import BeaconConfig as _BeaconConfig
+                cfg.beacons = [
+                    _BeaconConfig(**{k: v for k, v in b.items() if k in _BeaconConfig.__dataclass_fields__})
+                    for b in values
+                ]
+                # Validate the beacon list
+                errs = controller.config_manager.validate()
+                beacon_errs = [e for e in errs if "beacon" in e.lower() or "primary" in e.lower() or "secondary" in e.lower()]
+                if beacon_errs:
+                    raise HTTPException(status_code=400, detail="; ".join(beacon_errs))
+            elif hasattr(cfg, section) and isinstance(values, dict):
                 sec_obj = getattr(cfg, section)
                 for k, v in values.items():
                     if hasattr(sec_obj, k):
                         setattr(sec_obj, k, v)
+                    else:
+                        unknown_fields.append(f"{section}.{k}")
+            elif not hasattr(cfg, section):
+                unknown_fields.append(section)
+
+        if unknown_fields:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown config field(s): {', '.join(unknown_fields)}"
+            )
 
         # Apply live changes if running in simulation
         if controller.is_running and cfg.simulation.mode == "SIMULATION":
@@ -180,6 +216,9 @@ def update_config(req: ConfigUpdateRequest) -> Dict[str, Any]:
                 controller.disturbance_engine._noise_cfg = cfg.noise
                 controller.disturbance_engine._jitter_cfg = cfg.jitter
                 controller.disturbance_engine._platform_cfg = cfg.platform_motion
+                # Local contrast disturbance (new field — safe to set if attribute exists)
+                if hasattr(controller.disturbance_engine, '_local_contrast_cfg'):
+                    controller.disturbance_engine._local_contrast_cfg = cfg.local_contrast
 
         return {"success": True, "updated_config": cfg.to_dict()}
 
@@ -187,12 +226,42 @@ def update_config(req: ConfigUpdateRequest) -> Dict[str, Any]:
 @app.post("/api/v1/scenarios/load")
 def load_scenario(name: str) -> Dict[str, Any]:
     """Loads a named scenario from scenarios/ directory."""
+    if not name.endswith(".json"):
+        name += ".json"
     path = Path("scenarios") / name
     if not path.is_file():
         raise HTTPException(status_code=404, detail=f"Scenario '{name}' not found.")
     with state_lock:
         controller.config_manager.load_from_file(str(path))
         return {"success": True, "scenario": name, "config": controller.config_manager.config.to_dict()}
+
+class ScenarioSaveRequest(BaseModel):
+    name: str
+
+@app.post("/api/v1/scenarios/save")
+def save_scenario(req: ScenarioSaveRequest) -> Dict[str, Any]:
+    """Saves the current configuration as a new scenario."""
+    name = req.name
+    if not name.endswith(".json"):
+        name += ".json"
+    path = Path("scenarios") / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with state_lock:
+        cfg_dict = controller.config_manager.config.to_dict()
+        with open(path, "w") as f:
+            json.dump(cfg_dict, f, indent=2)
+        return {"success": True, "scenario": name}
+
+@app.delete("/api/v1/scenarios/{name}")
+def delete_scenario(name: str) -> Dict[str, Any]:
+    """Deletes a scenario."""
+    if not name.endswith(".json"):
+        name += ".json"
+    path = Path("scenarios") / name
+    if path.is_file():
+        path.unlink()
+        return {"success": True}
+    raise HTTPException(status_code=404, detail=f"Scenario '{name}' not found.")
 
 # ---------------------------------------------------------------------------
 # REST Endpoints: Simulation Lifecycle Controls
@@ -285,13 +354,16 @@ def run_benchmark_matrix(req: MatrixRunRequest) -> Dict[str, Any]:
                 report_data = json.load(f)
 
         return {
-            "batch_id": results.batch_id,
+            # Canonical identifier — prefer suite_id; batch_id kept as alias
+            "suite_id": results.suite_id,
+            "batch_id": results.suite_id,   # backward-compat alias
             "status": "COMPLETED",
             "passed_sih_spec": results.passed_sih_spec,
             "verdict": "PASS" if results.passed_sih_spec else "FAIL",
             "mean_fps": results.mean_algorithm_fps,
             "mean_rmse": results.mean_rmse_centroid,
-            "mean_loss_rate": results.mean_target_loss_rate_pct,
+            # mean_target_loss_rate is a fraction (0.0-1.0); frontend converts to %
+            "mean_loss_rate": results.mean_target_loss_rate,
             "report_paths": {"json": j_p, "csv": c_p, "markdown": m_p},
             "report_data": report_data,
         }
@@ -305,7 +377,8 @@ def run_ai_scenario(req: AIScenarioRequest) -> Dict[str, Any]:
     """Generates and executes a deterministic scenario from a natural language prompt."""
     algo = req.algorithm or controller.active_algorithm_name or "baseline_tracker"
     try:
-        workflow = AIScenarioWorkflow()
+        from src.evaluation.harness import EvaluationHarness
+        workflow = AIScenarioWorkflow(EvaluationHarness(controller))
         outcome = workflow.execute_prompt(
             prompt=req.prompt,
             algorithm_name=algo,

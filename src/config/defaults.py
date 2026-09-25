@@ -312,3 +312,68 @@ DISTURBANCE_ORDER = [
     "gaussian_noise",       # 5. Pixel — additive, signal-independent
     "salt_and_pepper_noise",  # 6. Pixel — impulse, applied last
 ]                                       # ARCH §7.1 — engineering decision
+
+# Extended pipeline order including optional Stage 4.5 local contrast
+EXTENDED_DISTURBANCE_ORDER = [
+    "platform_motion",
+    "camera_jitter",
+    "atmospheric",
+    "local_contrast",
+    "poisson_noise",
+    "gaussian_noise",
+    "salt_and_pepper_noise",
+]
+
+
+# ==========================================================================
+# MULTI-BEACON PARAMETERS (NEW — Additive, non-breaking)
+# ==========================================================================
+
+# Primary beacon intensity margin: secondary must be at least this much
+# dimmer than the primary to avoid dominance ambiguity.
+BEACON_PRIMARY_MARGIN = 5               # ENGINEERING_DEFAULT — intensity units
+
+# Maximum number of secondary (distractor) beacons
+BEACON_MAX_SECONDARY = 5               # ENGINEERING_DEFAULT
+
+# Default secondary beacon intensity step (relative to primary)
+BEACON_SECONDARY_DEFAULT_INTENSITY = 160  # ENGINEERING_DEFAULT
+
+# ==========================================================================
+# CANDIDATE IDENTIFIER — HYSTERESIS / ANTI-SWITCHING PARAMETERS (NEW)
+# ==========================================================================
+
+# During TRACKING, a challenger must exceed the current target score by this
+# margin for SWITCH_CONFIRMATION_FRAMES consecutive frames before a switch
+# is confirmed. Prevents momentary noise-induced target switching.
+IDENTIFIER_SWITCH_SCORE_MARGIN = 0.15  # ENGINEERING_DEFAULT — fraction of [0,1]
+IDENTIFIER_SWITCH_CONFIRMATION_FRAMES = 3  # ENGINEERING_DEFAULT — frames
+
+# ==========================================================================
+# LOCAL CONTRAST DISTURBANCE PARAMETERS (NEW)
+# ==========================================================================
+
+# Local background clutter: spatially-varying additive intensity field
+# applied after atmospheric degradation, before sensor noise.
+LOCAL_CONTRAST_ENABLED = False                  # ENGINEERING_DEFAULT
+LOCAL_CONTRAST_AMPLITUDE = 40.0                 # ENGINEERING_DEFAULT — intensity (0-120)
+LOCAL_CONTRAST_SPATIAL_SCALE = 80.0             # ENGINEERING_DEFAULT — blob radius px
+LOCAL_CONTRAST_NUM_BLOBS = 8                    # ENGINEERING_DEFAULT
+LOCAL_CONTRAST_MIN_BEACON_MARGIN = 30           # ENGINEERING_DEFAULT — beacon must be
+                                                # this much brighter than local background
+
+# ==========================================================================
+# POISSON NOISE SCALE (NEW — extends existing NoiseConfig)
+# ==========================================================================
+
+# Exposure scale multiplier for Poisson shot noise.
+# 1.0 = standard photon statistics. < 1.0 = underexposure (more noise).
+# > 1.0 = higher effective exposure (less noise, but rarely needed).
+NOISE_POISSON_SCALE = 1.0              # ENGINEERING_DEFAULT
+
+# ==========================================================================
+# SINGLE-RUN REPORT
+# ==========================================================================
+
+SINGLE_RUN_REPORT_OUTPUT_DIR = "output/single_run"  # ENGINEERING_DEFAULT
+

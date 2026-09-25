@@ -68,15 +68,19 @@ export function App() {
     }
     init();
 
-    // Setup live stream client
+    // Setup live stream client.
+    // NOTE: The WebSocket is a visualization stream only.
+    // Simulation lifecycle state (IDLE/RUNNING/PAUSED) is owned by the
+    // REST status poll below — NOT by the WebSocket packet handler.
+    // The closure below intentionally does not read simulationStatus to
+    // avoid stale-closure bugs where the captured value is always 'IDLE'.
     const client = new LiveStreamClient();
     streamClientRef.current = client;
     client.connect(
       (newPacket) => {
         setPacket(newPacket);
-        if (newPacket.tracking_state && simulationStatus === 'IDLE') {
-          setSimulationStatus('RUNNING');
-        }
+        // Do NOT mutate simulationStatus here.
+        // The REST status interval (below) is authoritative for lifecycle state.
       },
       (connected) => {
         setWsConnected(connected);
@@ -215,6 +219,12 @@ export function App() {
               scenarios={scenarios}
               selectedScenario={selectedScenario}
               onSelectScenario={handleSelectScenario}
+              onRefreshScenarios={async () => {
+                try {
+                  const list = await fetchScenarios();
+                  setScenarios(list || []);
+                } catch (e) { console.error(e); }
+              }}
               mp4Path={mp4Path}
               setMp4Path={setMp4Path}
               algorithms={algorithms}

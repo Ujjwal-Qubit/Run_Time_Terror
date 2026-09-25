@@ -8,6 +8,7 @@ interface ControlPanelProps {
   scenarios: string[];
   selectedScenario: string;
   onSelectScenario: (scenario: string) => void;
+  onRefreshScenarios: () => void;
   mp4Path: string;
   setMp4Path: (path: string) => void;
   algorithms: AlgorithmInfo[];
@@ -22,12 +23,15 @@ interface ControlPanelProps {
   algorithmError: string | null;
 }
 
+import { saveScenario, deleteScenario } from '../../api/client';
+
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   mode,
   setMode,
   scenarios,
   selectedScenario,
   onSelectScenario,
+  onRefreshScenarios,
   mp4Path,
   setMp4Path,
   algorithms,
@@ -46,6 +50,30 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const isIdle = simulationStatus === 'IDLE';
 
   const currentAlgoObj = algorithms.find((a) => a.name === activeAlgorithm);
+
+  const handleSaveScenario = async () => {
+    const name = prompt('Enter a name for the new scenario preset:');
+    if (!name) return;
+    try {
+      await saveScenario(name);
+      onRefreshScenarios();
+      onSelectScenario(name + (name.endsWith('.json') ? '' : '.json'));
+    } catch (e: any) {
+      alert(`Failed to save scenario: ${e.message}`);
+    }
+  };
+
+  const handleDeleteScenario = async () => {
+    if (!selectedScenario) return;
+    if (!confirm(`Are you sure you want to delete ${selectedScenario}?`)) return;
+    try {
+      await deleteScenario(selectedScenario);
+      onSelectScenario('');
+      onRefreshScenarios();
+    } catch (e: any) {
+      alert(`Failed to delete scenario: ${e.message}`);
+    }
+  };
 
   return (
     <div className="glass-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -83,19 +111,39 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {mode === 'SIMULATION' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
           <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Scenario Preset:</label>
-          <select
-            value={selectedScenario}
-            onChange={(e) => onSelectScenario(e.target.value)}
-            disabled={!isIdle}
-            style={{ width: '100%', fontSize: '12px', padding: '4px 8px' }}
-          >
-            <option value="">Default Parameters (Interactive)</option>
-            {scenarios.map((sc) => (
-              <option key={sc} value={sc}>
-                {sc}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <select
+              value={selectedScenario}
+              onChange={(e) => onSelectScenario(e.target.value)}
+              disabled={!isIdle}
+              style={{ flex: 1, fontSize: '12px', padding: '4px 8px' }}
+            >
+              <option value="">Default Parameters (Interactive)</option>
+              {scenarios.map((sc) => (
+                <option key={sc} value={sc}>
+                  {sc}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleSaveScenario}
+              disabled={!isIdle}
+              className="btn btn-secondary"
+              style={{ padding: '4px 8px', fontSize: '11px' }}
+              title="Save current config as new scenario preset"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleDeleteScenario}
+              disabled={!isIdle || !selectedScenario}
+              className="btn btn-secondary"
+              style={{ padding: '4px 8px', fontSize: '11px', color: '#f87171' }}
+              title="Delete selected scenario preset"
+            >
+              X
+            </button>
+          </div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

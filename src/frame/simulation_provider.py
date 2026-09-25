@@ -19,7 +19,7 @@ import numpy as np
 from src.interfaces.strategy_interfaces import IFrameProvider
 from src.frame.data_contracts import FramePacket, FrameSource
 from src.simulation.scene_manager import SceneManager
-from src.simulation.target_manager import TargetManager
+from src.simulation.target_manager import TargetManager, MultiBeaconManager
 from src.simulation.camera_model import CameraModel
 from src.simulation.disturbance_engine import DisturbanceEngine
 from src.simulation.ground_truth_provider import GroundTruthProvider
@@ -50,12 +50,15 @@ class SimulationFrameProvider(IFrameProvider):
         ground_truth_provider: Optional[GroundTruthProvider] = None,
         fps: float = 30.0,
         max_duration_s: Optional[float] = None,
+        multi_beacon_manager: Optional[MultiBeaconManager] = None,
     ) -> None:
         self._scene_manager = scene_manager
         self._target_manager = target_manager
         self._camera_model = camera_model
         self._disturbance_engine = disturbance_engine
         self._ground_truth_provider = ground_truth_provider
+        # Optional multi-beacon manager (None = single-beacon / backward-compat mode)
+        self._multi_beacon_manager: Optional[MultiBeaconManager] = multi_beacon_manager
 
         self._fps = float(fps) if fps > 0 else 30.0
         self._dt = 1.0 / self._fps
@@ -148,6 +151,8 @@ class SimulationFrameProvider(IFrameProvider):
         self._disturbance_engine.reset()
         if self._ground_truth_provider:
             self._ground_truth_provider.clear()
+        if self._multi_beacon_manager is not None:
+            self._multi_beacon_manager.reset()
 
     def get_next_frame(self) -> Optional[FramePacket]:
         """
@@ -158,7 +163,11 @@ class SimulationFrameProvider(IFrameProvider):
             return None
 
         # 1. Advance target physics
-        target_state = self._target_manager.step(self._dt)
+        if self._multi_beacon_manager is not None:
+            # Multi-beacon mode: step all beacons; primary state returned for GT
+            primary_state = self._multi_beacon_manager.step(self._dt)
+        else:
+            primary_state = self._target_manager.step(self._dt)
 
         # 2. Compute geometric disturbances on camera pose
         cam_x, cam_y = self._camera_model.world_position
@@ -166,10 +175,16 @@ class SimulationFrameProvider(IFrameProvider):
             cam_x, cam_y, self._dt
         )
 
-        # 3. Render target onto scene canvas
-        canvas = self._scene_manager.render(
-            target_state.world_x, target_state.world_y, target_state.patch
-        )
+        # 3. Render target(s) onto scene canvas
+        if self._multi_beacon_manager is not None:
+            # Multi-beacon: composite all beacons in one call
+            all_beacon_states = self._multi_beacon_manager.get_all_beacon_states()
+            canvas = self._scene_manager.render_beacons(all_beacon_states)
+        else:
+            # Single-beacon (backward-compat): use the original render()
+            canvas = self._scene_manager.render(
+                primary_state.world_x, primary_state.world_y, primary_state.patch
+            )
 
         # 4. Extract clean camera viewport
         clean_viewport = self._camera_model.extract_viewport(
@@ -177,11 +192,12 @@ class SimulationFrameProvider(IFrameProvider):
         )
 
         # 5. Capture synchronized ground truth (side-channel only)
+        # Ground truth ALWAYS refers to the PRIMARY beacon only.
         if self._ground_truth_provider is not None:
             self._ground_truth_provider.capture(
                 frame_number=self._frame_count,
                 timestamp=self._sim_time,
-                target_state=target_state,
+                target_state=primary_state,
                 camera_model=self._camera_model,
                 clean_viewport=clean_viewport,
                 effective_cam_x=eff_cam_x,

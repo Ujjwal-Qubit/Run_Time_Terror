@@ -111,3 +111,61 @@ class SceneManager:
 
         self._current_canvas = canvas
         return canvas
+
+    def render_beacons(
+        self,
+        beacons: list,  # List of (world_x, world_y, patch) tuples
+    ) -> np.ndarray:
+        """
+        Multi-beacon compositing — Stage 3 (World-Space Render).
+
+        Composites all beacons onto the background using np.maximum (same
+        blending as the single-target render). Primary beacon MUST be first
+        in the list (index 0) for ground-truth consistency.
+
+        If `beacons` contains exactly one entry, this is identical to
+        calling render(x, y, patch) with that entry.
+
+        Args:
+            beacons: List of (world_x, world_y, patch_array) tuples.
+                     The order is not semantically significant to the
+                     renderer; all beacons are composited via max-blend.
+
+        Returns:
+            Rendered world canvas as 2D numpy array (height, width) uint8.
+        """
+        canvas = self._background.copy()
+
+        for (target_x, target_y, target_patch) in beacons:
+            patch_h, patch_w = target_patch.shape
+
+            x_min = int(round(target_x - patch_w / 2.0))
+            y_min = int(round(target_y - patch_h / 2.0))
+            x_max = x_min + patch_w
+            y_max = y_min + patch_h
+
+            src_x0 = max(0, -x_min)
+            src_y0 = max(0, -y_min)
+            src_x1 = patch_w - max(0, x_max - self._width)
+            src_y1 = patch_h - max(0, y_max - self._height)
+
+            dst_x0 = max(0, x_min)
+            dst_y0 = max(0, y_min)
+            dst_x1 = min(self._width, x_max)
+            dst_y1 = min(self._height, y_max)
+
+            if (
+                dst_x1 > dst_x0
+                and dst_y1 > dst_y0
+                and src_x1 > src_x0
+                and src_y1 > src_y0
+            ):
+                patch_region = target_patch[src_y0:src_y1, src_x0:src_x1]
+                canvas_region = canvas[dst_y0:dst_y1, dst_x0:dst_x1]
+                canvas[dst_y0:dst_y1, dst_x0:dst_x1] = np.maximum(
+                    canvas_region, patch_region
+                )
+
+        self._current_canvas = canvas
+        return canvas
+

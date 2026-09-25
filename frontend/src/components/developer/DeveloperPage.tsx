@@ -13,6 +13,7 @@ interface DeveloperPageProps {
   scenarios: string[];
   selectedScenario: string;
   onSelectScenario: (scenario: string) => void;
+  onRefreshScenarios: () => void;
   mp4Path: string;
   setMp4Path: (path: string) => void;
   algorithms: AlgorithmInfo[];
@@ -63,6 +64,7 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
           scenarios={props.scenarios}
           selectedScenario={props.selectedScenario}
           onSelectScenario={props.onSelectScenario}
+          onRefreshScenarios={props.onRefreshScenarios}
           mp4Path={props.mp4Path}
           setMp4Path={props.setMp4Path}
           algorithms={props.algorithms}

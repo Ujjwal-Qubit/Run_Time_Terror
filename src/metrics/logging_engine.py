@@ -36,9 +36,11 @@ class LoggingEngine:
       - Zero expensive synchronous disk I/O in the core tracking loop
     """
 
-    def __init__(self, output_dir: str = "output", run_id: str = "") -> None:
+    def __init__(self, output_dir: str = "output", run_id: str = "", csv_enabled: bool = True, json_summary_enabled: bool = True) -> None:
         self._output_dir = output_dir
         self._run_id = run_id or f"run_{int(time.time())}"
+        self._csv_enabled = csv_enabled
+        self._json_summary_enabled = json_summary_enabled
         self._buffer: List[TelemetryRecord] = []
         self._csv_file: Optional[IO] = None
         self._csv_writer: Optional[csv.DictWriter] = None
@@ -58,24 +60,25 @@ class LoggingEngine:
         """Create output directory and open CSV files."""
         os.makedirs(self._output_dir, exist_ok=True)
 
-        # 1. Full Telemetry CSV
-        csv_path = os.path.join(
-            self._output_dir, f"{self._run_id}_telemetry.csv"
-        )
-        self._csv_file = open(csv_path, "w", newline="")
-        field_names = [f.name for f in fields(TelemetryRecord)]
-        self._csv_writer = csv.DictWriter(self._csv_file, fieldnames=field_names)
-        self._csv_writer.writeheader()
+        if self._csv_enabled:
+            # 1. Full Telemetry CSV
+            csv_path = os.path.join(
+                self._output_dir, f"{self._run_id}_telemetry.csv"
+            )
+            self._csv_file = open(csv_path, "w", newline="")
+            field_names = [f.name for f in fields(TelemetryRecord)]
+            self._csv_writer = csv.DictWriter(self._csv_file, fieldnames=field_names)
+            self._csv_writer.writeheader()
 
-        # 2. Evaluator Centroid Export CSV (PS Line 113 format)
-        centroid_path = os.path.join(
-            self._output_dir, f"{self._run_id}_centroids.csv"
-        )
-        self._centroid_file = open(centroid_path, "w", newline="")
-        self._centroid_writer = csv.writer(self._centroid_file)
-        self._centroid_writer.writerow([
-            "frame_number", "centroid_x", "centroid_y", "is_valid", "confidence"
-        ])
+            # 2. Evaluator Centroid Export CSV (PS Line 113 format)
+            centroid_path = os.path.join(
+                self._output_dir, f"{self._run_id}_centroids.csv"
+            )
+            self._centroid_file = open(centroid_path, "w", newline="")
+            self._centroid_writer = csv.writer(self._centroid_file)
+            self._centroid_writer.writerow([
+                "frame_number", "centroid_x", "centroid_y", "is_valid", "confidence"
+            ])
 
         self._initialized = True
 
@@ -114,8 +117,10 @@ class LoggingEngine:
         if self._centroid_file:
             self._centroid_file.flush()
 
-    def write_summary(self, summary: MetricsSummary) -> str:
+    def write_summary(self, summary: MetricsSummary) -> Optional[str]:
         """Write the aggregate metrics summary as JSON."""
+        if not self._json_summary_enabled:
+            return None
         summary_path = os.path.join(
             self._output_dir, f"{self._run_id}_summary.json"
         )
@@ -123,8 +128,10 @@ class LoggingEngine:
             json.dump(asdict(summary), f, indent=2)
         return summary_path
 
-    def write_config_snapshot(self, config_dict: dict) -> str:
+    def write_config_snapshot(self, config_dict: dict) -> Optional[str]:
         """Write the configuration snapshot used for this run."""
+        if not self._json_summary_enabled:
+            return None
         config_path = os.path.join(
             self._output_dir, f"{self._run_id}_config.json"
         )
@@ -132,11 +139,13 @@ class LoggingEngine:
             json.dump(config_dict, f, indent=2)
         return config_path
 
-    def write_performance_report(self, summary: MetricsSummary) -> str:
+    def write_performance_report(self, summary: MetricsSummary) -> Optional[str]:
         """
         Auto-generate a human-readable markdown performance report scorecard.
         Per PS Section Deliverables (Line 103).
         """
+        if not self._json_summary_enabled:
+            return None
         report_path = os.path.join(
             self._output_dir, f"{self._run_id}_performance_report.md"
         )

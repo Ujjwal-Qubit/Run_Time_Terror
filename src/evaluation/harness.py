@@ -351,11 +351,12 @@ class EvaluationHarness:
                 config_digest=config_digest,
             )
 
-            # 9. Write Individual Experiment Reports
-            json_report = os.path.join(out_dir, f"{experiment.experiment_id}_eval_result.json")
-            with open(json_report, "w", encoding="utf-8") as f_json:
-                f_json.write(res.to_json())
-            res.json_report_path = json_report
+            # 9. Write Individual Experiment Reports (if enabled)
+            if app.config_manager.config.logging.json_summary_enabled:
+                json_report = os.path.join(out_dir, f"{experiment.experiment_id}_eval_result.json")
+                with open(json_report, "w", encoding="utf-8") as f_json:
+                    f_json.write(res.to_json())
+                res.json_report_path = json_report
 
             return res
 

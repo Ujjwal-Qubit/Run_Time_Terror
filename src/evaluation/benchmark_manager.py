@@ -112,6 +112,50 @@ class BenchmarkManager:
             output_dir=output_dir,
         )
 
+    def generate_single_run_report(
+        self,
+        summary: MetricsSummary,
+        output_dir: Optional[str] = None,
+        scenario_label: Optional[str] = None,
+    ) -> Tuple[str, str, str]:
+        """
+        Generate a comprehensive report for a single benchmark run.
+
+        Wraps `MetricsSummary` from `run_benchmark()` into the same
+        ComprehensiveReportGenerator used by the full matrix runner.
+        Allows the developer workflow to produce identical-format reports
+        without running the full benchmark suite.
+
+        Args:
+            summary: MetricsSummary returned by run_benchmark().
+            output_dir: Output directory for JSON, CSV, and Markdown files.
+                        Defaults to 'output/single_run'.
+            scenario_label: Human-readable label for the run (e.g., scenario filename).
+                            Defaults to the active algorithm name or 'single_run'.
+
+        Returns:
+            Tuple of (json_path, csv_path, markdown_path).
+        """
+        from src.evaluation.reporting import ComprehensiveReportGenerator
+        from src.config import defaults
+
+        target_dir = output_dir or defaults.SINGLE_RUN_REPORT_OUTPUT_DIR
+        label = (
+            scenario_label
+            or (self.app.active_algorithm_name if self.app else None)
+            or "single_run"
+        )
+        title = f"Single-Run Report: {label}"
+
+        # Wrap the MetricsSummary into a minimal matrix-compatible result
+        # by using the reporting adapter that accepts raw summaries.
+        return ComprehensiveReportGenerator.generate_single_run_report(
+            summary=summary,
+            output_dir=target_dir,
+            report_title=title,
+        )
+
+
 
     @staticmethod
     def load_evaluator_reference_csv(csv_path: str) -> Dict[int, Tuple[float, float]]:

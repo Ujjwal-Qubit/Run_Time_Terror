@@ -1,7 +1,7 @@
 from __future__ import annotations
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QSplitter,
-    QStackedWidget, QPushButton, QLabel, QFrame, QSizePolicy
+    QStackedWidget, QPushButton, QLabel, QFrame, QSizePolicy, QScrollArea
 )
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QFont
@@ -90,8 +90,9 @@ QPushButton {
     color: #ffffff;
     border: none;
     padding: 6px 12px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-weight: 500;
+    min-height: 26px;
 }
 QPushButton:hover {
     background-color: #1177bb;
@@ -99,6 +100,52 @@ QPushButton:hover {
 QPushButton:disabled {
     background-color: #4d4d4d;
     color: #888888;
+}
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+QScrollBar:vertical {
+    border: none;
+    background: #181818;
+    width: 8px;
+    margin: 0px;
+    border-radius: 4px;
+}
+QScrollBar::handle:vertical {
+    background: #444444;
+    min-height: 24px;
+    border-radius: 4px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #007acc;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+QSlider::groove:horizontal {
+    border: 1px solid #444;
+    height: 6px;
+    background: #2d2d30;
+    border-radius: 3px;
+}
+QSlider::sub-page:horizontal {
+    background: #007acc;
+    border-radius: 3px;
+}
+QSlider::handle:horizontal {
+    background: #ffffff;
+    border: 1px solid #777;
+    width: 14px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    border-radius: 7px;
+}
+QSlider::handle:horizontal:hover {
+    background: #0098ff;
 }
 """
 
@@ -194,7 +241,8 @@ class MainWindow(QMainWindow):
         # Left Panel (Controls and Config)
         self.left_panel = QWidget()
         self.left_layout = QVBoxLayout(self.left_panel)
-        self.left_layout.setContentsMargins(0, 0, 0, 0)
+        self.left_layout.setContentsMargins(0, 0, 6, 0)
+        self.left_layout.setSpacing(10)
         
         self.control_panel = ControlPanel(self.app, self)
         self.left_layout.addWidget(self.control_panel)
@@ -202,8 +250,18 @@ class MainWindow(QMainWindow):
         self.config_panel = ConfigPanel(self.app)
         self.config_panel.config_changed.connect(self._on_config_changed)
         self.left_layout.addWidget(self.config_panel)
+        self.left_layout.addStretch()
+
+        # Wrap left panel in a QScrollArea to prevent squishing and ensure clean UX
+        self.left_scroll = QScrollArea()
+        self.left_scroll.setWidgetResizable(True)
+        self.left_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.left_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.left_scroll.setWidget(self.left_panel)
+        self.left_scroll.setMinimumWidth(380)
+        self.left_scroll.setMaximumWidth(460)
         
-        dev_layout.addWidget(self.left_panel, stretch=1)
+        dev_layout.addWidget(self.left_scroll, stretch=1)
         
         # Right Panel (Visualization Tabs and Telemetry)
         self.right_panel = QWidget()
@@ -229,18 +287,26 @@ class MainWindow(QMainWindow):
         dev_layout.addWidget(self.right_panel, stretch=3)
 
     def _on_config_changed(self):
-        # Only apply live tuning if running in Simulation mode
-        if self.app.is_running and self.app.config_manager.config.simulation.mode == "SIMULATION":
+        # Update config object from UI
+        if self.app.config_manager and self.app.config_manager.config:
             self.config_panel.apply_to_config(self.app.config_manager.config)
-            # Push changes to TargetManager and DisturbanceEngine for live tuning
-            if self.app.target_manager:
-                self.app.target_manager._target_cfg = self.app.config_manager.config.target
-                self.app.target_manager._motion_cfg = self.app.config_manager.config.motion
-            if self.app.disturbance_engine:
-                self.app.disturbance_engine._atmos_cfg = self.app.config_manager.config.atmospheric
-                self.app.disturbance_engine._noise_cfg = self.app.config_manager.config.noise
-                self.app.disturbance_engine._jitter_cfg = self.app.config_manager.config.jitter
-                self.app.disturbance_engine._platform_cfg = self.app.config_manager.config.platform_motion
+            cfg = self.app.config_manager.config
+            
+            # Live tuning if in Simulation mode
+            if cfg.simulation.mode == "SIMULATION":
+                # Propagate speed dynamically to TargetManager / MultiBeaconManager
+                self.app.set_target_speed(cfg.target.speed)
+                if cfg.beacons and hasattr(self.config_panel, "secondary_beacons"):
+                    for idx, row in enumerate(self.config_panel.secondary_beacons):
+                        self.app.set_secondary_beacon_speed(idx, row["speed"].value())
+                if self.app.target_manager:
+                    self.app.target_manager._target_cfg = cfg.target
+                    self.app.target_manager._motion_cfg = cfg.motion
+                if self.app.disturbance_engine:
+                    self.app.disturbance_engine._atmos_cfg = cfg.atmospheric
+                    self.app.disturbance_engine._noise_cfg = cfg.noise
+                    self.app.disturbance_engine._jitter_cfg = cfg.jitter
+                    self.app.disturbance_engine._platform_cfg = cfg.platform_motion
 
     def closeEvent(self, event):
         self.video_widget.stop_timer()
