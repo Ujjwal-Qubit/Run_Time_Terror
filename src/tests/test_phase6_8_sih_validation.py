@@ -26,9 +26,10 @@ import time
 import tempfile
 import types
 from pathlib import Path
-
 import numpy as np
 import pytest
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -348,7 +349,7 @@ class TestEntryPoint:
     def test_validate_flag_succeeds(self):
         """--validate flag exits cleanly without crash."""
         import subprocess
-        project_root = str(Path("E:/Newfolder/Project2O/Projects/SIH '26/external").resolve())
+        project_root = str(PROJECT_ROOT)
         result = subprocess.run(
             [sys.executable, "-m", "src.main", "--validate"],
             capture_output=True, text=True, timeout=30,
@@ -360,12 +361,12 @@ class TestEntryPoint:
 
     def test_run_lumitrack_bat_exists(self):
         """run_lumitrack.bat standalone launcher exists."""
-        bat = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/run_lumitrack.bat")
+        bat = PROJECT_ROOT / "run_lumitrack.bat"
         assert bat.exists(), "run_lumitrack.bat standalone launcher not found"
 
     def test_pyinstaller_spec_exists(self):
         """lumitrack.spec packaging specification exists."""
-        spec = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/lumitrack.spec")
+        spec = PROJECT_ROOT / "lumitrack.spec"
         assert spec.exists(), "lumitrack.spec not found"
 
     def test_requirements_resolvable(self):
@@ -453,7 +454,7 @@ class TestPluginArchitectureIntegrity:
 
     def test_baseline_plugin_manifest_present(self):
         """baseline_tracker plugin has valid manifest.json."""
-        manifest_path = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/src/plugins/algorithms/baseline_tracker/manifest.json")
+        manifest_path = PROJECT_ROOT / "src/plugins/algorithms/baseline_tracker/manifest.json"
         assert manifest_path.exists(), f"manifest.json not found at {manifest_path}"
         with open(manifest_path) as f:
             manifest = json.load(f)
@@ -493,7 +494,7 @@ class TestPluginArchitectureIntegrity:
 
     def test_algorithm_version_string_in_manifest(self):
         """Plugin manifest version follows semver format."""
-        manifest_path = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/src/plugins/algorithms/baseline_tracker/manifest.json")
+        manifest_path = PROJECT_ROOT / "src/plugins/algorithms/baseline_tracker/manifest.json"
         with open(manifest_path) as f:
             manifest = json.load(f)
         version = manifest.get("version", "")
@@ -550,7 +551,7 @@ class TestVisualizationInterface:
 
     def test_view3d_zero_duplicate_physics(self):
         """view_3d.py contains NO independent simulation/physics imports (Rule 8)."""
-        view3d_path = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/src/app/gui/view_3d.py")
+        view3d_path = PROJECT_ROOT / "src/app/gui/view_3d.py"
         content = view3d_path.read_text()
         forbidden_imports = [
             "from src.simulation",
@@ -566,7 +567,7 @@ class TestVisualizationInterface:
 
     def test_3d_widget_imports_only_visualization_state(self):
         """view_3d.py only imports VisualizationState (read-only consumption)."""
-        view3d_path = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/src/app/gui/view_3d.py")
+        view3d_path = PROJECT_ROOT / "src/app/gui/view_3d.py"
         content = view3d_path.read_text()
         assert "VisualizationState" in content, "view_3d must consume VisualizationState"
         # Verify it uses QPainter (CPU-only rendering — no GPU/OpenGL crash risk)
@@ -574,7 +575,7 @@ class TestVisualizationInterface:
 
     def test_view3d_interactive_controls_present(self):
         """view_3d.py implements orbit/zoom/pan mouse controls."""
-        view3d_path = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/src/app/gui/view_3d.py")
+        view3d_path = PROJECT_ROOT / "src/app/gui/view_3d.py"
         content = view3d_path.read_text()
         assert "mousePressEvent" in content
         assert "wheelEvent" in content
@@ -657,7 +658,7 @@ class TestSIHFunctionalRequirements:
 
     def test_fr13_documentation_user_manual_exists(self):
         """FR13: User manual deliverable exists."""
-        manual = Path("E:/Newfolder/Project2O/Projects/SIH '26/external/docs/USER_AND_EVALUATOR_MANUAL.md")
+        manual = PROJECT_ROOT / "docs/USER_AND_EVALUATOR_MANUAL.md"
         assert manual.exists(), "USER_AND_EVALUATOR_MANUAL.md not found in docs/"
         content = manual.read_text()
         assert len(content) > 500, "User manual appears empty or too short"
