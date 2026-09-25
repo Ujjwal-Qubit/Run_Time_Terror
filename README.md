@@ -354,53 +354,88 @@ LumiTrack features a dark-themed UI built in **PySide6 (Qt6)**.
 
 ### Prerequisites
 - **Operating System:** Windows 10/11, Linux, or macOS.
-- **Python:** Python `3.10`, `3.11`, or `3.12` (Python `3.11` recommended).
+- **Python:** Python `3.10`, `3.11`, or `3.12` (Python `3.11`/`3.12` recommended).
+- **Node.js / Bun (Optional for Web Frontend dev):** Node.js `18+` or Bun `1.0+`.
 
-### Option A: Standalone Windows Executable (Zero-Install)
-LumiTrack is bundled as a standalone Windows executable requiring no Python environment:
+---
 
-```powershell
-# Run the interactive GUI:
-.\dist\LumiTrack\LumiTrack.exe --gui
+### Option 1: Modern Web Interface (Recommended) 🌐
 
-# Or double-click the root batch script:
-.\run_lumitrack.bat
+LumiTrack includes a high-performance **React + Vite + Three.js** aerospace web interface backed by a **FastAPI** REST and WebSocket streaming engine.
+
+#### Step 1: Clone and Set Up Python Environment
+```bash
+git clone https://github.com/Ujjwal-Qubit/Run_Time_Terror.git
+cd Run_Time_Terror
+git checkout F1
 ```
 
-### Option B: Running from Source
+```powershell
+# Create virtual environment:
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Ujjwal-Qubit/Run_Time_Error.git
-   cd Run_Time_Error
-   ```
+# Install requirements:
+pip install --upgrade pip
+pip install -r requirements.txt
+# OR manually:
+pip install PySide6 numpy opencv-python pytest fastapi uvicorn websockets pydantic
+```
 
-2. **Create and activate a virtual environment:**
-   ```powershell
-   # Windows PowerShell:
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
+#### Step 2: Launch the Web Platform
+```powershell
+# One-Click Launcher (Windows):
+.\run_web.bat
 
-   # Linux / macOS:
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
+# OR via Python Module:
+python -m src.main --web --port 8000
+```
+Open your browser at **`http://localhost:8000`** to access the live 2D HUD Sensor View, 3D Three.js orbital geometry scene, telemetry bar, benchmark matrix runner, and AI scenario studio.
 
-3. **Install dependencies:**
-   ```bash
-   pip install --upgrade pip
-   pip install PySide6 numpy opencv-python pytest
-   ```
+#### (Optional) Frontend Development with Hot-Reloading:
+```bash
+# Terminal 1 (Backend API & WebSocket Server):
+python -m src.main --web --port 8000
 
-4. **Validate system foundation:**
-   ```bash
-   python -m src.main --validate
-   ```
+# Terminal 2 (Vite Frontend Dev Server):
+cd frontend
+bun install     # or: npm install
+bun dev         # or: npm run dev
+```
+Open **`http://localhost:5173`** or **`http://localhost:3000`**.
 
-5. **Launch the Graphical User Interface:**
-   ```bash
-   python -m src.main --gui
-   ```
+---
+
+### Option 2: Desktop PySide6 GUI 🖥️
+
+```powershell
+# Launch Desktop GUI:
+.\run_lumitrack.bat
+
+# OR via Python Module:
+python -m src.main --gui
+```
+
+---
+
+### Option 3: Standalone Windows Executable (Zero-Install) 📦
+
+```powershell
+# Run the bundled standalone binary directly without installing Python:
+.\dist\LumiTrack\LumiTrack.exe --gui
+```
+
+---
+
+### Option 4: Full Test Suite & Validation ✅
+
+```powershell
+# Run all 403 system integration & compliance tests:
+pytest -v
+
+# Validate system foundation contracts and exit:
+python -m src.main --validate
+```
 
 ---
 
