@@ -207,7 +207,7 @@ export function App() {
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Dynamic Workflow Page Content */}
-        <main style={{ flex: 1, minHeight: 0, marginTop: '12px' }}>
+        <main style={{ flex: 1, minHeight: 0, height: 'calc(100% - 12px)', marginTop: '12px', overflow: 'hidden' }}>
           {activeTab === 'developer' && (
             <DeveloperPage
               mode={mode}

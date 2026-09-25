@@ -36,14 +36,27 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '360px 1fr',
+      gridTemplateColumns: '380px 1fr',
       gap: '14px',
       height: '100%',
+      minHeight: 0,
       padding: '0 16px 16px 0',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxSizing: 'border-box'
     }}>
-      {/* Left Column: Controls & Configuration */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', paddingRight: '4px' }}>
+      {/* Left Column: Controls & Configuration (Independently Scrollable) */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        overflowY: 'auto',
+        minHeight: 0,
+        height: '100%',
+        maxHeight: '100%',
+        paddingRight: '6px',
+        paddingBottom: '16px',
+        boxSizing: 'border-box'
+      }}>
         <ControlPanel
           mode={props.mode}
           setMode={props.setMode}
