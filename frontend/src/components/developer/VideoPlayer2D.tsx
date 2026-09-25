@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Crosshair, Eye, EyeOff } from 'lucide-react';
 import type { VisualizationPacket } from '../../types';
+import { TargetLock } from './TargetLock';
+import { hasTargetLock } from './targetLockState';
 
 interface VideoPlayer2DProps {
   packet: VisualizationPacket | null;
+  compact?: boolean;
 }
 
-export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
+export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet, compact = false }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showGroundTruth, setShowGroundTruth] = useState(true);
   const [showOverlays, setShowOverlays] = useState(true);
@@ -40,6 +43,7 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
         }
       };
       img.src = packet.image_base64;
+      return () => { img.onload = null; };
     } else {
       // Idle / Reset state rendering
       ctx.strokeStyle = 'rgba(0, 210, 255, 0.2)';
@@ -147,6 +151,19 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
       ctx.strokeRect(gx - 3, gy - 3, 6, 6);
     }
 
+    if (hasTargetLock(pkt) && pkt.estimated_centroid) {
+      const { x, y } = pkt.estimated_centroid;
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+        ctx.beginPath();
+        ctx.moveTo(x + sx * 18, y + sy * 10);
+        ctx.lineTo(x + sx * 18, y + sy * 18);
+        ctx.lineTo(x + sx * 10, y + sy * 18);
+        ctx.stroke();
+      }
+    }
+
     // 5. Live Top-Left HUD Telemetry Overlay
     ctx.fillStyle = 'rgba(6, 11, 20, 0.8)';
     ctx.fillRect(10, 10, 220, 115);
@@ -177,7 +194,7 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
   return (
     <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Viewport Action Bar */}
-      <div style={{
+      {compact ? <div style={{ padding: '5px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', fontSize: '10px', color: '#38bdf8' }}><span>2D HUD · LIVE</span><TargetLock packet={packet} /></div> : <div style={{
         padding: '8px 14px',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
         display: 'flex',
@@ -210,9 +227,9 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
             <span>Overlays: {showOverlays ? 'ON' : 'OFF'}</span>
           </button>
         </div>
-      </div>
+      </div>}
 
-      <div style={{
+      {!compact && <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -236,18 +253,20 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
           style={{ width: '130px', accentColor: 'var(--accent-cyan)' }}
         />
         <span style={{ minWidth: '34px', textAlign: 'right' }}>{frameScale}%</span>
-      </div>
+      </div>}
 
       {/* Canvas Area */}
       <div style={{
         flex: 1,
+        minHeight: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         background: '#04060a',
-        padding: '12px',
+        padding: compact ? '4px' : '12px',
         position: 'relative'
       }}>
+        {!compact && <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1 }}><TargetLock packet={packet} /></div>}
         <canvas
           ref={canvasRef}
           style={{

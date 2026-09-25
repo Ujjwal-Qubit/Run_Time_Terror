@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { Box, RefreshCw } from 'lucide-react';
 import type { VisualizationPacket } from '../../types';
+import { VideoPlayer2D } from './VideoPlayer2D';
+import { TargetLock } from './TargetLock';
+import { hasTargetLock } from './targetLockState';
 
 interface View3DThreeProps {
   packet: VisualizationPacket | null;
@@ -16,6 +19,7 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
   // Dynamic 3D Objects
   const frustumGroupRef = useRef<THREE.Group | null>(null);
   const targetMeshRef = useRef<THREE.Mesh | null>(null);
+  const lockRingRef = useRef<THREE.Mesh | null>(null);
   const losLineRef = useRef<THREE.Line | null>(null);
   const breadcrumbLineRef = useRef<THREE.Line | null>(null);
   const breadcrumbPointsRef = useRef<THREE.Vector3[]>([]);
@@ -87,6 +91,21 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
     const frustumGroup = new THREE.Group();
     frustumGroup.position.set(0, 0, 0);
 
+    // Camera housing sits behind the optical origin; its lens faces local +Z.
+    const housing = new THREE.Mesh(new THREE.BoxGeometry(18, 12, 14), new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.7, roughness: 0.3 }));
+    housing.position.z = -12;
+    frustumGroup.add(housing);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(5, 6, 5, 24), new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.2 }));
+    lens.rotation.x = Math.PI / 2;
+    lens.position.z = -2.5;
+    frustumGroup.add(lens);
+    const glass = new THREE.Mesh(new THREE.CircleGeometry(4, 24), new THREE.MeshBasicMaterial({ color: 0x00d2ff, side: THREE.DoubleSide }));
+    glass.position.z = 0.1;
+    frustumGroup.add(glass);
+    const viewfinder = new THREE.Mesh(new THREE.BoxGeometry(7, 4, 6), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+    viewfinder.position.set(0, 8, -12);
+    frustumGroup.add(viewfinder);
+
     // Frustum pyramid geometry
     const pyramidGeo = new THREE.BufferGeometry();
     const fl = 60;
@@ -137,6 +156,10 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
     targetMesh.position.set(0, 40, 150);
     scene.add(targetMesh);
     targetMeshRef.current = targetMesh;
+    const lockRing = new THREE.Mesh(new THREE.RingGeometry(10, 11, 48), new THREE.MeshBasicMaterial({ color: 0x34d399, side: THREE.DoubleSide, depthTest: false }));
+    lockRing.visible = false;
+    scene.add(lockRing);
+    lockRingRef.current = lockRing;
 
     // 10. Line-of-Sight (LOS) Beam (Semi-transparent green laser)
     const losGeo = new THREE.BufferGeometry().setFromPoints([
@@ -171,6 +194,7 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
     let animationId: number;
     const animate = () => {
       animationId = requestAnimationFrame(animate);
+      lockRing.quaternion.copy(camera.quaternion);
       renderer.render(scene, camera);
     };
     animate();
@@ -192,6 +216,13 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
       cancelAnimationFrame(animationId);
       resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Line) {
+          object.geometry.dispose();
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          materials.forEach((material) => material.dispose());
+        }
+      });
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
@@ -212,7 +243,15 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
 
   // Sync with packet updates
   useEffect(() => {
-    if (!packet) return;
+    if (!packet) {
+      if (lockRingRef.current) lockRingRef.current.visible = false;
+      if (targetMeshRef.current) targetMeshRef.current.visible = false;
+      if (losLineRef.current) losLineRef.current.visible = false;
+      if (breadcrumbLineRef.current) breadcrumbLineRef.current.visible = false;
+      breadcrumbPointsRef.current = [];
+      frustumGroupRef.current?.rotation.set(0, 0, 0);
+      return;
+    }
 
     // 1. Orient PTZ Frustum using pan and tilt
     if (frustumGroupRef.current) {
@@ -221,7 +260,7 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
 
       frustumGroupRef.current.rotation.set(0, 0, 0);
       frustumGroupRef.current.rotateY(panRad);
-      frustumGroupRef.current.rotateX(tiltRad);
+      frustumGroupRef.current.rotateX(-tiltRad);
     }
 
     // 2. Compute 3D target coordinates from tracking centroid or ground truth
@@ -251,17 +290,25 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
 
     // Update target mesh position
     if (targetMeshRef.current) {
+      targetMeshRef.current.visible = !!(packet.estimated_centroid || packet.ground_truth);
       targetMeshRef.current.position.copy(currentPos);
+    }
+    const locked = hasTargetLock(packet);
+    if (lockRingRef.current) {
+      lockRingRef.current.visible = locked;
+      lockRingRef.current.position.copy(currentPos);
     }
 
     // Update LOS laser beam
     if (losLineRef.current) {
+      losLineRef.current.visible = locked;
       const pts = [new THREE.Vector3(0, 0, 0), currentPos];
       losLineRef.current.geometry.setFromPoints(pts);
     }
 
     // Update historical breadcrumb path (keep last 60 frames)
     if (breadcrumbLineRef.current) {
+      breadcrumbLineRef.current.visible = !!(packet.estimated_centroid || packet.ground_truth);
       const pts = breadcrumbPointsRef.current;
       pts.push(currentPos.clone());
       if (pts.length > 60) {
@@ -351,6 +398,7 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
       </div>
 
       {/* 3D Canvas Area */}
+      <div style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden' }}>
       <div
         ref={containerRef}
         onMouseDown={handleMouseDown}
@@ -367,6 +415,11 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
           position: 'relative'
         }}
       />
+      <div style={{ position: 'absolute', top: '12px', left: '12px', pointerEvents: 'none' }}><TargetLock packet={packet} /></div>
+      <div aria-label="Live 2D sensor inset" style={{ position: 'absolute', bottom: '12px', right: '12px', width: 'clamp(160px, 32%, 300px)', maxWidth: '48%', height: '45%', maxHeight: '245px', boxShadow: '0 6px 24px rgba(0,0,0,0.6)', borderRadius: '8px' }}>
+        <VideoPlayer2D packet={packet} compact />
+      </div>
+      </div>
     </div>
   );
 };
