@@ -1,0 +1,16 @@
+{
+  "dataset_name": "temporal-v1",
+  "dataset_version": "v1.0",
+  "task": "temporal_prediction",
+  "git_commit": "HEAD",
+  "seed": 42,
+  "created_at": "2026-09-10T10:11:06Z",
+  "num_records": 150,
+  "scenarios": [
+    "sim_seed_42_m_CIRCULAR_s_10",
+    "sim_seed_42_m_STRAIGHT_LINE_s_20",
+    "sim_seed_42_m_STRAIGHT_LINE_s_10",
+    "sim_seed_42_m_CIRCULAR_s_5",
+    "sim_seed_42_m_STRAIGHT_LINE_s_5"
+  ]
+}

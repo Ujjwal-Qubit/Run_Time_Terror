@@ -1,7 +1,7 @@
 from __future__ import annotations
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGroupBox,
-    QProgressBar, QTextEdit, QMessageBox
+    QProgressBar, QTextEdit, QMessageBox, QInputDialog
 )
 from src.app.app_controller import AppController
 
@@ -88,5 +88,75 @@ class EvaluationPanel(QWidget):
             self._log(f"ERROR: {str(e)}")
             
     def _on_run_ai(self):
-        # We can reuse the control_panel logic here
-        pass
+        prompt, accepted = QInputDialog.getMultiLineText(
+            self,
+            "AI-Assisted Scenario",
+            "Describe the scenario to generate and evaluate:",
+        )
+        prompt = prompt.strip()
+        if not accepted or not prompt:
+            return
+
+        active_algo = self.app.active_algorithm_name or "baseline_tracker"
+        self._log(f"Generating an AI scenario for '{active_algo}'...")
+        self.btn_run_ai.setEnabled(False)
+        try:
+            from src.evaluation.benchmark_manager import BenchmarkManager
+
+            benchmark = BenchmarkManager(self.app)
+            success, spec, result, errors = benchmark.run_ai_scenario(
+                prompt=prompt,
+                algorithm_name=active_algo,
+                seed=42,
+                max_frames=60,
+                output_dir="output/ai_scenarios",
+            )
+            if not success or spec is None:
+                details = "\n".join(f"• {error}" for error in errors)
+                self._log(f"AI scenario rejected: {details or 'validation failed'}")
+                QMessageBox.warning(
+                    self,
+                    "Scenario Not Accepted",
+                    details or "The generated scenario did not pass validation.",
+                )
+                return
+
+            self._log(
+                f"Validated '{spec.scenario_id}' "
+                f"({spec.trajectory_type}, {spec.target_speed:g} px/s)."
+            )
+            if result is None:
+                self._log("Scenario generated; no evaluation result was returned.")
+                QMessageBox.information(
+                    self, "Scenario Generated", f"Generated {spec.scenario_id}."
+                )
+                return
+
+            rmse = (
+                f"{result.centroid_rmse:.3f} px"
+                if result.centroid_rmse is not None
+                else "N/A (no reference truth)"
+            )
+            self._log(
+                f"Outcome: {result.outcome.value} | "
+                f"Frames: {result.total_frames} | "
+                f"FPS: {result.algorithm_fps:.1f} | "
+                f"Centroid RMSE: {rmse} | "
+                f"Target loss: {result.target_loss_rate:.2f}%"
+            )
+            if result.md_report_path:
+                self._log(f"Report exported to: {result.md_report_path}")
+            QMessageBox.information(
+                self,
+                "AI Scenario Evaluation Complete",
+                f"Scenario: {spec.scenario_id}\n"
+                f"Outcome: {result.outcome.value}\n"
+                f"Algorithm FPS: {result.algorithm_fps:.1f}\n"
+                f"Centroid RMSE: {rmse}\n"
+                f"Target loss: {result.target_loss_rate:.2f}%",
+            )
+        except Exception as exc:
+            self._log(f"AI scenario evaluation failed: {exc}")
+            QMessageBox.critical(self, "AI Scenario Error", str(exc))
+        finally:
+            self.btn_run_ai.setEnabled(True)

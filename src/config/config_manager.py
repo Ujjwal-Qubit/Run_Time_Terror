@@ -245,6 +245,15 @@ class StateConfig:
 
 
 @dataclass
+class AIMLConfig:
+    """Optional learned candidate classification configuration."""
+    candidate_classifier_enabled: bool = False
+    candidate_model_dir: str = "models/candidate_classifier/v001"
+    temporal_predictor_enabled: bool = False
+    temporal_model_dir: str = "models/temporal_predictor/v001"
+
+
+@dataclass
 class LoggingConfig:
     """Logging configuration."""
     csv_enabled: bool = defaults.LOG_CSV_ENABLED
@@ -288,6 +297,7 @@ class SystemConfig:
     centroid: CentroidConfig = field(default_factory=CentroidConfig)
     tracker: TrackerConfig = field(default_factory=TrackerConfig)
     state: StateConfig = field(default_factory=StateConfig)
+    aiml: AIMLConfig = field(default_factory=AIMLConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
     simulation: SimulationConfig = field(default_factory=SimulationConfig)
     # Multi-beacon list (optional). Empty = use legacy single-target config.

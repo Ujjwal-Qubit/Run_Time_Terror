@@ -154,7 +154,10 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
     losLineRef.current = losLine;
 
     // 11. Historical Breadcrumbs Trail (Orange)
-    const breadcrumbGeo = new THREE.BufferGeometry();
+    const breadcrumbGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, 0),
+    ]);
     const breadcrumbMat = new THREE.LineBasicMaterial({
       color: 0xf97316,
       transparent: true,
@@ -172,19 +175,22 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
     };
     animate();
 
-    // Resize handler
+    // Resize handler: the tab content may change size without a window resize.
     const handleResize = () => {
       if (!container || !renderer || !camera) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
+      const w = Math.max(1, container.clientWidth);
+      const h = Math.max(1, container.clientHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
     window.addEventListener('resize', handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
+      resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
@@ -229,13 +235,16 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
       const resW = packet.resolution?.width || 640;
       const resH = packet.resolution?.height || 480;
 
-      // Project pixel offset into 3D world plane
-      const dx = ((coord.x - resW / 2) / (resW / 2)) * 80;
-      const dy = -((coord.y - resH / 2) / (resH / 2)) * 60;
-
-      targetX = dx;
-      targetY = dy + 20;
-      targetZ = dist;
+      // Convert observed pixel offset to angular line-of-sight, then combine
+      // it with the simulated gimbal pose. Keep the displayed range normalized:
+      // this 2D simulation does not provide physical beacon range/depth.
+      const hFovRad = THREE.MathUtils.degToRad(packet.camera_fov);
+      const vFovRad = hFovRad * resH / resW;
+      const panRad = THREE.MathUtils.degToRad(-packet.pan_angle_deg) + ((coord.x - resW / 2) / resW) * hFovRad;
+      const tiltRad = THREE.MathUtils.degToRad(packet.tilt_angle_deg) - ((coord.y - resH / 2) / resH) * vFovRad;
+      targetX = dist * Math.sin(panRad) * Math.cos(tiltRad);
+      targetY = dist * Math.sin(tiltRad);
+      targetZ = dist * Math.cos(panRad) * Math.cos(tiltRad);
     }
 
     const currentPos = new THREE.Vector3(targetX, targetY, targetZ);
@@ -258,7 +267,9 @@ export const View3DThree: React.FC<View3DThreeProps> = ({ packet }) => {
       if (pts.length > 60) {
         pts.shift();
       }
-      breadcrumbLineRef.current.geometry.setFromPoints(pts);
+      if (pts.length >= 2) {
+        breadcrumbLineRef.current.geometry.setFromPoints(pts);
+      }
     }
   }, [packet]);
 

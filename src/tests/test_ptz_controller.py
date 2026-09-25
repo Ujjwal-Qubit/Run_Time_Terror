@@ -22,8 +22,9 @@ import pytest
 from src.interfaces.strategy_interfaces import IPTZController
 from src.control.ptz_controller import ProportionalDeadbandPTZController, PTZController
 from src.frame.data_contracts import PTZCommand, TrackResult, TrackingState
-from src.config.config_manager import PTZConfig, CameraConfig, SystemConfig
+from src.config.config_manager import PTZConfig, CameraConfig, SystemConfig, TargetConfig, MotionConfig
 from src.simulation.camera_model import CameraModel, ProjectionModel
+from src.simulation.target_manager import TargetManager
 from src.frame.simulation_provider import SimulationFrameProvider
 from src.tracker.detection_engine import P0ThresholdDetector
 from src.tracker.centroid_estimator import IntensityWeightedCentroidEstimator
@@ -477,6 +478,54 @@ class TestPTZControllerPerformance:
 # ---------------------------------------------------------------------------
 
 class TestPTZControllerClosedLoopIntegration:
+    def test_moving_beacon_keeps_physical_speed_while_camera_tracks(self):
+        """PTZ motion must recenter the image without altering target kinematics."""
+        camera_cfg = CameraConfig(width=640, height=480, fov_h_deg=4.0, fov_v_deg=3.0)
+        camera = CameraModel(camera_cfg)
+        target = TargetManager(
+            target_config=TargetConfig(
+                initial_position="custom",
+                initial_x=1100.0,
+                initial_y=1000.0,
+                speed=50.0,
+                size=10,
+            ),
+            motion_config=MotionConfig(motion_type="STRAIGHT_LINE", straight_line_angle_deg=0.0),
+        )
+        controller = ProportionalDeadbandPTZController(camera_config=camera_cfg)
+        dt = 1.0 / 30.0
+        initial_x = target.world_position[0]
+        camera_start_x = camera.world_position[0]
+
+        for frame in range(60):
+            target_state = target.step(dt)
+            img_x, img_y = camera.projection_model.world_to_image(
+                target_state.world_x,
+                target_state.world_y,
+                *camera.world_position,
+            )
+            command = controller.compute(
+                make_track(img_x, img_y, frame=frame + 1, ts=(frame + 1) * dt),
+                TrackingState.TRACKING,
+                camera_cfg.width,
+                camera_cfg.height,
+                dt,
+                camera.projection_model,
+            )
+            if command.valid:
+                camera.apply_pan_tilt(command.delta_pan_deg, command.delta_tilt_deg)
+
+        final_state = target.target_state
+        final_x, final_y = camera.projection_model.world_to_image(
+            final_state.world_x,
+            final_state.world_y,
+            *camera.world_position,
+        )
+        assert target.speed == pytest.approx(50.0)
+        assert final_state.world_x - initial_x == pytest.approx(100.0, abs=1e-6)
+        assert camera.world_position[0] > camera_start_x
+        assert math.hypot(final_x - camera_cfg.width / 2, final_y - camera_cfg.height / 2) <= 10.0
+
     def test_closed_loop_target_centering(self):
         """
         Closed-loop integration test:

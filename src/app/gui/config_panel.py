@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QFormLayout, QSpinBox, 
     QDoubleSpinBox, QComboBox, QCheckBox, QPushButton, QLabel, QGroupBox,
-    QSlider, QGridLayout, QFrame
+    QSlider, QGridLayout, QFrame, QLineEdit
 )
 from PySide6.QtCore import Signal, Qt
 from src.app.app_controller import AppController
@@ -162,6 +162,25 @@ class ConfigPanel(QWidget):
         dist_layout.addRow("Jitter Enabled", self.dist_jitter_enable)
         dist_layout.addRow("Jitter Amp (px/f)", self.dist_jitter_amp)
         self.tabs.addTab(self.dist_tab, "Disturbances")
+
+        # Optional learned candidate classifier; disabled until explicitly enabled.
+        self.aiml_tab = QWidget()
+        aiml_layout = QFormLayout(self.aiml_tab)
+        self.aiml_classifier_enable = QCheckBox("Use learned candidate classifier")
+        self.aiml_model_dir = QLineEdit("models/candidate_classifier/v001")
+        self.aiml_temporal_enable = QCheckBox("Use temporal residual predictor for candidate ranking")
+        self.aiml_temporal_model_dir = QLineEdit("models/temporal_predictor/v001")
+        self.aiml_model_dir.setToolTip(
+            "Project-relative or absolute directory containing the versioned model package."
+        )
+        self.aiml_temporal_model_dir.setToolTip(
+            "Project-relative or absolute directory containing the trained temporal model package."
+        )
+        aiml_layout.addRow("Candidate classifier", self.aiml_classifier_enable)
+        aiml_layout.addRow("Model package", self.aiml_model_dir)
+        aiml_layout.addRow("Temporal predictor", self.aiml_temporal_enable)
+        aiml_layout.addRow("Temporal model", self.aiml_temporal_model_dir)
+        self.tabs.addTab(self.aiml_tab, "AI/ML")
         
         self.layout.addWidget(self.tabs)
         
@@ -297,6 +316,10 @@ class ConfigPanel(QWidget):
         
         self.dist_jitter_enable.toggled.connect(self._on_change)
         self.dist_jitter_amp.valueChanged.connect(self._on_change)
+        self.aiml_classifier_enable.toggled.connect(self._on_change)
+        self.aiml_model_dir.textChanged.connect(self._on_change)
+        self.aiml_temporal_enable.toggled.connect(self._on_change)
+        self.aiml_temporal_model_dir.textChanged.connect(self._on_change)
 
     def _on_change(self, *args, **kwargs):
         if hasattr(self.app, "set_target_speed"):
@@ -311,6 +334,11 @@ class ConfigPanel(QWidget):
         self.tabs.setEnabled(not locked)
         
     def apply_to_config(self, cfg):
+        cfg.aiml.candidate_classifier_enabled = self.aiml_classifier_enable.isChecked()
+        cfg.aiml.candidate_model_dir = self.aiml_model_dir.text().strip()
+        cfg.aiml.temporal_predictor_enabled = self.aiml_temporal_enable.isChecked()
+        cfg.aiml.temporal_model_dir = self.aiml_temporal_model_dir.text().strip()
+
         cfg.camera.width = self.cam_w.value()
         cfg.camera.height = self.cam_h.value()
         cfg.camera.fov_h_deg = self.cam_fov.value()

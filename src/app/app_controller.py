@@ -195,6 +195,7 @@ class AppController:
             "identifier": vars(cfg.identifier) if hasattr(cfg.identifier, "__dict__") else {},
             "tracker": vars(cfg.tracker) if hasattr(cfg.tracker, "__dict__") else {},
             "state": vars(cfg.state) if hasattr(cfg.state, "__dict__") else {},
+            "aiml": vars(cfg.aiml) if hasattr(cfg.aiml, "__dict__") else {},
             "use_ai_classifier": True,
         }
 
@@ -827,6 +828,9 @@ class AppController:
                 tilt_angle_deg=cam_tilt,
                 camera_fov=cam_fov,
                 display_image=packet.image,
+                camera_fov_v=self.config_manager.config.camera.fov_v_deg,
+                camera_width=packet.width,
+                camera_height=packet.height,
                 estimated_centroid_x=centroid_res.x if centroid_res and centroid_res.valid else None,
                 estimated_centroid_y=centroid_res.y if centroid_res and centroid_res.valid else None,
                 tracking_state=state_res.state.name,

@@ -7,7 +7,7 @@ import type { AlgorithmInfo, MatrixResult, AIScenarioOutcome, ReportItem, System
 const API_BASE: string =
   (import.meta as any).env?.VITE_API_BASE_URL ??
   (typeof window !== 'undefined' && window.location.port === '5173'
-    ? 'http://localhost:8000'
+    ? `http://${window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname}:8000`
     : '');
 
 /**

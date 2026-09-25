@@ -126,7 +126,7 @@ class ControlPanel(QWidget):
         self.chk_ptz_tracking.setChecked(True)
         self.chk_ptz_tracking.setStyleSheet("font-weight: bold; color: #569cd6; margin-top: 4px;")
         self.chk_ptz_tracking.setToolTip(
-            "Checked: Camera actively pans/tilts to keep the beacon centered.\n"
+            "Checked: Camera actively pans/tilts to keep the beacon centered. The beacon keeps its configured world speed; its apparent motion in the image reduces because the camera follows it.\n"
             "Unchecked: Camera holds still so you can watch the beacon visibly traverse the view."
         )
         self.chk_ptz_tracking.toggled.connect(self._on_ptz_toggled)
@@ -196,6 +196,10 @@ class ControlPanel(QWidget):
                 # Sync jitter
                 cp.dist_jitter_enable.setChecked(cfg.jitter.enabled)
                 cp.dist_jitter_amp.setValue(cfg.jitter.max_px_per_frame)
+                cp.aiml_classifier_enable.setChecked(cfg.aiml.candidate_classifier_enabled)
+                cp.aiml_model_dir.setText(cfg.aiml.candidate_model_dir)
+                cp.aiml_temporal_enable.setChecked(cfg.aiml.temporal_predictor_enabled)
+                cp.aiml_temporal_model_dir.setText(cfg.aiml.temporal_model_dir)
             
     def _browse_mp4(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Select MP4 Video", "", "MP4 files (*.mp4);;All files (*.*)")

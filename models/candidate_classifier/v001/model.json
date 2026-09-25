@@ -1,0 +1,73 @@
+{
+  "model_name": "candidate_classifier",
+  "model_version": "v001",
+  "algorithm": "logistic_regression",
+  "feature_schema_version": "candidate-v1",
+  "feature_names": [
+    "peak_intensity_norm",
+    "mean_intensity_norm",
+    "local_contrast",
+    "area_norm",
+    "compactness",
+    "aspect_ratio",
+    "size_error_norm",
+    "distance_to_prediction_norm",
+    "innovation_norm",
+    "frame_border_distance_norm",
+    "candidate_detection_score"
+  ],
+  "weights": [
+    -0.0034165806137025356,
+    -0.0034165806137025356,
+    0.020212534815073013,
+    0.015562748536467552,
+    -0.009104449301958084,
+    -0.5268077254295349,
+    0.017520008608698845,
+    0.0,
+    0.0,
+    0.02609129808843136,
+    2.264068841934204
+  ],
+  "bias": 2.2641139030456543,
+  "mean": [
+    0.6607629656791687,
+    0.6607629656791687,
+    4.0477423667907715,
+    0.000635096977930516,
+    0.9393658638000488,
+    1.0090903043746948,
+    1.4109554290771484,
+    1.0,
+    1.0,
+    0.24833263456821442,
+    0.7998899817466736
+  ],
+  "std": [
+    0.1674572229385376,
+    0.1674572229385376,
+    1.5133994817733765,
+    0.0005401811795309186,
+    0.0621969997882843,
+    0.11696339398622513,
+    1.2913813591003418,
+    1.0,
+    1.0,
+    0.14104633033275604,
+    0.00011003240069840103
+  ],
+  "classification_threshold": 0.5,
+  "training_dataset_version": "candidate-v1",
+  "random_seed": 42,
+  "validation_metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "test_metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "created_at": "2026-09-25T19:10:13Z"
+}

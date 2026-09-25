@@ -1,0 +1,4772 @@
+[
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 20,
+    "input_history": [
+      {
+        "timestamp": 0.0,
+        "x": 319.0,
+        "y": 241.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0333,
+        "x": 319.0,
+        "y": 243.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0667,
+        "x": 319.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 319.0,
+        "y": 246.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 319.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 316.0,
+      "y": 274.0,
+      "vx": -8.71,
+      "vy": 49.24
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 21,
+    "input_history": [
+      {
+        "timestamp": 0.0333,
+        "x": 319.0,
+        "y": 243.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0667,
+        "x": 319.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 319.0,
+        "y": 246.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 319.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 316.0,
+      "y": 276.0,
+      "vx": -9.12,
+      "vy": 49.16
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 22,
+    "input_history": [
+      {
+        "timestamp": 0.0667,
+        "x": 319.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 319.0,
+        "y": 246.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 319.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 316.0,
+      "y": 278.0,
+      "vx": -9.52,
+      "vy": 49.08
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 23,
+    "input_history": [
+      {
+        "timestamp": 0.1,
+        "x": 319.0,
+        "y": 246.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 319.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 316.0,
+      "y": 279.0,
+      "vx": -9.93,
+      "vy": 49.0
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 24,
+    "input_history": [
+      {
+        "timestamp": 0.1333,
+        "x": 319.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 315.0,
+      "y": 281.0,
+      "vx": -10.34,
+      "vy": 48.92
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 25,
+    "input_history": [
+      {
+        "timestamp": 0.1667,
+        "x": 319.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 315.0,
+      "y": 282.0,
+      "vx": -10.75,
+      "vy": 48.83
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 26,
+    "input_history": [
+      {
+        "timestamp": 0.2,
+        "x": 319.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 314.0,
+      "y": 284.0,
+      "vx": -11.16,
+      "vy": 48.74
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 27,
+    "input_history": [
+      {
+        "timestamp": 0.2333,
+        "x": 319.0,
+        "y": 253.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 314.0,
+      "y": 286.0,
+      "vx": -11.56,
+      "vy": 48.65
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 28,
+    "input_history": [
+      {
+        "timestamp": 0.2667,
+        "x": 319.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 314.0,
+      "y": 287.0,
+      "vx": -11.97,
+      "vy": 48.55
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 29,
+    "input_history": [
+      {
+        "timestamp": 0.3,
+        "x": 319.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 313.0,
+      "y": 289.0,
+      "vx": -12.37,
+      "vy": 48.45
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 30,
+    "input_history": [
+      {
+        "timestamp": 0.3333,
+        "x": 319.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 313.0,
+      "y": 291.0,
+      "vx": -12.77,
+      "vy": 48.34
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 31,
+    "input_history": [
+      {
+        "timestamp": 0.3667,
+        "x": 319.0,
+        "y": 259.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 312.0,
+      "y": 292.0,
+      "vx": -13.18,
+      "vy": 48.23
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 32,
+    "input_history": [
+      {
+        "timestamp": 0.4,
+        "x": 318.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 312.0,
+      "y": 294.0,
+      "vx": -13.58,
+      "vy": 48.12
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 33,
+    "input_history": [
+      {
+        "timestamp": 0.4333,
+        "x": 318.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 312.0,
+      "y": 295.0,
+      "vx": -13.98,
+      "vy": 48.01
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 34,
+    "input_history": [
+      {
+        "timestamp": 0.4667,
+        "x": 318.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 311.0,
+      "y": 297.0,
+      "vx": -14.38,
+      "vy": 47.89
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 35,
+    "input_history": [
+      {
+        "timestamp": 0.5,
+        "x": 318.0,
+        "y": 266.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 311.0,
+      "y": 299.0,
+      "vx": -14.78,
+      "vy": 47.77
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 36,
+    "input_history": [
+      {
+        "timestamp": 0.5333,
+        "x": 317.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 310.0,
+      "y": 300.0,
+      "vx": -15.17,
+      "vy": 47.64
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 37,
+    "input_history": [
+      {
+        "timestamp": 0.5667,
+        "x": 317.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 310.0,
+      "y": 302.0,
+      "vx": -15.57,
+      "vy": 47.51
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 38,
+    "input_history": [
+      {
+        "timestamp": 0.6,
+        "x": 317.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 309.0,
+      "y": 303.0,
+      "vx": -15.97,
+      "vy": 47.38
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 39,
+    "input_history": [
+      {
+        "timestamp": 0.6333,
+        "x": 317.0,
+        "y": 273.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 308.0,
+      "y": 305.0,
+      "vx": -16.36,
+      "vy": 47.25
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 40,
+    "input_history": [
+      {
+        "timestamp": 0.6667,
+        "x": 316.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 308.0,
+      "y": 307.0,
+      "vx": -16.75,
+      "vy": 47.11
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 41,
+    "input_history": [
+      {
+        "timestamp": 0.7,
+        "x": 316.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 307.0,
+      "y": 308.0,
+      "vx": -17.14,
+      "vy": 46.97
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 42,
+    "input_history": [
+      {
+        "timestamp": 0.7333,
+        "x": 316.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 307.0,
+      "y": 310.0,
+      "vx": -17.54,
+      "vy": 46.82
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 43,
+    "input_history": [
+      {
+        "timestamp": 0.7667,
+        "x": 316.0,
+        "y": 279.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 306.0,
+      "y": 311.0,
+      "vx": -17.93,
+      "vy": 46.68
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 44,
+    "input_history": [
+      {
+        "timestamp": 0.8,
+        "x": 315.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 306.0,
+      "y": 313.0,
+      "vx": -18.31,
+      "vy": 46.53
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 45,
+    "input_history": [
+      {
+        "timestamp": 0.8333,
+        "x": 315.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 306.0,
+        "y": 313.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 305.0,
+      "y": 314.0,
+      "vx": -18.7,
+      "vy": 46.37
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 46,
+    "input_history": [
+      {
+        "timestamp": 0.8667,
+        "x": 314.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 306.0,
+        "y": 313.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 305.0,
+        "y": 314.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 304.0,
+      "y": 316.0,
+      "vx": -19.09,
+      "vy": 46.21
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 47,
+    "input_history": [
+      {
+        "timestamp": 0.9,
+        "x": 314.0,
+        "y": 286.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 306.0,
+        "y": 313.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 305.0,
+        "y": 314.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 304.0,
+        "y": 316.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 304.0,
+      "y": 317.0,
+      "vx": -19.47,
+      "vy": 46.05
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 48,
+    "input_history": [
+      {
+        "timestamp": 0.9333,
+        "x": 314.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 306.0,
+        "y": 313.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 305.0,
+        "y": 314.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 304.0,
+        "y": 316.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5667,
+        "x": 304.0,
+        "y": 317.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 303.0,
+      "y": 319.0,
+      "vx": -19.85,
+      "vy": 45.89
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_CIRCULAR_s_5",
+    "frame_number": 49,
+    "input_history": [
+      {
+        "timestamp": 0.9667,
+        "x": 313.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 313.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 312.0,
+        "y": 292.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 312.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 312.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 311.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 311.0,
+        "y": 299.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 310.0,
+        "y": 300.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 310.0,
+        "y": 302.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 309.0,
+        "y": 303.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 308.0,
+        "y": 305.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 308.0,
+        "y": 307.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 307.0,
+        "y": 308.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 307.0,
+        "y": 310.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 306.0,
+        "y": 311.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 306.0,
+        "y": 313.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 305.0,
+        "y": 314.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 304.0,
+        "y": 316.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5667,
+        "x": 304.0,
+        "y": 317.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.6,
+        "x": 303.0,
+        "y": 319.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 302.0,
+      "y": 320.0,
+      "vx": -20.24,
+      "vy": 45.72
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "CIRCULAR",
+      "target_size": 5,
+      "seed": 45
+    }
+  }
+]

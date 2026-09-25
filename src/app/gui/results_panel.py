@@ -27,6 +27,8 @@ class ResultsPanel(QWidget):
         table_layout = QVBoxLayout(table_group)
         self.table = QTableWidget(0, 3)
         self.table.setHorizontalHeaderLabels(["Metric", "Value", "Status"])
+        # Backward-compatible name used by earlier results-page integrations.
+        self.summary_table = self.table
         table_layout.addWidget(self.table)
         self.layout.addWidget(table_group, stretch=2)
         
@@ -49,8 +51,14 @@ class ResultsPanel(QWidget):
         
         self.current_report_path = None
         
-    def load_results(self, matrix_res, report_path: str):
-        self.current_report_path = report_path
+    def load_results(
+        self,
+        matrix_res,
+        report_path: str | None = None,
+        *,
+        metadata_path: str | None = None,
+    ):
+        self.current_report_path = report_path if report_path is not None else metadata_path
 
         # Populate table
         self.table.setRowCount(0)

@@ -544,3 +544,8 @@ class VisualizationState:
     # Motion & Control Telemetry for HUD
     target_speed_px_s: Optional[float] = None
     ptz_enabled: bool = True
+
+    # Camera geometry for calibrated 3D line-of-sight visualization.
+    camera_fov_v: Optional[float] = None
+    camera_width: int = 640
+    camera_height: int = 480

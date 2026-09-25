@@ -1,4 +1,5 @@
 @echo off
+pushd "%~dp0"
 REM LumiTrack — Modern Web Interface Launcher
 echo ==========================================================
 echo Starting LumiTrack Web Platform (FastAPI + Vite/React)
@@ -10,3 +11,4 @@ IF EXIST ".venv\Scripts\python.exe" (
 ) ELSE (
     python -m src.main --web --port 8000
 )
+popd

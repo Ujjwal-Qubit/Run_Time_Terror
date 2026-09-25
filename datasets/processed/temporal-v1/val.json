@@ -1,0 +1,4772 @@
+[
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 20,
+    "input_history": [
+      {
+        "timestamp": 0.0,
+        "x": 321.0,
+        "y": 241.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0333,
+        "x": 322.0,
+        "y": 242.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0667,
+        "x": 323.0,
+        "y": 243.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 324.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 325.0,
+        "y": 245.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 344.0,
+      "y": 264.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 21,
+    "input_history": [
+      {
+        "timestamp": 0.0333,
+        "x": 322.0,
+        "y": 242.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.0667,
+        "x": 323.0,
+        "y": 243.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 324.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 325.0,
+        "y": 245.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 345.0,
+      "y": 265.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 22,
+    "input_history": [
+      {
+        "timestamp": 0.0667,
+        "x": 323.0,
+        "y": 243.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1,
+        "x": 324.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 325.0,
+        "y": 245.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 347.0,
+      "y": 267.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 23,
+    "input_history": [
+      {
+        "timestamp": 0.1,
+        "x": 324.0,
+        "y": 244.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1333,
+        "x": 325.0,
+        "y": 245.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 348.0,
+      "y": 268.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 24,
+    "input_history": [
+      {
+        "timestamp": 0.1333,
+        "x": 325.0,
+        "y": 245.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 349.0,
+      "y": 269.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 25,
+    "input_history": [
+      {
+        "timestamp": 0.1667,
+        "x": 327.0,
+        "y": 247.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 350.0,
+      "y": 270.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 26,
+    "input_history": [
+      {
+        "timestamp": 0.2,
+        "x": 328.0,
+        "y": 248.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 351.0,
+      "y": 271.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 27,
+    "input_history": [
+      {
+        "timestamp": 0.2333,
+        "x": 329.0,
+        "y": 249.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 352.0,
+      "y": 272.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 28,
+    "input_history": [
+      {
+        "timestamp": 0.2667,
+        "x": 330.0,
+        "y": 250.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 354.0,
+      "y": 274.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 29,
+    "input_history": [
+      {
+        "timestamp": 0.3,
+        "x": 331.0,
+        "y": 251.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 355.0,
+      "y": 275.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 30,
+    "input_history": [
+      {
+        "timestamp": 0.3333,
+        "x": 332.0,
+        "y": 252.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 356.0,
+      "y": 276.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 31,
+    "input_history": [
+      {
+        "timestamp": 0.3667,
+        "x": 334.0,
+        "y": 254.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 357.0,
+      "y": 277.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 32,
+    "input_history": [
+      {
+        "timestamp": 0.4,
+        "x": 335.0,
+        "y": 255.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 358.0,
+      "y": 278.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 33,
+    "input_history": [
+      {
+        "timestamp": 0.4333,
+        "x": 336.0,
+        "y": 256.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 360.0,
+      "y": 280.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 34,
+    "input_history": [
+      {
+        "timestamp": 0.4667,
+        "x": 337.0,
+        "y": 257.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 361.0,
+      "y": 281.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 35,
+    "input_history": [
+      {
+        "timestamp": 0.5,
+        "x": 338.0,
+        "y": 258.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 362.0,
+      "y": 282.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 36,
+    "input_history": [
+      {
+        "timestamp": 0.5333,
+        "x": 340.0,
+        "y": 260.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 363.0,
+      "y": 283.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 37,
+    "input_history": [
+      {
+        "timestamp": 0.5667,
+        "x": 341.0,
+        "y": 261.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 364.0,
+      "y": 284.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 38,
+    "input_history": [
+      {
+        "timestamp": 0.6,
+        "x": 342.0,
+        "y": 262.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 365.0,
+      "y": 285.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 39,
+    "input_history": [
+      {
+        "timestamp": 0.6333,
+        "x": 343.0,
+        "y": 263.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 367.0,
+      "y": 287.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 40,
+    "input_history": [
+      {
+        "timestamp": 0.6667,
+        "x": 344.0,
+        "y": 264.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 368.0,
+      "y": 288.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 41,
+    "input_history": [
+      {
+        "timestamp": 0.7,
+        "x": 345.0,
+        "y": 265.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 369.0,
+      "y": 289.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 42,
+    "input_history": [
+      {
+        "timestamp": 0.7333,
+        "x": 347.0,
+        "y": 267.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 370.0,
+      "y": 290.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 43,
+    "input_history": [
+      {
+        "timestamp": 0.7667,
+        "x": 348.0,
+        "y": 268.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 371.0,
+      "y": 291.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 44,
+    "input_history": [
+      {
+        "timestamp": 0.8,
+        "x": 349.0,
+        "y": 269.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 373.0,
+      "y": 293.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 45,
+    "input_history": [
+      {
+        "timestamp": 0.8333,
+        "x": 350.0,
+        "y": 270.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 373.0,
+        "y": 293.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 374.0,
+      "y": 294.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 46,
+    "input_history": [
+      {
+        "timestamp": 0.8667,
+        "x": 351.0,
+        "y": 271.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 373.0,
+        "y": 293.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 374.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 375.0,
+      "y": 295.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 47,
+    "input_history": [
+      {
+        "timestamp": 0.9,
+        "x": 352.0,
+        "y": 272.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 373.0,
+        "y": 293.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 374.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 375.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 376.0,
+      "y": 296.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 48,
+    "input_history": [
+      {
+        "timestamp": 0.9333,
+        "x": 354.0,
+        "y": 274.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 373.0,
+        "y": 293.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 374.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 375.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5667,
+        "x": 376.0,
+        "y": 296.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 377.0,
+      "y": 297.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  },
+  {
+    "dataset_version": "temporal-v1",
+    "sequence_id": "sim_seed_42_m_STRAIGHT_LINE_s_5",
+    "frame_number": 49,
+    "input_history": [
+      {
+        "timestamp": 0.9667,
+        "x": 355.0,
+        "y": 275.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0,
+        "x": 356.0,
+        "y": 276.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0333,
+        "x": 357.0,
+        "y": 277.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.0667,
+        "x": 358.0,
+        "y": 278.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1,
+        "x": 360.0,
+        "y": 280.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1333,
+        "x": 361.0,
+        "y": 281.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.1667,
+        "x": 362.0,
+        "y": 282.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2,
+        "x": 363.0,
+        "y": 283.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2333,
+        "x": 364.0,
+        "y": 284.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.2667,
+        "x": 365.0,
+        "y": 285.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3,
+        "x": 367.0,
+        "y": 287.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3333,
+        "x": 368.0,
+        "y": 288.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.3667,
+        "x": 369.0,
+        "y": 289.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4,
+        "x": 370.0,
+        "y": 290.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4333,
+        "x": 371.0,
+        "y": 291.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.4667,
+        "x": 373.0,
+        "y": 293.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5,
+        "x": 374.0,
+        "y": 294.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5333,
+        "x": 375.0,
+        "y": 295.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.5667,
+        "x": 376.0,
+        "y": 296.0,
+        "valid": true,
+        "confidence": 1.0
+      },
+      {
+        "timestamp": 1.6,
+        "x": 377.0,
+        "y": 297.0,
+        "valid": true,
+        "confidence": 1.0
+      }
+    ],
+    "target": {
+      "x": 378.0,
+      "y": 298.0,
+      "vx": 35.36,
+      "vy": 35.36
+    },
+    "label_source": "rendered_centroid_ground_truth",
+    "scenario": {
+      "motion_type": "STRAIGHT_LINE",
+      "target_size": 5,
+      "seed": 42
+    }
+  }
+]

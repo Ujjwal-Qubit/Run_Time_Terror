@@ -37,7 +37,7 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '380px 1fr',
+      gridTemplateColumns: 'minmax(300px, 0.85fr) minmax(360px, 1.4fr)',
       gap: '14px',
       height: '100%',
       minHeight: 0,
@@ -87,7 +87,7 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
       </div>
 
       {/* Right Column: Dual Viewport + Bottom Telemetry Bar */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
         {/* Dual Viewport Tabs */}
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
@@ -109,7 +109,7 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
         </div>
 
         {/* Viewport Display Area */}
-        <div style={{ flex: 1, minHeight: 0 }}>
+        <div style={{ flex: '1 1 0%', minHeight: 220, minWidth: 0, overflow: 'hidden' }}>
           {viewportTab === '2d' ? (
             <VideoPlayer2D packet={props.packet} />
           ) : (
@@ -118,7 +118,9 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = (props) => {
         </div>
 
         {/* Bottom 11-field Telemetry HUD Bar */}
-        <TelemetryPanel packet={props.packet} activeAlgorithm={props.activeAlgorithm} />
+        <div style={{ flex: '0 1 auto', minHeight: 0, maxHeight: '28vh', overflowY: 'auto', flexShrink: 0 }}>
+          <TelemetryPanel packet={props.packet} activeAlgorithm={props.activeAlgorithm} />
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showGroundTruth, setShowGroundTruth] = useState(true);
   const [showOverlays, setShowOverlays] = useState(true);
+  const [frameScale, setFrameScale] = useState(100);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -211,6 +212,32 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
         </div>
       </div>
 
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: '8px',
+        padding: '4px 12px',
+        background: 'rgba(10, 15, 25, 0.35)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
+        fontSize: '11px',
+        color: 'var(--text-secondary)',
+      }}>
+        <label htmlFor="sensor-frame-scale">Frame size</label>
+        <input
+          id="sensor-frame-scale"
+          type="range"
+          min={40}
+          max={100}
+          step={1}
+          value={frameScale}
+          onChange={(event) => setFrameScale(Number(event.target.value))}
+          aria-label="Sensor frame display size"
+          style={{ width: '130px', accentColor: 'var(--accent-cyan)' }}
+        />
+        <span style={{ minWidth: '34px', textAlign: 'right' }}>{frameScale}%</span>
+      </div>
+
       {/* Canvas Area */}
       <div style={{
         flex: 1,
@@ -224,8 +251,10 @@ export const VideoPlayer2D: React.FC<VideoPlayer2DProps> = ({ packet }) => {
         <canvas
           ref={canvasRef}
           style={{
+            width: `${frameScale}%`,
             maxWidth: '100%',
             maxHeight: '100%',
+            height: 'auto',
             objectFit: 'contain',
             borderRadius: '4px',
             boxShadow: '0 0 30px rgba(0, 0, 0, 0.9), 0 0 1px 1px rgba(0, 210, 255, 0.2)'
