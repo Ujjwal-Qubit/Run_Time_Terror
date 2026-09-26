@@ -48,7 +48,9 @@ class View3DWidget(QWidget):
         # Orbit camera parameters
         self._cam_azimuth_deg = 35.0      # Orbit angle around vertical axis
         self._cam_elevation_deg = 25.0    # Orbit angle above ground plane
-        self._cam_distance = 600.0        # View distance
+        # Keep the complete normalized line-of-sight envelope in view, even
+        # when the tracked target moves to an extreme pan/tilt direction.
+        self._cam_distance = 1100.0       # View distance
         self._cam_target = np.array([0.0, 0.0, 150.0], dtype=np.float32)
 
         # Mouse interaction state
@@ -85,16 +87,22 @@ class View3DWidget(QWidget):
         tilt_rad = math.radians(state.tilt_angle_deg)
 
         # Target 3D position in terminal frame
-        # If ground truth or estimated centroid is available, calculate offset
-        if state.ground_truth_x is not None and state.ground_truth_y is not None:
-            # Map normalized image plane coordinates to angular offset
-            # 640x480 nominal center is (320, 240)
-            cx, cy = 320.0, 240.0
-            fov_rad = math.radians(state.camera_fov)
-            # Angular offset per pixel
-            px_to_rad = fov_rad / 640.0
-            dx_rad = (state.ground_truth_x - cx) * px_to_rad
-            dy_rad = (state.ground_truth_y - cy) * px_to_rad
+        # Use the actual tracker estimate to place the beacon on its observed
+        # line of sight. Ground truth is a visualization-only fallback while
+        # the tracker has not acquired a measurement.
+        target_x = state.estimated_centroid_x
+        target_y = state.estimated_centroid_y
+        if target_x is None or target_y is None:
+            target_x = state.ground_truth_x
+            target_y = state.ground_truth_y
+
+        if target_x is not None and target_y is not None:
+            width = max(1, int(state.camera_width))
+            height = max(1, int(state.camera_height))
+            fov_h = math.radians(state.camera_fov)
+            fov_v = math.radians(state.camera_fov_v or state.camera_fov * height / width)
+            dx_rad = (target_x - width / 2.0) * fov_h / width
+            dy_rad = (target_y - height / 2.0) * fov_v / height
             
             tot_pan = pan_rad + dx_rad
             tot_tilt = tilt_rad - dy_rad
@@ -117,7 +125,7 @@ class View3DWidget(QWidget):
         """Reset orbit view angles to default."""
         self._cam_azimuth_deg = 35.0
         self._cam_elevation_deg = 25.0
-        self._cam_distance = 600.0
+        self._cam_distance = 1100.0
         self._cam_target = np.array([0.0, 0.0, 150.0], dtype=np.float32)
         self._trajectory_history.clear()
         self.update()
@@ -313,7 +321,8 @@ class View3DWidget(QWidget):
 
         # Frustum corner half-widths at frustum_len
         half_w = frustum_len * math.tan(fov_rad / 2.0)
-        half_h = half_w * (480.0 / 640.0)
+        fov_v_deg = state.camera_fov_v or state.camera_fov * 480.0 / 640.0
+        half_h = frustum_len * math.tan(math.radians(fov_v_deg) / 2.0)
 
         # Local coordinate basis at aperture
         fwd = np.array([dir_x, dir_y, dir_z], dtype=np.float32)

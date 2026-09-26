@@ -1,0 +1,16 @@
+{
+  "feature_schema_version": "candidate-v1",
+  "feature_names": [
+    "peak_intensity_norm",
+    "mean_intensity_norm",
+    "local_contrast",
+    "area_norm",
+    "compactness",
+    "aspect_ratio",
+    "size_error_norm",
+    "distance_to_prediction_norm",
+    "innovation_norm",
+    "frame_border_distance_norm",
+    "candidate_detection_score"
+  ]
+}

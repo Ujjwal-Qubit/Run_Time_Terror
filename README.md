@@ -2,7 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![UI Framework](https://img.shields.io/badge/GUI-PySide6%20%2F%20Qt6-green.svg)](https://doc.qt.io/qtforpython/)
-[![Test Suite](https://img.shields.io/badge/tests-403%20passed%20%28100%25%29-brightgreen.svg)](https://pytest.org/)
+[![Test Suite](https://img.shields.io/badge/tests-444%20passed%20%2F%201%20skipped-brightgreen.svg)](https://pytest.org/)
 [![SIH Problem Statement](https://img.shields.io/badge/SIH%20%2726-PS%2026169%20%2F%20PS--4-orange.svg)](https://sih.gov.in/)
 [![Organization](https://img.shields.io/badge/Organization-ISRO%20%2F%20Dept%20of%20Space-blueviolet.svg)](https://www.isro.gov.in/)
 [![Architecture](https://img.shields.io/badge/Architecture-v1.2%20Frozen%20Baseline-success.svg)](docs/FRESH_ARCHITECTURE_BASELINE.md)
@@ -354,85 +354,85 @@ LumiTrack features a dark-themed UI built in **PySide6 (Qt6)**.
 
 ### Prerequisites
 - **Operating System:** Windows 10/11, Linux, or macOS.
-- **Python:** Python `3.10`, `3.11`, or `3.12` (Python `3.11` recommended).
-
-### Option A: Standalone Windows Executable (Zero-Install)
-LumiTrack is bundled as a standalone Windows executable requiring no Python environment:
-
-```powershell
-# Run the interactive GUI:
-.\dist\LumiTrack\LumiTrack.exe --gui
-
-# Or double-click the root batch script:
-.\run_lumitrack.bat
-```
-
-### Option B: Running from Source
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Ujjwal-Qubit/Run_Time_Error.git
-   cd Run_Time_Error
-   ```
-
-2. **Create and activate a virtual environment:**
-   ```powershell
-   # Windows PowerShell:
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-
-   # Linux / macOS:
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install --upgrade pip
-   pip install PySide6 numpy opencv-python pytest
-   ```
-
-4. **Validate system foundation:**
-   ```bash
-   python -m src.main --validate
-   ```
-
-5. **Launch the Graphical User Interface:**
-   ```bash
-   python -m src.main --gui
-   ```
+- **Python:** Python `3.10`, `3.11`, or `3.12` (Python `3.11`/`3.12` recommended).
+- **Node.js / Bun (Optional for Web Frontend dev):** Node.js `18+` or Bun `1.0+`.
 
 ---
 
-## 💻 Command Line Interface (CLI) Reference
+### Option 1: Modern Web Interface (Recommended) 🌐
 
-LumiTrack provides a unified CLI entry point via `python -m src.main` (or `LumiTrack.exe`).
+LumiTrack includes a high-performance **React + Vite + Three.js** aerospace web interface backed by a **FastAPI** REST and WebSocket streaming engine.
 
-### Complete Argument Reference
-
-| Flag | Type | Default | Description |
-|---|---|---|---|
-| `--gui` | Flag | `False` | Launches the interactive PySide6 graphical user interface. |
-| `--validate` | Flag | `False` | Executes foundation contracts and configuration integrity check. |
-| `--scenario <name>` | String | `None` | Loads a specific scenario JSON from the `scenarios/` directory. |
-| `--mp4 <path>` | String | `None` | Runs Benchmark 2 on an external MP4 video file with PTZ bypass. |
-| `--reference-csv <path>` | String | `None` | External evaluator reference CSV for BM2 ground-truth comparison. |
-| `--algorithm <name>` | String | `baseline_tracker` | Target tracking algorithm plugin under test. |
-| `--matrix <SUBSET>` | Choice | `None` | Executes a standard benchmark matrix subset (`SMOKE`, `CORE`, `DISTURBANCE`, `FULL`). |
-| `--ai-scenario "<prompt>"` | String | `None` | Interprets natural language prompt, generates scenario, and evaluates algorithm. |
-| `--eval-scenarios <dir>` | String | `None` | Batch evaluates all JSON scenarios in a directory. |
-| `--eval-mp4s <dir>` | String | `None` | Batch evaluates all MP4 video files in a directory. |
-| `--config <path>` | String | `None` | Path to a custom system JSON configuration file. |
-| `--output-dir <dir>` | String | `output` | Destination directory for reports, summaries, and telemetry CSVs. |
-| `--plugins-dir <dir>` | String | `src/plugins/algorithms` | Custom root directory for external algorithm plugins. |
-| `--seed <int>` | Integer | `42` | Deterministic random seed for simulation reproducibility. |
-| `--max-frames <int>` | Integer | `None` | Maximum frames to process per scenario. |
-
-### Practical CLI Examples
-
-#### 1. Execute Core Benchmark Matrix
+#### Step 1: Clone and Set Up Python Environment
 ```bash
-python -m src.main --matrix CORE --algorithm baseline_tracker --output-dir output
+git clone https://github.com/Ujjwal-Qubit/Run_Time_Terror.git
+cd Run_Time_Terror
+git checkout F1
+```
+
+```powershell
+# Create virtual environment:
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# Install requirements:
+pip install --upgrade pip
+pip install -r requirements.txt
+# OR manually:
+pip install PySide6 numpy opencv-python pytest fastapi uvicorn websockets pydantic
+```
+
+#### Step 2: Launch the Web Platform
+```powershell
+# One-Click Launcher (Windows):
+.\run_web.bat
+
+# OR via Python Module:
+python -m src.main --web --port 8000
+```
+Open your browser at **`http://localhost:8000`** to access the live 2D HUD Sensor View, 3D Three.js orbital geometry scene, telemetry bar, benchmark matrix runner, and AI scenario studio.
+
+#### (Optional) Frontend Development with Hot-Reloading:
+```bash
+# Terminal 1 (Backend API & WebSocket Server):
+python -m src.main --web --port 8000
+
+# Terminal 2 (Vite Frontend Dev Server):
+cd frontend
+bun install     # or: npm install
+bun dev         # or: npm run dev
+```
+Open **`http://localhost:5173`** or **`http://localhost:3000`**.
+
+---
+
+### Option 2: Desktop PySide6 GUI 🖥️
+
+```powershell
+# Launch Desktop GUI:
+.\run_lumitrack.bat
+
+# OR via Python Module:
+python -m src.main --gui
+```
+
+---
+
+### Option 3: Standalone Windows Executable (Zero-Install) 📦
+
+```powershell
+# Run the bundled standalone binary directly without installing Python:
+.\dist\LumiTrack\LumiTrack.exe --gui
+```
+
+---
+
+### Option 4: Full Test Suite & Validation ✅
+
+```powershell
+# Run the complete system integration, compliance, and AIML regression suite:
+pytest -v
+**Latest verified result:** `444 passed, 1 skipped`. The skip is an environment-dependent test; no test failures or collection errors remain.
 ```
 
 #### 2. Evaluate External Video with Reference Ground Truth (BM2)
@@ -592,6 +592,7 @@ Outputs detailed JSON metrics and Markdown reports to `output/robustness_campaig
 ```
 Run_Time_Error/
 ├── docs/                                  # Primary Engineering Documentation
+│   ├── AIML_TRAINING_RUNBOOK.md            # Dataset generation, model training & runtime setup
 │   ├── FRESH_ARCHITECTURE_BASELINE.md     # Architectural baseline & forensic audit
 │   ├── FINAL_ENGINEERING_REPORT.md        # Comprehensive phase-by-phase report
 │   ├── SIH_REQUIREMENT_TRACEABILITY_MATRIX.md # Full requirement compliance matrix
@@ -613,11 +614,13 @@ Run_Time_Error/
 │   ├── scenario_3_figure8.json            # Figure-8 trajectory scenario
 │   └── scenario_4_fog_gaussian.json       # Fog & Gaussian noise scenario
 ├── src/                                   # Source Code (19 Modules)
+│   ├── aiml/                              # Learned classifier, bounded-history predictor & model contracts
 │   ├── api/v1/                            # Frozen Public Plugin API (Contracts & Interfaces)
 │   ├── app/                               # Application Controller & PySide6 GUI
 │   │   └── gui/                           # 2D Viewport, 3D Orbital Widget, Panels
 │   ├── config/                            # Configuration & Scenario Managers
 │   ├── control/                           # Proportional-Deadband PTZ Controller
+│   ├── data/                              # Grouped synthetic dataset generation and schemas
 │   ├── evaluation/                        # Benchmark Harness, Matrix, AI Scenarios, Reporting
 │   ├── frame/                             # Internal Data Contracts & Enumerations
 │   ├── interfaces/                        # Internal Strategy Interfaces
@@ -627,11 +630,14 @@ Run_Time_Error/
 │   ├── simulation/                        # Scene, Target, Camera, Disturbance & Frame Providers
 │   ├── tests/                             # 403-Test Regression Suite (100% Pass)
 │   ├── tracker/                           # Baseline Detector, Centroid, Kalman & State Manager
+│   ├── training/                          # Offline classifier/predictor training and artifact evaluation
 │   └── main.py                            # Unified CLI & GUI Application Entry Point
 ├── dist/LumiTrack/                        # Packaged Standalone Executable
 ├── lumitrack.spec                         # PyInstaller Packaging Specification
 ├── run_lumitrack.bat                      # Windows One-Click Application Launcher
 ├── run_robustness_campaign.py             # Robustness Sweep Campaign Script
+├── datasets/                              # Versioned grouped training/validation/test datasets
+├── models/                                # Versioned candidate and temporal model packages
 ├── pytest.ini                             # Pytest Configuration
 ├── pyrefly.toml                           # Pyrefly Static Analysis Configuration
 └── README.md                              # Master Repository Documentation
@@ -647,6 +653,7 @@ Run_Time_Error/
 | **Final Engineering Report** | [docs/FINAL_ENGINEERING_REPORT.md](docs/FINAL_ENGINEERING_REPORT.md) | Architectural evolution, phase-by-phase implementation summary, and verification results. |
 | **Requirement Traceability Matrix** | [docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md](docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md) | 100% clause-by-clause mapping against SIH Problem Statement 26169. |
 | **Fresh Architecture Baseline** | [docs/FRESH_ARCHITECTURE_BASELINE.md](docs/FRESH_ARCHITECTURE_BASELINE.md) | Architectural audit, ground-truth firewall verification, and Graphify metrics. |
+| **AIML Training Runbook** | [docs/AIML_TRAINING_RUNBOOK.md](docs/AIML_TRAINING_RUNBOOK.md) | Reproducible grouped dataset generation, held-out model training, and optional classifier activation. |
 | **SIH Problem Statement** | [Imp. .md/PS.md](Imp.%20.md/PS.md) | Official SIH 2026 Problem Statement 4 (ISRO / Department of Space). |
 | **System Architecture Specification** | [Imp. .md/system_architecture.md](Imp.%20.md/system_architecture.md) | Detailed technical model of all 19 platform modules. |
 | **Graphify Analysis Report** | [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md) | Codebase knowledge graph topology, God nodes, and dependency clusters. |

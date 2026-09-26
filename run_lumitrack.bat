@@ -1,4 +1,5 @@
 @echo off
+pushd "%~dp0"
 REM LumiTrack — FSOC Virtual Camera Tracking System Launcher
 REM Prefers compiled standalone binary if present; falls back to python module.
 
@@ -17,3 +18,4 @@ IF EXIST "%EXE_PATH%" (
         python -m src.main %*
     )
 )
+popd

@@ -28,6 +28,7 @@ from src.config.config_manager import (
     JitterConfig,
     AtmosphericConfig,
     NoiseConfig,
+    LocalContrastConfig,
 )
 from src.config import defaults
 from src.frame.data_contracts import AtmosphericCondition
@@ -54,12 +55,14 @@ class DisturbanceEngine:
         jitter_cfg: JitterConfig | None = None,
         atmos_cfg: AtmosphericConfig | None = None,
         noise_cfg: NoiseConfig | None = None,
+        local_contrast_cfg: LocalContrastConfig | None = None,
         seed: int = defaults.SIM_DEFAULT_RANDOM_SEED,
     ) -> None:
         self._platform_cfg = platform_cfg or PlatformMotionConfig()
         self._jitter_cfg = jitter_cfg or JitterConfig()
         self._atmos_cfg = atmos_cfg or AtmosphericConfig()
         self._noise_cfg = noise_cfg or NoiseConfig()
+        self._local_contrast_cfg = local_contrast_cfg or LocalContrastConfig()
         self._seed = seed
 
         # Validate PS required limits
@@ -83,6 +86,9 @@ class DisturbanceEngine:
         self._rng_platform = np.random.RandomState(self._seed + 1)
         self._rng_jitter = np.random.RandomState(self._seed + 2)
         self._rng_noise = np.random.RandomState(self._seed + 3)
+        # Separate RNG for local contrast clutter — seed offset +10 so it
+        # does not interfere with existing streams even if seeds overlap.
+        self._rng_local_contrast = np.random.RandomState(self._seed + 10)
 
         self._time = 0.0
         self._last_platform_offset = (0.0, 0.0)
@@ -103,6 +109,7 @@ class DisturbanceEngine:
         self._rng_platform = np.random.RandomState(self._seed + 1)
         self._rng_jitter = np.random.RandomState(self._seed + 2)
         self._rng_noise = np.random.RandomState(self._seed + 3)
+        self._rng_local_contrast = np.random.RandomState(self._seed + 10)
         self._time = 0.0
         self._last_platform_offset = (0.0, 0.0)
         self._last_jitter_offset = (0.0, 0.0)
@@ -267,16 +274,24 @@ class DisturbanceEngine:
         """
         Stage 5: Poisson Noise (Signal-Dependent).
         Applied first among noise models because shot noise is inherent to arriving photons.
+
+        The `poisson_scale` multiplier in NoiseConfig controls the effective
+        exposure: scale < 1.0 simulates underexposure (more shot noise),
+        scale > 1.0 simulates overexposure (less shot noise).
         """
         if not self._noise_cfg.poisson_enabled:
             return frame
 
-        # Poisson distribution where lambda = pixel intensity
+        scale = float(getattr(self._noise_cfg, "poisson_scale", 1.0))
+        scale = max(0.01, scale)  # prevent division by zero
+
+        # Poisson distribution where lambda = pixel intensity * scale
         float_frame = frame.astype(np.float32)
-        # Avoid zero or negative lambda
-        lambda_val = np.maximum(float_frame, 0.0)
+        lambda_val = np.maximum(float_frame * scale, 0.0)
         noisy = self._rng_noise.poisson(lambda_val)
-        return np.clip(noisy, 0, 255).astype(np.uint8)
+        # Rescale back to original intensity range
+        noisy_scaled = noisy / scale
+        return np.clip(noisy_scaled, 0, 255).astype(np.uint8)
 
     # -----------------------------------------------------------------------
     # 6. Gaussian Noise (IPC, Additive Sensor Read Noise)
@@ -329,19 +344,78 @@ class DisturbanceEngine:
         return result
 
     # -----------------------------------------------------------------------
-    # Full Pixel Disturbance Pipeline (Stages 4 -> 5 -> 6 -> 7)
+    # 4.5. Local Contrast / Background Clutter (IPC, additive spatial field)
+    # -----------------------------------------------------------------------
+
+    def apply_local_contrast_clutter(
+        self,
+        frame: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Stage 4.5: Local Contrast / Background Clutter (Pixel).
+
+        Adds a spatially-varying background perturbation modeled as a sum of
+        Gaussian-profile blobs at random positions. This simulates local
+        illumination variation, surface reflections, or an optically cluttered
+        background field.
+
+        Applied AFTER atmospheric degradation and BEFORE Poisson noise so
+        that it represents background photon flux variation, not readout noise.
+
+        The RNG stream is seeded independently from the noise streams so
+        existing Gaussian/S&P results are not perturbed when this is enabled.
+
+        Does NOT reduce beacon signal — blobs are additive to the background.
+        """
+        cfg = self._local_contrast_cfg
+        if not cfg.enabled:
+            return frame
+
+        amplitude = float(np.clip(cfg.amplitude, 0.0, 255.0))
+        if amplitude <= 0.0:
+            return frame
+
+        spatial_scale = max(1.0, cfg.spatial_scale)
+        num_blobs = max(1, cfg.num_blobs)
+
+        h, w = frame.shape[:2]
+        clutter_field = np.zeros((h, w), dtype=np.float32)
+
+        for _ in range(num_blobs):
+            # Random blob center in the frame (IPC coordinates)
+            cx = float(self._rng_local_contrast.uniform(0, w))
+            cy = float(self._rng_local_contrast.uniform(0, h))
+            # Random per-blob amplitude drawn from [0.3*amp, amp]
+            blob_amp = float(
+                self._rng_local_contrast.uniform(0.3 * amplitude, amplitude)
+            )
+            # Generate Gaussian blob (vectorized, no Python loop over pixels)
+            y_idx, x_idx = np.mgrid[0:h, 0:w]
+            dist_sq = (x_idx - cx) ** 2 + (y_idx - cy) ** 2
+            blob = blob_amp * np.exp(-dist_sq / (2.0 * spatial_scale ** 2))
+            clutter_field += blob
+
+        # Add clutter to frame and clip
+        result = frame.astype(np.float32) + clutter_field
+        return np.clip(result, 0.0, 255.0).astype(np.uint8)
+
+    # -----------------------------------------------------------------------
+    # Full Pixel Disturbance Pipeline (Stages 4 → 4.5 → 5 → 6 → 7)
     # -----------------------------------------------------------------------
 
     def apply_pixel_pipeline(self, clean_viewport: np.ndarray) -> np.ndarray:
         """
         Execute pixel disturbances in verified physical sequence:
-          Stage 4: Atmospheric degradation
-          Stage 5: Poisson noise (signal-dependent)
-          Stage 6: Gaussian noise (additive)
-          Stage 7: Salt & pepper noise (impulse)
+          Stage 4:   Atmospheric degradation
+          Stage 4.5: Local contrast / background clutter (optional)
+          Stage 5:   Poisson noise (signal-dependent)
+          Stage 6:   Gaussian noise (additive)
+          Stage 7:   Salt & pepper noise (impulse)
         """
         # 4. Atmospheric degradation
         frame = self.apply_atmospheric_degradation(clean_viewport)
+        # 4.5. Local contrast clutter (no-op if disabled)
+        frame = self.apply_local_contrast_clutter(frame)
         # 5. Poisson noise
         frame = self.apply_poisson_noise(frame)
         # 6. Gaussian noise

@@ -3,7 +3,7 @@ import os
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QGroupBox, 
     QRadioButton, QButtonGroup, QFileDialog, QLineEdit, QLabel, QMessageBox,
-    QComboBox, QInputDialog
+    QComboBox, QInputDialog, QCheckBox
 )
 from src.app.app_controller import AppController
 
@@ -85,14 +85,21 @@ class ControlPanel(QWidget):
         self.algo_combo.currentTextChanged.connect(self._on_algorithm_selected)
         
         # Controls
-        ctrl_group = QGroupBox("Playback")
+        ctrl_group = QGroupBox("Playback & Camera Control")
         ctrl_layout = QVBoxLayout(ctrl_group)
+        ctrl_layout.setSpacing(6)
         
         self.btn_start = QPushButton("Start")
         self.btn_stop = QPushButton("Stop")
         self.btn_pause = QPushButton("Pause")
         self.btn_resume = QPushButton("Resume")
         self.btn_reset = QPushButton("Reset")
+
+        self.btn_start.setMinimumHeight(30)
+        self.btn_stop.setMinimumHeight(30)
+        self.btn_pause.setMinimumHeight(28)
+        self.btn_resume.setMinimumHeight(28)
+        self.btn_reset.setMinimumHeight(28)
         
         self.btn_start.clicked.connect(self._on_start)
         self.btn_stop.clicked.connect(self._on_stop)
@@ -113,6 +120,24 @@ class ControlPanel(QWidget):
         ctrl_layout.addLayout(pause_layout)
         
         ctrl_layout.addWidget(self.btn_reset)
+
+        # PTZ Tracking Actuation Toggle
+        self.chk_ptz_tracking = QCheckBox("PTZ Camera Tracking (Hold Center)")
+        self.chk_ptz_tracking.setChecked(True)
+        self.chk_ptz_tracking.setStyleSheet("font-weight: bold; color: #569cd6; margin-top: 4px;")
+        self.chk_ptz_tracking.setToolTip(
+            "Checked: Camera actively pans/tilts to keep the beacon centered. The beacon keeps its configured world speed; its apparent motion in the image reduces because the camera follows it.\n"
+            "Unchecked: Camera holds still so you can watch the beacon visibly traverse the view."
+        )
+        self.chk_ptz_tracking.toggled.connect(self._on_ptz_toggled)
+        ctrl_layout.addWidget(self.chk_ptz_tracking)
+        
+        self.btn_report = QPushButton("Generate Single-Run Report")
+        self.btn_report.setMinimumHeight(28)
+        self.btn_report.setToolTip("Generate single-run Markdown, JSON, and CSV report from current simulation run")
+        self.btn_report.clicked.connect(self._on_generate_report)
+        ctrl_layout.addWidget(self.btn_report)
+        
         self.layout.addWidget(ctrl_group)
         
         # Removed Benchmark Integration to EvaluationPanel
@@ -171,6 +196,10 @@ class ControlPanel(QWidget):
                 # Sync jitter
                 cp.dist_jitter_enable.setChecked(cfg.jitter.enabled)
                 cp.dist_jitter_amp.setValue(cfg.jitter.max_px_per_frame)
+                cp.aiml_classifier_enable.setChecked(cfg.aiml.candidate_classifier_enabled)
+                cp.aiml_model_dir.setText(cfg.aiml.candidate_model_dir)
+                cp.aiml_temporal_enable.setChecked(cfg.aiml.temporal_predictor_enabled)
+                cp.aiml_temporal_model_dir.setText(cfg.aiml.temporal_model_dir)
             
     def _browse_mp4(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Select MP4 Video", "", "MP4 files (*.mp4);;All files (*.*)")
@@ -235,6 +264,9 @@ class ControlPanel(QWidget):
         self.app.resume()
         self.btn_pause.setEnabled(True)
         self.btn_resume.setEnabled(False)
+
+    def _on_ptz_toggled(self, checked: bool):
+        self.app.set_ptz_enabled(checked)
         
     def _on_reset(self):
         self.app.reset()
@@ -299,4 +331,38 @@ class ControlPanel(QWidget):
         else:
             self.lbl_algo_status.setText("Error")
             self.lbl_algo_status.setStyleSheet("color: #cc0000; font-weight: bold; font-size: 11px;")
+
+    def _on_generate_report(self):
+        """Generate a single-run benchmark-style report for the current interactive run."""
+        try:
+            metrics_engine = getattr(self.app, "metrics_engine", None)
+            if not metrics_engine:
+                QMessageBox.warning(self, "No Metrics", "Metrics engine is not initialized. Start a run first.")
+                return
+            summary = metrics_engine.get_current_summary()
+            if not summary or summary.total_frames == 0:
+                QMessageBox.warning(
+                    self, 
+                    "No Run Data", 
+                    "No simulation frames have been processed yet. Start and run a simulation before generating a report."
+                )
+                return
+            bm = getattr(self.app, "benchmark_manager", None)
+            if not bm:
+                from src.evaluation.benchmark_manager import BenchmarkManager
+                bm = BenchmarkManager(self.app)
+            raw_scenario = self.scenario_path.text().strip()
+            scenario_name = os.path.splitext(os.path.basename(raw_scenario))[0] if raw_scenario else "interactive_run"
+            json_p, csv_p, md_p = bm.generate_single_run_report(summary, scenario_label=scenario_name)
+            QMessageBox.information(
+                self,
+                "Report Generated",
+                f"Single-run evaluation report generated successfully!\n\n"
+                f"Markdown: {md_p}\n"
+                f"JSON: {json_p}\n"
+                f"CSV: {csv_p}"
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "Report Error", f"Failed to generate single-run report: {e}")
+
 

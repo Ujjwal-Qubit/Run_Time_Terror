@@ -144,8 +144,8 @@ class BenchmarkScenarioDefinition:
                 "mp4_path": self.mp4_path,
             },
             "logging": {
-                "csv_enabled": True,
-                "json_summary_enabled": True,
+                "csv_enabled": False,
+                "json_summary_enabled": False,
                 "output_dir": "output",
             },
         }
@@ -495,6 +495,27 @@ class BenchmarkMatrixResults:
     passed_sih_spec: bool = False
     timestamp: float = field(default_factory=time.time)
 
+    @property
+    def batch_id(self) -> str:
+        """Backward-compatibility alias for suite_id."""
+        return self.suite_id
+
+    @property
+    def passed_fps_spec(self) -> bool:
+        """Backward-compatibility property checking if mean FPS meets minimum spec."""
+        return self.mean_algorithm_fps >= 20.0
+
+    @property
+    def mean_target_loss_rate_pct(self) -> float:
+        """Backward-compatibility property returning loss rate as percentage."""
+        return self.mean_target_loss_rate * 100.0
+
+    @property
+    def run_items(self) -> List[EvaluationRunResult]:
+        """Backward-compatibility alias for run_results."""
+        return self.run_results
+
+
     def to_dict(self) -> Dict[str, Any]:
         """Converts results into a JSON-serializable dictionary."""
         return {
@@ -679,5 +700,16 @@ class BenchmarkMatrixRunner:
             mean_target_loss_rate=mean_loss,
             passed_sih_spec=passed_sih,
         )
+
+        import shutil
+        # Cleanup temp scenarios if they exist
+        if os.path.exists(temp_scenario_dir):
+            shutil.rmtree(temp_scenario_dir, ignore_errors=True)
+            
+        # Cleanup empty scenario output directories
+        for s_def in scenarios:
+            s_dir = os.path.join(target_out_dir, s_def.scenario_id)
+            if os.path.exists(s_dir) and not os.listdir(s_dir):
+                os.rmdir(s_dir)
 
         return matrix_results

@@ -527,3 +527,121 @@ class ComprehensiveReportGenerator:
         ])
 
         return "\n".join(lines)
+
+    @classmethod
+    def generate_single_run_report(
+        cls,
+        summary,  # MetricsSummary
+        output_dir: str = "output/single_run",
+        report_title: Optional[str] = None,
+    ) -> Tuple[str, str, str]:
+        """
+        Generate a lightweight report from a single `MetricsSummary`.
+
+        Produces:
+          1. JSON summary (`single_run_report.json`)
+          2. CSV metrics (`single_run_metrics.csv`)
+          3. Markdown scorecard (`single_run_report.md`)
+
+        This adapts the existing MetricsSummary (from BenchmarkManager.run_benchmark())
+        into a standalone report without requiring a full matrix run.
+
+        Returns:
+            Tuple of (json_path, csv_path, md_path)
+        """
+        import csv as csv_module
+
+        os.makedirs(output_dir, exist_ok=True)
+        run_ts = time.strftime("%Y%m%d_%H%M%S", time.gmtime())
+        title = report_title or f"Single-Run Evaluation Report — {run_ts}"
+
+        # Robust extraction of metric fields from MetricsSummary
+        fps = getattr(summary, "mean_fps", 0.0) or getattr(summary, "fps_achieved", 0.0)
+        latency = getattr(summary, "mean_latency_ms", 0.0) or getattr(summary, "mean_tracking_latency_ms", 0.0)
+        rmse = getattr(summary, "rmse_centroid_rendered", 0.0) or getattr(summary, "rmse_centroid", 0.0)
+        
+        if hasattr(summary, "target_loss_rate_pct"):
+            loss_pct = summary.target_loss_rate_pct
+        else:
+            loss_pct = getattr(summary, "target_loss_rate", 0.0) * 100.0
+
+        if hasattr(summary, "lock_retention_pct"):
+            lock_pct = summary.lock_retention_pct
+        elif hasattr(summary, "lock_retention_all_pct") and summary.lock_retention_all_pct > 0:
+            lock_pct = summary.lock_retention_all_pct
+        else:
+            lock_pct = getattr(summary, "lock_retention_rate", 0.0) * 100.0
+
+        # --- Derived spec pass/fail ---
+        fps_ok = fps >= 20.0 and summary.total_frames > 0
+        rmse_ok = (rmse <= 10.0) if rmse > 0 else None
+        loss_ok = loss_pct < 5.0
+
+        # --- JSON ---
+        json_path = os.path.join(output_dir, f"single_run_report_{run_ts}.json")
+        report_data = {
+            "title": title,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+            "total_frames": summary.total_frames,
+            "mean_fps": round(fps, 2),
+            "mean_latency_ms": round(latency, 3),
+            "rmse_centroid": round(summary.rmse_centroid, 4) if getattr(summary, "rmse_centroid", 0.0) > 0 else None,
+            "rmse_centroid_rendered": round(rmse, 4),
+            "target_loss_rate_pct": round(loss_pct, 2),
+            "lock_retention_pct": round(lock_pct, 2),
+            "acquisition_time_s": round(summary.acquisition_time_s, 3) if getattr(summary, "acquisition_time_s", None) else None,
+            "passed_fps_spec": fps_ok,
+            "passed_rmse_spec": rmse_ok,
+            "passed_loss_rate_spec": loss_ok,
+        }
+        with open(json_path, "w", encoding="utf-8") as jf:
+            json.dump(report_data, jf, indent=2)
+
+        # --- CSV ---
+        csv_path = os.path.join(output_dir, f"single_run_metrics_{run_ts}.csv")
+        with open(csv_path, "w", newline="", encoding="utf-8") as cf:
+            writer = csv_module.writer(cf)
+            writer.writerow(["Metric", "Value", "Spec", "Status"])
+            writer.writerow(["Mean FPS", f"{fps:.1f}", ">= 20", "PASS" if fps_ok else "FAIL"])
+            writer.writerow(["Mean Latency (ms)", f"{latency:.2f}", "< 50", "INFO"])
+            if rmse > 0:
+                writer.writerow(["Centroid RMSE (rendered)", f"{rmse:.3f} px", "<= 10", "PASS" if rmse_ok else "FAIL"])
+            writer.writerow(["Target Loss Rate", f"{loss_pct:.2f}%", "< 5%", "PASS" if loss_ok else "FAIL"])
+            writer.writerow(["Lock Retention", f"{lock_pct:.1f}%", "> 95%", "INFO"])
+            writer.writerow(["Total Frames", str(summary.total_frames), "", "INFO"])
+
+        # --- Markdown ---
+        md_path = os.path.join(output_dir, f"single_run_report_{run_ts}.md")
+        verdict = "✅ PASSED" if (fps_ok and loss_ok) else "❌ FAILED"
+        md_lines = [
+            f"# {title}",
+            "",
+            f"**Generated:** {report_data['timestamp']}  ",
+            f"**Verdict:** {verdict}",
+            "",
+            "## Performance Metrics",
+            "",
+            "| Metric | Value | PS Spec | Status |",
+            "|--------|-------|---------|--------|",
+            f"| Mean Algorithm FPS | {fps:.1f} | ≥ 20 FPS | {'✅ PASS' if fps_ok else '❌ FAIL'} |",
+            f"| Mean Latency | {latency:.2f} ms | — | INFO |",
+        ]
+        if rmse > 0:
+            rmse_status = '✅ PASS' if rmse_ok else '❌ FAIL'
+            md_lines.append(f"| Centroid RMSE | {rmse:.3f} px | ≤ 10 px | {rmse_status} |")
+        else:
+            md_lines.append("| Centroid RMSE | N/A (no reference) | ≤ 10 px | N/A |")
+        md_lines += [
+            f"| Target Loss Rate | {loss_pct:.2f}% | < 5% | {'✅ PASS' if loss_ok else '❌ FAIL'} |",
+            f"| Lock Retention | {lock_pct:.1f}% | — | INFO |",
+            f"| Total Frames | {summary.total_frames} | — | INFO |",
+            "",
+            "---",
+            "",
+            "**Generated by SIH '26 LumiTrack Evaluation Platform (Single-Run Mode)**",
+        ]
+        with open(md_path, "w", encoding="utf-8") as mf:
+            mf.write("\n".join(md_lines))
+
+        logger.info(f"Single-run report generated: {md_path}")
+        return json_path, csv_path, md_path

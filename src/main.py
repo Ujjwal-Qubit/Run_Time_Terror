@@ -37,6 +37,14 @@ def parse_args(args=None) -> argparse.Namespace:
         help="Launch the standalone GUI for evaluator demonstration",
     )
     parser.add_argument(
+        "--web", action="store_true",
+        help="Launch the modern Web API server and frontend interface",
+    )
+    parser.add_argument(
+        "--port", type=int, default=8000,
+        help="Port for Web API server (default: 8000)",
+    )
+    parser.add_argument(
         "--validate", action="store_true",
         help="Validate foundation (config, contracts, interfaces) and exit",
     )
@@ -488,7 +496,11 @@ def main(argv=None) -> None:
         print(f"  Mean Centroid Error: {summary.mean_centroid_error:.3f} px, Max: {summary.max_centroid_error:.3f} px")
         sys.exit(0)
 
-    if args.gui:
+    if args.web:
+        import uvicorn
+        print(f"\n[LumiTrack Web] Starting Modern Web API & Frontend on http://127.0.0.1:{args.port}")
+        uvicorn.run("src.api.server:app", host="127.0.0.1", port=args.port, reload=False)
+    elif args.gui:
         from src.app.gui import launch_gui
         launch_gui(app)
     else:

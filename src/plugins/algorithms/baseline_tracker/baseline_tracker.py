@@ -17,6 +17,7 @@ FIREWALL ENFORCEMENT:
 
 from dataclasses import replace
 import logging
+import math
 from typing import Any, Dict, Optional, Tuple
 
 from src.api.v1.algorithm import ITrackingAlgorithm
@@ -34,6 +35,10 @@ from src.frame.data_contracts import (
     ROI,
     TrackingState,
 )
+from src.aiml.candidate_classifier import LearnedCandidateClassifier
+from src.aiml.contracts import PredictionRequest, TrackObservation
+from src.aiml.feature_extractor import CandidateFeatureExtractor
+from src.aiml.temporal_predictor import ResidualCorrectionPredictor
 from src.tracker.ai_classifier import AIClassifier
 from src.tracker.candidate_identifier import CandidateIdentifier
 from src.tracker.centroid_estimator import IntensityWeightedCentroidEstimator
@@ -70,6 +75,13 @@ class BaselineTracker(ITrackingAlgorithm):
         self._state_manager: Optional[TrackingStateManager] = None
 
         self._use_ai_classifier: bool = True
+        self._aiml_candidate_enabled: bool = False
+        self._candidate_model_dir: str = "models/candidate_classifier/v001"
+        self._learned_classifier: Optional[LearnedCandidateClassifier] = None
+        self._feature_extractor: Optional[CandidateFeatureExtractor] = None
+        self._aiml_temporal_enabled: bool = False
+        self._temporal_model_dir: str = "models/temporal_predictor/v001"
+        self._temporal_predictor: Optional[ResidualCorrectionPredictor] = None
         self._is_initialized: bool = False
 
         # Build pipeline with initial defaults
@@ -91,6 +103,16 @@ class BaselineTracker(ITrackingAlgorithm):
 
         self._tracker = ConstantVelocityKalmanTracker(self._tracker_cfg)
         self._state_manager = TrackingStateManager(self._state_cfg)
+        self._learned_classifier = None
+        self._feature_extractor = None
+        self._temporal_predictor = None
+        if self._aiml_candidate_enabled:
+            self._learned_classifier = LearnedCandidateClassifier(self._candidate_model_dir)
+            self._feature_extractor = CandidateFeatureExtractor(
+                expected_target_size=self._identifier_cfg.expected_beacon_size
+            )
+        if self._aiml_temporal_enabled:
+            self._temporal_predictor = ResidualCorrectionPredictor(self._temporal_model_dir)
         self._is_initialized = True
 
     @property
@@ -132,6 +154,25 @@ class BaselineTracker(ITrackingAlgorithm):
             # Check for AI Classifier override
             if "use_ai_classifier" in config:
                 self._use_ai_classifier = bool(config["use_ai_classifier"])
+
+            aiml_overrides = config.get("aiml")
+            if isinstance(aiml_overrides, dict):
+                self._aiml_candidate_enabled = bool(
+                    aiml_overrides.get(
+                        "candidate_classifier_enabled", self._aiml_candidate_enabled
+                    )
+                )
+                self._candidate_model_dir = str(
+                    aiml_overrides.get("candidate_model_dir", self._candidate_model_dir)
+                )
+                self._aiml_temporal_enabled = bool(
+                    aiml_overrides.get(
+                        "temporal_predictor_enabled", self._aiml_temporal_enabled
+                    )
+                )
+                self._temporal_model_dir = str(
+                    aiml_overrides.get("temporal_model_dir", self._temporal_model_dir)
+                )
 
             # Adapt sub-dictionaries into dataclasses using field matching
             def _apply_overrides(cfg_obj: Any, overrides: Optional[Dict[str, Any]]) -> Any:
@@ -194,9 +235,50 @@ class BaselineTracker(ITrackingAlgorithm):
 
         # 4. Stage 2: Candidate Identification
         pred_pos = self._tracker.predict() if self._tracker.is_initialized else None
+        if (
+            pred_pos is not None
+            and self._temporal_predictor is not None
+            and self._temporal_predictor.is_loaded
+        ):
+            history = self._temporal_predictor.history.get_history()
+            prediction = self._temporal_predictor.predict(PredictionRequest(
+                frame_number=frame_packet.frame_number,
+                timestamp=frame_packet.timestamp,
+                history=history,
+                frame_width=width,
+                frame_height=height,
+                horizon_seconds=1.0 / 30.0,
+            ))
+            if (
+                not prediction.used_fallback
+                and math.isfinite(prediction.predicted_x)
+                and math.isfinite(prediction.predicted_y)
+            ):
+                pred_pos = (prediction.predicted_x, prediction.predicted_y)
         curr_state = self._state_manager.current_state
+        candidates = detection_res.candidates
+        if self._learned_classifier is not None and self._feature_extractor is not None and candidates:
+            features = self._feature_extractor.extract_batch(
+                internal_packet,
+                candidates,
+                predicted_position=pred_pos,
+                previous_position=pred_pos,
+                current_state=curr_state,
+            )
+            classifications = self._learned_classifier.classify(features)
+            scores_by_id = {
+                classification.candidate_id: classification.beacon_probability
+                for classification in classifications
+            }
+            candidates = [
+                replace(
+                    candidate,
+                    detection_score=scores_by_id.get(candidate.candidate_id, candidate.detection_score),
+                )
+                for candidate in candidates
+            ]
         ident_res = self._identifier.identify(
-            detection_res.candidates,
+            candidates,
             predicted_position=pred_pos,
             current_state=curr_state,
             frame_number=frame_packet.frame_number,
@@ -224,6 +306,18 @@ class BaselineTracker(ITrackingAlgorithm):
             track_res,
             timestamp=frame_packet.timestamp,
         )
+
+        if self._temporal_predictor is not None:
+            self._temporal_predictor.update(TrackObservation(
+                timestamp=frame_packet.timestamp,
+                x=track_res.estimated_x if track_res is not None else None,
+                y=track_res.estimated_y if track_res is not None else None,
+                measurement_valid=bool(track_res and track_res.measurement_valid),
+                measurement_accepted=bool(track_res and track_res.measurement_accepted),
+                confidence=track_res.confidence if track_res is not None else 0.0,
+                state=state_res.state.name,
+                processing_latency_ms=track_res.processing_time_ms if track_res is not None else 0.0,
+            ))
 
         # 8. Output Mapping to Public Contract
         # Subjective tracking belief: True iff confirmed locked in TRACKING state
@@ -263,3 +357,5 @@ class BaselineTracker(ITrackingAlgorithm):
             self._tracker.reset()
         if self._state_manager is not None:
             self._state_manager.reset()
+        if self._temporal_predictor is not None:
+            self._temporal_predictor.reset()
