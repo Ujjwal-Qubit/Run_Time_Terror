@@ -28,9 +28,134 @@ from src.frame.data_contracts import PTZCommand, TrackResult, TrackingState
 from src.interfaces.strategy_interfaces import IPTZController
 
 
+class ExpandingSearchPattern:
+    """
+    Kinematically constrained Expanding Square Search (ESS) generator.
+    Standard aeronautical / maritime search pattern adapted for 2-DOF optical gimbal.
+    
+    Generates rate-limited pan/tilt angular velocity commands (<= max_speed)
+    expanding outwards from the current camera orientation in concentric squares
+    with 25% track overlap (step_size = 0.75 * FOV_minor) to guarantee zero blind spots.
+    """
+
+    def __init__(
+        self,
+        step_deg: float = 2.25,
+        max_pan_speed: float = 10.0,
+        max_tilt_speed: float = 10.0,
+        max_expansion_deg: float = 12.5,
+    ) -> None:
+        self.step_deg = max(0.1, float(step_deg))
+        self.max_pan_speed = max(0.1, float(max_pan_speed))
+        self.max_tilt_speed = max(0.1, float(max_tilt_speed))
+        self.max_expansion_deg = max(1.0, float(max_expansion_deg))
+        self.reset()
+
+    def reset(self) -> None:
+        """Reset search state to origin."""
+        self._leg_index: int = 0
+        self._leg_progress_deg: float = 0.0
+        self._total_search_time: float = 0.0
+
+    @property
+    def leg_index(self) -> int:
+        return self._leg_index
+
+    @property
+    def total_search_time(self) -> float:
+        return self._total_search_time
+
+    def compute_step(self, dt: float) -> Tuple[float, float, float, float]:
+        """
+        Compute rate-limited pan/tilt velocities and displacements for the current timestep.
+
+        Returns:
+            Tuple of (delta_pan_deg, delta_tilt_deg, pan_velocity_deg_s, tilt_velocity_deg_s)
+        """
+        eff_dt = max(0.0, float(dt))
+        if eff_dt == 0.0:
+            return (0.0, 0.0, 0.0, 0.0)
+
+        # Leg length in expanding square: L_i = (i // 2 + 1) * step_deg
+        multiplier = (self._leg_index // 2) + 1
+        leg_length = multiplier * self.step_deg
+
+        # If expansion exceeds maximum boundary, cycle back to initial step
+        if leg_length > self.max_expansion_deg:
+            self._leg_index = 0
+            self._leg_progress_deg = 0.0
+            leg_length = self.step_deg
+
+        # Direction pattern: 0: +Pan, 1: +Tilt, 2: -Pan, 3: -Tilt
+        direction_mode = self._leg_index % 4
+
+        if direction_mode == 0:
+            pan_vel = self.max_pan_speed
+            tilt_vel = 0.0
+            dist_remaining = leg_length - self._leg_progress_deg
+            step_dist = pan_vel * eff_dt
+            if step_dist >= dist_remaining:
+                actual_dist = dist_remaining
+                self._leg_index += 1
+                self._leg_progress_deg = 0.0
+            else:
+                actual_dist = step_dist
+                self._leg_progress_deg += step_dist
+            d_pan = actual_dist
+            d_tilt = 0.0
+
+        elif direction_mode == 1:
+            pan_vel = 0.0
+            tilt_vel = self.max_tilt_speed
+            dist_remaining = leg_length - self._leg_progress_deg
+            step_dist = tilt_vel * eff_dt
+            if step_dist >= dist_remaining:
+                actual_dist = dist_remaining
+                self._leg_index += 1
+                self._leg_progress_deg = 0.0
+            else:
+                actual_dist = step_dist
+                self._leg_progress_deg += step_dist
+            d_pan = 0.0
+            d_tilt = actual_dist
+
+        elif direction_mode == 2:
+            pan_vel = -self.max_pan_speed
+            tilt_vel = 0.0
+            dist_remaining = leg_length - self._leg_progress_deg
+            step_dist = abs(pan_vel) * eff_dt
+            if step_dist >= dist_remaining:
+                actual_dist = dist_remaining
+                self._leg_index += 1
+                self._leg_progress_deg = 0.0
+            else:
+                actual_dist = step_dist
+                self._leg_progress_deg += step_dist
+            d_pan = -actual_dist
+            d_tilt = 0.0
+
+        else: # direction_mode == 3
+            pan_vel = 0.0
+            tilt_vel = -self.max_tilt_speed
+            dist_remaining = leg_length - self._leg_progress_deg
+            step_dist = abs(tilt_vel) * eff_dt
+            if step_dist >= dist_remaining:
+                actual_dist = dist_remaining
+                self._leg_index += 1
+                self._leg_progress_deg = 0.0
+            else:
+                actual_dist = step_dist
+                self._leg_progress_deg += step_dist
+            d_pan = 0.0
+            d_tilt = -actual_dist
+
+        self._total_search_time += eff_dt
+        return (d_pan, d_tilt, pan_vel, tilt_vel)
+
+
 class ProportionalDeadbandPTZController(IPTZController):
     """
-    P0 Baseline PTZ Controller.
+    P0 Baseline & Active Search PTZ Controller.
 
     Control Pipeline:
       1. Image-plane error relative to optical axis center:
@@ -40,15 +165,16 @@ class ProportionalDeadbandPTZController(IPTZController):
          Delta_y' = 0 if |Delta_y| <= deadband else Delta_y
       3. Angular error conversion via ProjectionModel:
          theta_pan, theta_tilt = projection_model.image_to_angles(x_center + Delta_x', y_center + Delta_y')
-      4. Proportional control law:
-         omega_pan_req = K_p * theta_pan
-         omega_tilt_req = K_p * theta_tilt
+      4. Proportional-Integral control law with back-calculation anti-windup:
+         omega_pan_req = K_p * theta_pan + K_i * I_pan
+         omega_tilt_req = K_p * theta_tilt + K_i * I_tilt
       5. Hard rate limiting (PS Rows 13-14):
          omega_pan_lim = clamp(omega_pan_req, -max_pan_speed, max_pan_speed)
          omega_tilt_lim = clamp(omega_tilt_req, -max_tilt_speed, max_tilt_speed)
       6. Timestep integration to angular displacement:
          Delta_pan = omega_pan_lim * dt
          Delta_tilt = omega_tilt_lim * dt
+      7. Autonomous active expanding search during SEARCHING state when enabled.
     """
 
     def __init__(
@@ -65,8 +191,18 @@ class ProportionalDeadbandPTZController(IPTZController):
             camera_config: Camera geometry parameters (resolution, FOV).
             projection_model: Optional authoritative ProjectionModel instance.
         """
-        self._ptz_cfg = ptz_config or PTZConfig()
-        self._camera_cfg = camera_config or CameraConfig()
+        if hasattr(ptz_config, "ptz"):
+            self._ptz_cfg = ptz_config.ptz
+        else:
+            self._ptz_cfg = ptz_config or PTZConfig()
+
+        if hasattr(camera_config, "camera"):
+            self._camera_cfg = camera_config.camera
+        elif hasattr(ptz_config, "camera") and camera_config is None:
+            self._camera_cfg = ptz_config.camera
+        else:
+            self._camera_cfg = camera_config or CameraConfig()
+
         self._projection_model = projection_model
 
         # Telemetry and diagnostics counters
@@ -78,6 +214,15 @@ class ProportionalDeadbandPTZController(IPTZController):
         # Integral control accumulators for steady-state lag elimination
         self._integral_pan: float = 0.0
         self._integral_tilt: float = 0.0
+
+        # Step increment for search: 0.75 * min(fov_h, fov_v)
+        fov_minor = min(self._camera_cfg.fov_h_deg, self._camera_cfg.fov_v_deg)
+        step_deg = 0.75 * fov_minor
+        self._search_pattern = ExpandingSearchPattern(
+            step_deg=step_deg,
+            max_pan_speed=float(self._ptz_cfg.max_pan_speed_deg_s),
+            max_tilt_speed=float(self._ptz_cfg.max_tilt_speed_deg_s),
+        )
 
     @property
     def config(self) -> PTZConfig:
@@ -99,6 +244,10 @@ class ProportionalDeadbandPTZController(IPTZController):
     def last_command(self) -> Optional[PTZCommand]:
         return self._last_command
 
+    @property
+    def search_pattern(self) -> ExpandingSearchPattern:
+        return self._search_pattern
+
     def get_name(self) -> str:
         return "ProportionalDeadbandPTZController"
 
@@ -110,6 +259,7 @@ class ProportionalDeadbandPTZController(IPTZController):
         self._last_command = None
         self._integral_pan = 0.0
         self._integral_tilt = 0.0
+        self._search_pattern.reset()
 
     def _convert_pixels_to_angles(
         self,
@@ -178,14 +328,50 @@ class ProportionalDeadbandPTZController(IPTZController):
             )
 
         # -------------------------------------------------------------------
-        # 1. State-Dependent Gating (Zero Gain Scheduling)
+        # 1. State-Dependent Gating & Active Autonomous Search
         # -------------------------------------------------------------------
-        # SEARCHING, ACQUIRING, and LOST command zero actuation.
-        if tracking_state in (
-            TrackingState.SEARCHING,
-            TrackingState.ACQUIRING,
-            TrackingState.LOST,
-        ):
+        eff_dt = max(0.0, float(dt))
+
+        if tracking_state == TrackingState.SEARCHING:
+            self._integral_pan = 0.0
+            self._integral_tilt = 0.0
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+            search_enabled = getattr(self._ptz_cfg, "search_scan_enabled", False)
+            if search_enabled:
+                d_pan, d_tilt, pan_vel, tilt_vel = self._search_pattern.compute_step(eff_dt)
+                self._total_commands += 1
+                cmd = PTZCommand(
+                    delta_pan_deg=d_pan,
+                    delta_tilt_deg=d_tilt,
+                    pan_velocity_deg_s=pan_vel,
+                    tilt_velocity_deg_s=tilt_vel,
+                    valid=True,
+                    timestamp=timestamp,
+                    frame_number=frame_num,
+                    processing_time_ms=elapsed_ms,
+                )
+                self._last_command = cmd
+                return cmd
+            else:
+                cmd = PTZCommand(
+                    delta_pan_deg=0.0,
+                    delta_tilt_deg=0.0,
+                    pan_velocity_deg_s=0.0,
+                    tilt_velocity_deg_s=0.0,
+                    valid=False,
+                    timestamp=timestamp,
+                    frame_number=frame_num,
+                    processing_time_ms=elapsed_ms,
+                )
+                self._total_commands += 1
+                self._last_command = cmd
+                return cmd
+
+        # Not searching: reset search pattern generator
+        self._search_pattern.reset()
+
+        if tracking_state in (TrackingState.ACQUIRING, TrackingState.LOST):
             self._integral_pan = 0.0
             self._integral_tilt = 0.0
             elapsed_ms = (time.perf_counter() - t0) * 1000.0
@@ -308,18 +494,35 @@ class ProportionalDeadbandPTZController(IPTZController):
         )
 
         # -------------------------------------------------------------------
-        # 6. Proportional-Integral (PI) Control Law
+        # 6. Proportional-Integral (PI) Control Law with Back-Calculation Anti-Windup
         # -------------------------------------------------------------------
         eff_dt = max(0.0, float(dt))
         kp = float(self._ptz_cfg.proportional_gain)
         ki = float(getattr(self._ptz_cfg, "integral_gain", 0.0))
+        max_pan = float(self._ptz_cfg.max_pan_speed_deg_s)
+        max_tilt = float(self._ptz_cfg.max_tilt_speed_deg_s)
+        max_int = 1.0  # Anti-windup ceiling (degrees)
 
         if ki > 0.0:
             if not in_deadband:
                 self._integral_pan += theta_pan * eff_dt
                 self._integral_tilt += theta_tilt * eff_dt
-                # Anti-windup clamping (1.0 degree max accumulated error)
-                max_int = 1.0
+
+                # Back-calculation anti-windup: if tentative request exceeds limits,
+                # shed excess integration to prevent runaway accumulation
+                omega_pan_tentative = kp * theta_pan + ki * self._integral_pan
+                omega_tilt_tentative = kp * theta_tilt + ki * self._integral_tilt
+
+                if abs(omega_pan_tentative) > max_pan and kp > 0.0:
+                    omega_pan_sat = max(-max_pan, min(max_pan, omega_pan_tentative))
+                    excess_pan = omega_pan_tentative - omega_pan_sat
+                    self._integral_pan -= (excess_pan / kp) * eff_dt
+
+                if abs(omega_tilt_tentative) > max_tilt and kp > 0.0:
+                    omega_tilt_sat = max(-max_tilt, min(max_tilt, omega_tilt_tentative))
+                    excess_tilt = omega_tilt_tentative - omega_tilt_sat
+                    self._integral_tilt -= (excess_tilt / kp) * eff_dt
+
                 self._integral_pan = max(-max_int, min(max_int, self._integral_pan))
                 self._integral_tilt = max(-max_int, min(max_int, self._integral_tilt))
             else:

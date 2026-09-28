@@ -156,20 +156,20 @@ Discriminates compact, high-contrast beacons from irregular clutter streaks with
 
 ### 4.1 Benchmark 1 (BM1) Closed-Loop Production Batch Results
 Evaluated over all 4 standardized production scenarios (3,600 frames total) via standalone executable `LumiTrack.exe`:
-- **Processing Frame Rate:** 75.0 FPS (PS Requirement: $\ge 20.0$ FPS) -> **PASS**
-- **Target Acquisition Time:** 0.07 s (PS Requirement: $\le 2.00$ s) -> **PASS**
+- **Processing Frame Rate:** Sustained loop rate: 62.7 FPS (PS Requirement: $\ge 20.0$ FPS) -> **PASS** (Standalone algorithm: 758.1 FPS)
+- **Target Acquisition Time:** 0.07 s nominal in-FOV; operational uncertainty zone ($R \le 460\text{ px}$) $\le 1.73\text{ s}$ -> **PASS**; extreme-corner blind search requires $2.27\text{--}5.47\text{ s}$ due to $10^\circ/\text{s}$ PTZ rate limit -> **PARTIAL / BOUNDED COMPLIANCE**
 - **Mean Tracking Alignment Error:** 3.54 px (PS Requirement: $\le 10.0$ px) -> **PASS**
-- **Target Loss Rate:** 0.00% (PS Requirement: $< 5.0\%$) -> **PASS**
-- **Ground Truth Centroid RMSE:** 0.028 px
-- **Mean End-to-End Latency:** 4.48 ms (P95: 8.06 ms)
+- **Target Loss Rate:** 0.00% post-acquisition (PS Requirement: $< 5.0\%$) -> **PASS**
+- **Ground Truth Centroid RMSE:** 0.028 px rendered (0.734 px continuous projected)
+- **Mean End-to-End Latency:** 15.95 ms (P95: 17.90 ms)
 
 ### 4.2 Benchmark 2 (BM2) Evaluator Video & Reference Comparator Results
 Evaluated on synthetic MP4 video with external evaluator reference CSV (`frame,true_x,true_y`):
-- **Processing Speed:** 455.9 FPS (Batch) / 272.6 FPS (Single) -> **PASS**
-- **Centroid RMSE vs. Evaluator Reference:** 0.278 px (Sub-pixel accuracy) -> **PASS**
+- **Processing Speed:** 898.2 FPS (Standalone Core) / 62.7 FPS (Full Loop) -> **PASS**
+- **Centroid RMSE vs. Evaluator Reference:** 0.393 px (Sub-pixel accuracy) -> **PASS**
 - **Mean Centroid Error:** 0.077 px (Max: 1.297 px)
-- **Reference Frame Coverage:** 100.0% (60/60 frames matched)
-- **Ground Truth Firewall:** Verified 100% isolation; simulation models `None`, PTZ actuation bypassed.
+- **Reference Frame Coverage:** 100.0% post-acquisition (48/48 frames matched)
+- **Ground Truth Firewall:** Verified 100% isolation via static AST analysis and dynamic adversarial memory poisoning ($0.0\text{ px}$ diff).
 
 ### 4.3 Default Out-of-the-Box Configuration (Zero Scenario JSON)
 Evaluated with system defaults ($K_p = 8.0, K_i = 2.0, \text{deadband} = 1.0\text{ px}$):
@@ -178,13 +178,20 @@ Evaluated with system defaults ($K_p = 8.0, K_i = 2.0, \text{deadband} = 1.0\tex
 - **Figure-8 Motion:** 6.39 px tracking error, 0.00% loss -> **PASS**
 - **Random Walk Motion:** 6.96 px tracking error, 0.00% loss -> **PASS**
 
-### 4.4 Comprehensive 24-Test Robustness Campaign
+### 4.4 Comprehensive Robustness & Boundary Evaluation
 Executed across 6 experimental dimensions (Target Size, Motion Pattern, Sensor Noise, Atmosphere, Disturbances, Progressive Stress):
-- **Tracking Error Compliance ($\le 10.0$ px):** 24/24 runs (100.0%) -> **PASS**
-- **Frame Rate Compliance ($\ge 20.0$ FPS):** 24/24 runs (100.0%, range: 21.8 - 439.4 FPS) -> **PASS**
-- **Acquisition Time Compliance ($\le 2.0$ s):** 24/24 runs (100.0%, 0.067 s nominal) -> **PASS**
-- **Target Loss Rate ($< 5.0\%$):** 24/24 runs (0.00% loss across all tests) -> **PASS**
+- **Tracking Error Compliance ($\le 10.0$ px):** 100.0% compliant across matrix -> **PASS**
+- **Frame Rate Compliance ($\ge 20.0$ FPS):** 100.0% compliant (sustained 62.7 FPS loop, 758.1 FPS algorithm) -> **PASS**
+- **Acquisition Time Compliance ($\le 2.0$ s):** 100.0% compliant in operational uncertainty envelope ($R \le 460\text{ px}$); bounded physical limit for extreme corners -> **PARTIAL**
+- **Target Loss Rate ($< 5.0\%$):** 0.00% post-acquisition loss under nominal and boundary jitter/drift -> **PASS**
+- **Gaussian Noise Boundary:** Robust tracking verified for $\sigma \le 16.0$; degradation at $\sigma \approx 18.0$; breakdown at $\sigma = 20.0$.
 
 ### 4.5 Automated Regression Test Suite
-- **Total Tests:** 255 collected
-- **Results:** 255 passed, 0 failed, 0 errors, 0 skipped (100.0% pass rate in 10.64s)
+- **Total Tests:** 464 collected
+- **Results:** 464 passed, 0 failed, 0 errors, 0 skipped (100.0% pass rate in 18.64s)
+
+### 4.6 Official Requirement Reconciliation & Compliance Summary
+- **Official SIH PS 26169 Specification Table (25 Table Rows):** 24 of 25 fully satisfied (PASS); 1 bounded/partially satisfied (PARTIAL: Row 16 Acquisition Time).
+- **Official SIH Deliverables (5 Deliverables):** 5 of 5 complete (PASS) (Standalone Windows Application `.exe`, Modular Source Code, Technical Documentation, User/Evaluator Manual, Performance Logs).
+- **Official Expected Solution Requirements (8 Functional Requirements):** 8 of 8 verified (PASS) (FR1–FR8).
+- **Internal System Engineering Specifications (28 Requirements, R01–R28):** 27 of 28 fully satisfied (PASS); 1 bounded/partially satisfied (PARTIAL: R16). Zero runtime ground-truth leakage verified.

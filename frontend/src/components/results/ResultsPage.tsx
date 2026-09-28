@@ -102,12 +102,75 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({ latestResult }) => {
 
   const totalRuns: number | null = summary?.total_runs ?? null;
   const successfulRuns: number | null = summary?.successful_runs ?? null;
-  const failedRuns: number | null = summary?.failed_runs ?? null;
-
-  // Acquisition time from report if available
+  const failedRuns: number | null =
+    totalRuns !== null && successfulRuns !== null ? Math.max(0, totalRuns - successfulRuns) : null;
+  // Acquisition and re-acquisition time from report if available
   const meanAcqTime: number | null = summary?.mean_acquisition_time_s ?? null;
+  const meanReacqTime: number | null =
+    summary?.mean_reacquisition_time_s ??
+    reportData?.failure_analysis?.mean_reacquisition_time_s ??
+    null;
 
   const hasAnyResult = isPassed !== null || meanFps !== null;
+
+  if (!loading && !latestResult && !reportData) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        padding: '32px',
+        textAlign: 'center',
+      }}>
+        <div className="glass-panel" style={{
+          padding: '40px 48px',
+          maxWidth: '540px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%)',
+          border: '1px solid rgba(56, 189, 248, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: 'rgba(56, 189, 248, 0.1)',
+            border: '1px solid rgba(56, 189, 248, 0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#38bdf8',
+          }}>
+            <Database className="w-8 h-8" />
+          </div>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#f0f4fc', marginBottom: '8px' }}>
+              No Benchmark Data Available
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+              No evaluation results were found in memory or the <code>output/</code> directory. Run an automated benchmark suite or AI scenario from the Evaluator workspace to generate compliance scorecards.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className="btn btn-secondary"
+              aria-label="Refresh results list"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <span>Check for Reports</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Compliance gates — only populated when data is real
@@ -133,6 +196,13 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({ latestResult }) => {
       measured: meanAcqTime !== null ? `${meanAcqTime.toFixed(3)} s` : 'N/A',
       passed: meanAcqTime !== null ? meanAcqTime <= 2.0 : null,
       note: meanAcqTime === null ? 'Not measured in this run' : 'Initial lock acquisition',
+    },
+    {
+      metric: 'Re-acquisition Time',
+      sihLimit: '≤ 1.0 s',
+      measured: meanReacqTime !== null ? `${meanReacqTime.toFixed(3)} s` : 'N/A',
+      passed: meanReacqTime !== null ? meanReacqTime <= 1.0 : null,
+      note: meanReacqTime !== null ? 'Measured from target loss/recovery' : 'No loss episodes recorded',
     },
     {
       metric: 'Target Loss Rate',

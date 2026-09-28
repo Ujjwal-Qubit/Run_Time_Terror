@@ -63,6 +63,7 @@ class TargetConfig:
     initial_x: Optional[float] = None   # if initial_position != "random"
     initial_y: Optional[float] = None
     speed: float = defaults.TARGET_DEFAULT_SPEED
+    spawn_range: Optional[float] = 150.0 # None = unconstrained full scene; float = center +/- spawn_range
 
 
 @dataclass
@@ -97,6 +98,7 @@ class PTZConfig:
     proportional_gain: float = defaults.PTZ_DEFAULT_PROPORTIONAL_GAIN
     deadband_px: float = defaults.PTZ_DEFAULT_DEADBAND_PX
     integral_gain: float = defaults.PTZ_DEFAULT_INTEGRAL_GAIN
+    search_scan_enabled: bool = False
 
 
 @dataclass
@@ -285,7 +287,7 @@ class SystemConfig:
     camera: CameraConfig = field(default_factory=CameraConfig)
     target: TargetConfig = field(default_factory=TargetConfig)
     motion: MotionConfig = field(default_factory=MotionConfig)
-    ptz: PTZConfig = field(default_factory=PTZConfig)
+    ptz: PTZConfig = field(default_factory=lambda: PTZConfig(search_scan_enabled=True))
     noise: NoiseConfig = field(default_factory=NoiseConfig)
     atmospheric: AtmosphericConfig = field(default_factory=AtmosphericConfig)
     jitter: JitterConfig = field(default_factory=JitterConfig)

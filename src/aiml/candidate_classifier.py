@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import os
+import sys
 from pathlib import Path
 import time
 from typing import List, Optional
@@ -92,12 +93,22 @@ class LearnedCandidateClassifier(ICandidateClassifier):
 
     def _load_model(self) -> None:
         try:
-            model_path = Path(self.model_dir)
-            if not model_path.is_absolute() and not model_path.exists():
-                project_root = Path(__file__).resolve().parents[2]
-                model_path = project_root / model_path
-            if model_path.exists():
-                self.package = ModelLoader.load_candidate_classifier_package(str(model_path))
+            candidates = [
+                Path(self.model_dir),
+            ]
+            if hasattr(sys, "_MEIPASS"):
+                candidates.append(Path(getattr(sys, "_MEIPASS")) / self.model_dir)
+            if hasattr(sys, "executable"):
+                exe_dir = Path(sys.executable).resolve().parent
+                candidates.append(exe_dir / self.model_dir)
+                candidates.append(exe_dir / "_internal" / self.model_dir)
+            project_root = Path(__file__).resolve().parents[2]
+            candidates.append(project_root / self.model_dir)
+
+            for cand in candidates:
+                if cand.exists() and (cand / "model.json").exists():
+                    self.package = ModelLoader.load_candidate_classifier_package(str(cand))
+                    break
         except Exception as e:
             print(f"[LearnedCandidateClassifier] Warning loading model from {self.model_dir}: {e}")
             self.package = None
@@ -130,9 +141,23 @@ class LearnedCandidateClassifier(ICandidateClassifier):
             # Standardize
             X_scaled = (X - self.package.mean) / self.package.std
 
-            # Logistic Regression inference
-            logits = np.dot(X_scaled, self.package.weights) + self.package.bias
-            probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -20.0, 20.0)))
+            # Forward pass: MLP or Logistic Regression
+            if getattr(self.package, "layers", None):
+                act = X_scaled
+                for W, b, fn in self.package.layers:
+                    z = np.dot(act, W) + b
+                    if fn == "relu":
+                        act = np.maximum(0, z)
+                    elif fn == "sigmoid":
+                        act = 1.0 / (1.0 + np.exp(-np.clip(z, -20.0, 20.0)))
+                    else:
+                        act = z
+                probs = act.ravel()
+            else:
+                # Logistic Regression inference
+                logits = np.dot(X_scaled, self.package.weights) + self.package.bias
+                probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -20.0, 20.0)))
+
             if not np.isfinite(probs).all():
                 return self.fallback.classify(features)
 

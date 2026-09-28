@@ -37,6 +37,10 @@ def parse_args(args=None) -> argparse.Namespace:
         help="Launch the standalone GUI for evaluator demonstration",
     )
     parser.add_argument(
+        "--headless", action="store_true",
+        help="Run in headless console mode without graphical UI",
+    )
+    parser.add_argument(
         "--web", action="store_true",
         help="Launch the modern Web API server and frontend interface",
     )
@@ -500,7 +504,7 @@ def main(argv=None) -> None:
         import uvicorn
         print(f"\n[LumiTrack Web] Starting Modern Web API & Frontend on http://127.0.0.1:{args.port}")
         uvicorn.run("src.api.server:app", host="127.0.0.1", port=args.port, reload=False)
-    elif args.gui:
+    elif args.gui or (not args.headless and len(sys.argv) == 1 and argv is None):
         from src.app.gui import launch_gui
         launch_gui(app)
     else:

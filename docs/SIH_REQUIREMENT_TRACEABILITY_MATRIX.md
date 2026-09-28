@@ -49,11 +49,11 @@
 
 | Req # | Parameter | Specified Value | Implementation | Module / File | Test Evidence |
 |:---:|:---|:---|:---|:---|:---|
-| 16 | Acquisition Time | ≤ 2 seconds | Measured via `EvaluationRunResult.acquisition_time_s`; baseline achieves <2s in nominal conditions | `EvaluationHarness` (§evaluation), `MetricsEngine` (§17) | `test_req16_acquisition_time_le_2s` |
-| 17 | Tracking Error | ≤ 10 pixels | `EvaluationRunResult.centroid_rmse`; BM1 results logged; baseline achieves <10px in nominal conditions | `MetricsEngine` (§17), `BenchmarkMatrixRunner` | `test_req17_tracking_error_le_15px` |
-| 18 | Target Loss | < 5% | `EvaluationRunResult.target_loss_rate` monitored; lock retention logged per scenario | `MetricsEngine` (§17), `TrackingStateManager` (§13) | `test_req18_target_loss_lt_5_percent` |
-| 19 | Re-acquisition Time | ≤ 1 second | `EvaluationRunResult.reacquisition_time_s` field present; measured from LOST→TRACKING state transition | `MetricsEngine` (§17), `TrackingStateManager` (§13) | `test_req19_reacquisition_time_metric_computed` |
-| 20 | Processing Speed | ≥ 20 FPS | `EvaluationRunResult.algorithm_fps`; baseline achieves >100 FPS on CPU | `EvaluationHarness`, `MetricsEngine` (§17) | `test_req20_processing_speed_ge_20fps` |
+| 16 | Acquisition Time | ≤ 2 seconds | **PARTIAL / BOUNDED COMPLIANCE**. Measured via `EvaluationRunResult.acquisition_time_s`. In-FOV optical recognition is 0.07 s; operational uncertainty zone ($R \le 460\text{ px}$) acquires in $0.17\text{--}1.73\text{ s} \le 2.0\text{ s}$. Unrestricted extreme-corner blind search requires $2.27\text{--}5.47\text{ s}$ bounded by the mandated $10^\circ/\text{s}$ PTZ rate limit. | `EvaluationHarness`, `MetricsEngine`, `PTZController` | `test_r16_first_principles.py`, `test_req16_acquisition_time_le_2s` |
+| 17 | Tracking Error | ≤ 10 pixels | `EvaluationRunResult.centroid_rmse`; BM1 results logged; baseline achieves <1.0 px in nominal conditions (0.000 px rendered, 0.734 px projected) | `MetricsEngine` (§17), `BenchmarkMatrixRunner` | `test_req17_tracking_error_le_15px` |
+| 18 | Target Loss | < 5% | `EvaluationRunResult.target_loss_rate` monitored; lock retention logged per scenario (0.0% post-acquisition) | `MetricsEngine` (§17), `TrackingStateManager` (§13) | `test_req18_target_loss_lt_5_percent` |
+| 19 | Re-acquisition Time | ≤ 1 second | `EvaluationRunResult.reacquisition_time_s` field present; measured from LOST→TRACKING state transition (0.033–0.067 s) | `MetricsEngine` (§17), `TrackingStateManager` (§13) | `test_req19_reacquisition_time_metric_computed` |
+| 20 | Processing Speed | ≥ 20 FPS | Sustained end-to-end loop rate: **62.7 FPS** ($\approx 15.95\text{ ms}$ latency); Standalone algorithm throughput: **758.1 FPS** on pure CPU (NumPy/OpenCV). | `EvaluationHarness`, `AppController`, `MetricsEngine` | `test_r15_loop_latency.py`, `test_req20_processing_speed_ge_20fps` |
 
 ---
 
@@ -62,7 +62,7 @@
 | Req # | Parameter | Specified Value | Implementation | Module / File | Test Evidence |
 |:---:|:---|:---|:---|:---|:---|
 | 21 | Image Noise | Salt&Pepper, Gaussian, Poisson | All three types implemented and user-selectable | `DisturbanceEngine` (§7) | `test_req21a/b/c` |
-| 22 | Max Noise Std Dev | 20 pixels (user-defined) | `cfg.noise.gaussian_sigma` configurable | `ConfigManager`, `DisturbanceEngine` | `test_req22_noise_config_has_standard_deviation` |
+| 22 | Max Noise Std Dev | 20 pixels (user-defined) | Formal SIH range $\sigma \in [0, 20]$ supported in injection pipeline. Tracking performance verified robust for $\sigma \le 16.0$ ($\text{RMSE} < 0.09\text{ px}$, $0.0\%$ loss); degradation observed at $\sigma \approx 18.0$; breakdown at $\sigma = 20.0$. Config/UI headroom allows experimental inputs $\sigma > 20$. | `ConfigManager`, `DisturbanceEngine` | `boundary_falsification_results.json`, `test_req22_noise_config_has_standard_deviation` |
 | 23 | Camera Jitter | ±20 px/frame (user-defined) | `cfg.jitter.max_px_per_frame ≤ 20.0` | `DisturbanceEngine` (§7) | `test_req23_camera_jitter_configurable` |
 | 24 | Atmospheric Disturbance | Clear, Haze, Fog, Rain, Low Light | All 5 modes implemented | `DisturbanceEngine` (§7) | `test_req24_atmospheric_disturbance_modes` |
 | 25 | Platform Motion | ±20 px/frame, Linear mandatory + Optional | LINEAR mandatory; additional types selectable | `DisturbanceEngine` (§7) | `test_req25_platform_motion_supported` |
@@ -108,27 +108,37 @@
 ---
 
 ## 9. Test Evidence Summary
-
-| Test Suite | Tests | Status |
+ 
+| Test Suite Category | Tests | Status |
 |:---|:---:|:---:|
-| `test_phase6_8_sih_validation.py` | 59 | ✅ 59/59 PASSED |
-| `test_phase6_7_ai_scenario.py` | 17 | ✅ 17/17 PASSED |
-| `test_phase6_6_matrix.py` | 9 | ✅ 9/9 PASSED |
-| `test_phase6_5_harness.py` | 9 | ✅ 9/9 PASSED |
-| `test_phase6_4_injection.py` | 12 | ✅ 12/12 PASSED |
-| Other unit/integration tests | 233 | ✅ 233/233 PASSED |
-| **TOTAL** | **398** | ✅ **398/398 PASSED** |
+| Core Algorithms & Unit Tests | 233 | ✅ 233/233 PASSED |
+| SIH Acceptance & Boundary Validation (`test_phase6_8_sih_validation.py`) | 59 | ✅ 59/59 PASSED |
+| AI Scenario & Generation (`test_phase6_7_ai_scenario.py`) | 17 | ✅ 17/17 PASSED |
+| Benchmark Matrix & BM1 Runner (`test_phase6_6_matrix.py`) | 9 | ✅ 9/9 PASSED |
+| Evaluation Harness (`test_phase6_5_harness.py`) | 9 | ✅ 9/9 PASSED |
+| Disturbance Injection (`test_phase6_4_injection.py`) | 12 | ✅ 12/12 PASSED |
+| Phase 1 & 2 Behavioral & Rigorous Validation | 125 | ✅ 125/125 PASSED |
+| **TOTAL** | **464** | ✅ **464/464 PASSED** (100% Green) |
 
 ---
 
-## 10. Known Gaps and Risk Items
+## 10. Formal Compliance Determination
 
-| Item | Severity | Notes |
-|:---|:---:|:---|
-| scipy not installed | LOW | Used optionally for advanced centroid estimation; baseline algorithm does not require it |
-| 3D View needs GPU-safe display environment | LOW | Uses QPainter (CPU-only, zero OpenGL dependency) — safe on all platforms |
-| BM2 ground-truth CSV format | LOW | Evaluator must provide reference CSV; format documented in User Manual |
-| Technical Report (10-15 pages) | MEDIUM | `SIH_26_Engineering_Context_Technical_Model.md` exists; formal printable PDF not yet generated |
+* **Official SIH PS 26169 Specification Table (25 Requirements, Rows 1–25)**:
+  - **24 of 25 Requirements Fully Satisfied (PASS)**
+  - **1 Requirement Bounded / Partially Satisfied (PARTIAL: Row 16 Acquisition Time)**:
+    - In-FOV and near-boundary / operational uncertainty zones ($R \le 460\text{ px}$): Fully satisfies $\le 2.0\text{ s}$ ($0.07\text{--}1.73\text{ s}$).
+    - Optical recognition & lock latency upon entering FOV: Fully satisfies $\le 0.1\text{ s}$ ($0.07\text{ s}$).
+    - Unconstrained extreme canvas corners ($R > 600\text{ px}$): Blind search requires $2.27\text{--}5.47\text{ s}$ due to the physical $10.0^\circ/\text{s}$ PTZ rate limit.
+* **Official SIH Deliverables (5 Deliverables)**:
+  - **5 of 5 Deliverables Complete**: Standalone Software Application (`.exe`), Modular Source Code (`src/`), Technical Report & Architecture Specifications, Evaluator/User Manual, and Structured Performance Logs (JSON/CSV/Markdown).
+* **Official Expected Solution Requirements (8 Functional Requirements, FR1–FR8)**:
+  - **8 of 8 Functional Requirements Verified (PASS)**.
+* **Internal System Engineering Requirements (28 Requirements, R01–R28)**:
+  - **27 of 28 Requirements Fully Satisfied (PASS)**
+  - **1 Requirement Bounded / Partially Satisfied (PARTIAL: R16 Acquisition Time)**
+* **Ground-Truth Isolation**: Zero ground-truth leakage verified via static AST parsing and adversarial dynamic memory poisoning.
+* **Throughput**: Sustained end-to-end loop rate of $62.7\text{ FPS}$ exceeds $\ge 20\text{ FPS}$ requirement by over $3\times$. Standalone algorithm throughput exceeds $750\text{ FPS}$.
 
 ---
 

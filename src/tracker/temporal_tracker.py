@@ -91,6 +91,8 @@ class ConstantVelocityKalmanTracker(ITracker):
         self._P = np.eye(4, dtype=np.float64)
         self._is_initialized = False
         self._track_age = 0
+        self._consecutive_coasts = 0
+        self._max_coast_frames = 8
         self._last_timestamp: Optional[float] = None
         self._nominal_dt = 1.0 / 30.0
 
@@ -105,6 +107,10 @@ class ConstantVelocityKalmanTracker(ITracker):
     @property
     def track_age(self) -> int:
         return self._track_age
+
+    @property
+    def consecutive_coasts(self) -> int:
+        return self._consecutive_coasts
 
     @property
     def state_vector(self) -> np.ndarray:
@@ -123,6 +129,7 @@ class ConstantVelocityKalmanTracker(ITracker):
         self._P = np.eye(4, dtype=np.float64)
         self._is_initialized = False
         self._track_age = 0
+        self._consecutive_coasts = 0
         self._last_timestamp = None
 
     def _build_f_matrix(self, dt: float) -> np.ndarray:
@@ -334,16 +341,19 @@ class ConstantVelocityKalmanTracker(ITracker):
                 # Enforce symmetry
                 self._P = 0.5 * (self._P + self._P.T)
                 self._track_age += 1
+                self._consecutive_coasts = 0
             else:
                 # Measurement Rejected as Outlier -> Coast on Prediction
                 accepted = False
                 self._x = x_prior
                 self._P = P_prior
+                self._consecutive_coasts += 1
         else:
             # Missing Measurement -> Coast on Prediction
             accepted = False
             self._x = x_prior
             self._P = P_prior
+            self._consecutive_coasts += 1
 
         # -------------------------------------------------------------------
         # 4. Next Frame Prediction
@@ -351,11 +361,11 @@ class ConstantVelocityKalmanTracker(ITracker):
         pred_x = float(self._x[0, 0] + self._x[2, 0] * self._nominal_dt)
         pred_y = float(self._x[1, 0] + self._x[3, 0] * self._nominal_dt)
 
-        # Confidence: scales with measurement status and covariance
+        # Confidence: scales with measurement status, covariance, and coasting duration
         pos_var = float(self._P[0, 0] + self._P[1, 1])
         conf = float(math.exp(-0.5 * pos_var / 100.0))
         if not accepted:
-            conf *= 0.8
+            conf *= (0.85 ** min(self._consecutive_coasts, 10))
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
         status_str = "TRACKING" if accepted else ("COASTING" if self._is_initialized else "LOST")
@@ -395,15 +405,21 @@ class ConstantVelocityKalmanTracker(ITracker):
         """
         Compute the adaptive ROI for the next frame based on prediction and speed.
         """
-        if not self._is_initialized:
+        if not self._is_initialized or self._consecutive_coasts >= 3:
             return ROI(x=0, y=0, width=frame_width, height=frame_height)
 
         pred_x, pred_y = self.predict()
         speed = math.hypot(float(self._x[2, 0]), float(self._x[3, 0]))
 
-        # Scale ROI size with target velocity
-        dynamic_size = self._roi_min + speed * self._nominal_dt * self._roi_margin_factor * 2.0
-        roi_size = int(max(self._roi_min, min(self._roi_max, dynamic_size)))
+        # Scale ROI size with target velocity and coasting duration
+        coast_expansion = float(self._consecutive_coasts * 30.0)
+        base_roi_min = max(140.0, float(self._roi_min))
+        dynamic_size = (
+            base_roi_min
+            + speed * self._nominal_dt * self._roi_margin_factor * 2.0
+            + coast_expansion
+        )
+        roi_size = int(max(base_roi_min, min(self._roi_max, dynamic_size)))
 
         half = roi_size // 2
         x0 = max(0, min(frame_width - roi_size, int(pred_x - half)))

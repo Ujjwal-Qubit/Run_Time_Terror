@@ -67,6 +67,9 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               onClick={() => setActiveTab(tab.id)}
               disabled={disabled}
               title={`Switch to ${tab.label} Settings`}
+              aria-label={`Switch to ${tab.label} Settings`}
+              role="tab"
+              aria-selected={isActive}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -111,8 +114,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Width (px)</label>
+                <label htmlFor="cam-width" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Width (px)</label>
                 <input
+                  id="cam-width"
+                  aria-label="Camera Width in pixels"
                   type="number"
                   value={config.camera.width}
                   disabled={disabled}
@@ -121,8 +126,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 />
               </div>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Height (px)</label>
+                <label htmlFor="cam-height" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Height (px)</label>
                 <input
+                  id="cam-height"
+                  aria-label="Camera Height in pixels"
                   type="number"
                   value={config.camera.height}
                   disabled={disabled}
@@ -134,8 +141,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Horizontal FOV (°)</label>
+                <label htmlFor="cam-fov-h" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Horizontal FOV (°)</label>
                 <input
+                  id="cam-fov-h"
+                  aria-label="Camera Horizontal FOV in degrees"
                   type="number"
                   step="0.1"
                   value={config.camera.fov_h_deg}
@@ -145,8 +154,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 />
               </div>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Vertical FOV (°)</label>
+                <label htmlFor="cam-fov-v" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Vertical FOV (°)</label>
                 <input
+                  id="cam-fov-v"
+                  aria-label="Camera Vertical FOV in degrees"
                   type="number"
                   step="0.1"
                   value={config.camera.fov_v_deg}
@@ -158,8 +169,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             </div>
 
             <div>
-              <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Frame Rate (Hz)</label>
+              <label htmlFor="cam-frame-rate" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Frame Rate (Hz)</label>
               <input
+                id="cam-frame-rate"
+                aria-label="Camera Frame Rate in Hertz"
                 type="number"
                 value={config.camera.update_rate_hz}
                 disabled={disabled}
@@ -180,8 +193,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Beacon Size (px)</label>
+                <label htmlFor="target-size" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Beacon Size (px)</label>
                 <input
+                  id="target-size"
+                  aria-label="Beacon Size in pixels"
                   type="number"
                   min="5"
                   max="20"
@@ -192,8 +207,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 />
               </div>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Shape Profile</label>
+                <label htmlFor="target-shape" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Shape Profile</label>
                 <select
+                  id="target-shape"
+                  aria-label="Beacon Shape Profile"
                   value={config.target.shape}
                   disabled={disabled}
                   onChange={(e) => onUpdateConfig({ target: { ...config.target, shape: e.target.value } })}
@@ -208,8 +225,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Intensity (0–255)</label>
+                <label htmlFor="target-intensity" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Intensity (0–255)</label>
                 <input
+                  id="target-intensity"
+                  aria-label="Beacon Intensity from 0 to 255"
                   type="number"
                   min="0"
                   max="255"
@@ -221,8 +240,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               </div>
               <div>
                 {/* target.speed is the real backend field (TargetConfig.speed) */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Speed (px/s)</label>
+                <label htmlFor="target-speed" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Speed (px/s)</label>
                 <input
+                  id="target-speed"
+                  aria-label="Beacon Speed in pixels per second"
                   type="number"
                   step="5"
                   min="0"
@@ -236,8 +257,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
 
             <div>
               {/* motion_type lives in MotionConfig, not TargetConfig — correct section */}
-              <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Motion Pattern</label>
+              <label htmlFor="target-motion" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Motion Pattern</label>
               <select
+                id="target-motion"
+                aria-label="Beacon Motion Pattern"
                 value={config.motion.motion_type}
                 disabled={disabled}
                 onChange={(e) => onUpdateConfig({ motion: { ...config.motion, motion_type: e.target.value } })}
@@ -270,8 +293,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', letterSpacing: '0.05em' }}>ATMOSPHERIC</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Condition</label>
+                <label htmlFor="dist-condition" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Condition</label>
                 <select
+                  id="dist-condition"
+                  aria-label="Atmospheric Condition"
                   value={config.atmospheric.condition}
                   disabled={disabled}
                   onChange={(e) => onUpdateConfig({ atmospheric: { ...config.atmospheric, condition: e.target.value } })}
@@ -286,8 +311,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               </div>
               <div>
                 {/* contrast_factor: real backend field (AtmosphericConfig.contrast_factor) */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Contrast Factor (0–1)</label>
+                <label htmlFor="dist-contrast" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Contrast Factor (0–1)</label>
                 <input
+                  id="dist-contrast"
+                  aria-label="Atmospheric Contrast Factor"
                   type="number"
                   step="0.05"
                   min="0"
@@ -310,8 +337,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', letterSpacing: '0.05em', marginTop: '4px' }}>SENSOR NOISE</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Noise Type</label>
+                <label htmlFor="dist-noise-type" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Noise Type</label>
                 <select
+                  id="dist-noise-type"
+                  aria-label="Sensor Noise Type"
                   value={
                     config.noise.gaussian_enabled
                       ? 'GAUSSIAN'
@@ -345,8 +374,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 {/* gaussian_sigma: real backend field (NoiseConfig.gaussian_sigma) */}
                 {config.noise.gaussian_enabled && (
                   <>
-                    <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Gaussian Sigma (σ)</label>
+                    <label htmlFor="dist-gaussian-sigma" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Gaussian Sigma (σ)</label>
                     <input
+                      id="dist-gaussian-sigma"
+                      aria-label="Gaussian Sigma Noise"
                       type="number"
                       step="0.5"
                       min="0"
@@ -361,8 +392,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 {/* sp_density: real backend field (NoiseConfig.sp_density) */}
                 {config.noise.sp_enabled && (
                   <>
-                    <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>S&P Density (0–1)</label>
+                    <label htmlFor="dist-sp-density" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>S&P Density (0–1)</label>
                     <input
+                      id="dist-sp-density"
+                      aria-label="Salt and Pepper Density"
                       type="number"
                       step="0.01"
                       min="0"
@@ -377,8 +410,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
                 {/* poisson_scale: real backend field (NoiseConfig.poisson_scale). 1.0 = standard */}
                 {config.noise.poisson_enabled && (
                   <>
-                    <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Poisson Scale (exposure)</label>
+                    <label htmlFor="dist-poisson-scale" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Poisson Scale (exposure)</label>
                     <input
+                      id="dist-poisson-scale"
+                      aria-label="Poisson Noise Scale"
                       type="number"
                       step="0.1"
                       min="0.1"
@@ -397,10 +432,12 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', letterSpacing: '0.05em', marginTop: '4px' }}>GEOMETRIC DISTURBANCES</div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-secondary)' }}>
-                <span>Camera Jitter (px/frame)</span>
+                <label htmlFor="dist-jitter">Camera Jitter (px/frame)</label>
                 <span className="font-mono" style={{ color: '#38bdf8' }}>{config.jitter.max_px_per_frame} px</span>
               </div>
               <input
+                id="dist-jitter"
+                aria-label="Camera Jitter in pixels per frame"
                 type="range"
                 min="0"
                 max="20"
@@ -414,10 +451,12 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-secondary)' }}>
-                <span>Platform Drift (px/frame)</span>
+                <label htmlFor="dist-platform">Platform Drift (px/frame)</label>
                 <span className="font-mono" style={{ color: '#38bdf8' }}>{config.platform_motion.max_px_per_frame} px</span>
               </div>
               <input
+                id="dist-platform"
+                aria-label="Platform Drift in pixels per frame"
                 type="range"
                 min="0"
                 max="30"
@@ -432,8 +471,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             {/* Local Contrast */}
             <div style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', letterSpacing: '0.05em', marginTop: '4px' }}>LOCAL CONTRAST CLUTTER</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '6px', alignItems: 'center' }}>
-              <label style={{ color: 'var(--text-secondary)', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label htmlFor="dist-clutter-enable" style={{ color: 'var(--text-secondary)', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                 <input
+                  id="dist-clutter-enable"
+                  aria-label="Enable Background Clutter"
                   type="checkbox"
                   checked={config.local_contrast?.enabled ?? false}
                   disabled={disabled}
@@ -446,10 +487,12 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             {config.local_contrast?.enabled && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-secondary)' }}>
-                  <span>Clutter Amplitude (0–150)</span>
+                  <label htmlFor="dist-clutter-amp">Clutter Amplitude (0–150)</label>
                   <span className="font-mono" style={{ color: '#f59e0b' }}>{config.local_contrast.amplitude}</span>
                 </div>
                 <input
+                  id="dist-clutter-amp"
+                  aria-label="Clutter Amplitude"
                   type="range"
                   min="0"
                   max="150"
@@ -479,8 +522,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
                 {/* proportional_gain: real backend field (PTZConfig.proportional_gain) */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Proportional Gain (Kp)</label>
+                <label htmlFor="ptz-kp" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Proportional Gain (Kp)</label>
                 <input
+                  id="ptz-kp"
+                  aria-label="PTZ Proportional Gain Kp"
                   type="number"
                   step="0.5"
                   min="0"
@@ -492,8 +537,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               </div>
               <div>
                 {/* integral_gain: real backend field (PTZConfig.integral_gain) */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Integral Gain (Ki)</label>
+                <label htmlFor="ptz-ki" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Integral Gain (Ki)</label>
                 <input
+                  id="ptz-ki"
+                  aria-label="PTZ Integral Gain Ki"
                   type="number"
                   step="0.1"
                   min="0"
@@ -508,8 +555,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
                 {/* max_pan_speed_deg_s: real backend field */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Max Pan Speed (°/s)</label>
+                <label htmlFor="ptz-max-pan" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Max Pan Speed (°/s)</label>
                 <input
+                  id="ptz-max-pan"
+                  aria-label="Max Pan Speed in degrees per second"
                   type="number"
                   step="0.5"
                   min="0"
@@ -522,8 +571,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               </div>
               <div>
                 {/* max_tilt_speed_deg_s: real backend field */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Max Tilt Speed (°/s)</label>
+                <label htmlFor="ptz-max-tilt" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Max Tilt Speed (°/s)</label>
                 <input
+                  id="ptz-max-tilt"
+                  aria-label="Max Tilt Speed in degrees per second"
                   type="number"
                   step="0.5"
                   min="0"
@@ -539,8 +590,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <div>
                 {/* deadband_px: real backend field */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Deadband (px)</label>
+                <label htmlFor="ptz-deadband" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Deadband (px)</label>
                 <input
+                  id="ptz-deadband"
+                  aria-label="PTZ Deadband in pixels"
                   type="number"
                   step="0.5"
                   min="0"
@@ -552,8 +605,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onUpdateConfig
               </div>
               <div>
                 {/* update_rate_hz: real backend field */}
-                <label style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Update Rate (Hz)</label>
+                <label htmlFor="ptz-rate" style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>Update Rate (Hz)</label>
                 <input
+                  id="ptz-rate"
+                  aria-label="PTZ Update Rate in Hertz"
                   type="number"
                   step="1"
                   min="1"

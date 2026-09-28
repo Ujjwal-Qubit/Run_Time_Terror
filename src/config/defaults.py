@@ -146,6 +146,7 @@ PTZ_DEFAULT_UPDATE_RATE_HZ = 20        # PS_DEFAULT
 PTZ_DEFAULT_PROPORTIONAL_GAIN = 8.0    # ENGINEERING_DEFAULT — proportional tracking gain
 PTZ_DEFAULT_DEADBAND_PX = 1.0          # ENGINEERING_DEFAULT — tracking deadband in pixels
 PTZ_DEFAULT_INTEGRAL_GAIN = 2.0        # ENGINEERING_DEFAULT — anti-lag integral action
+PTZ_DEFAULT_SEARCH_SCAN_ENABLED = True # ENGINEERING_DEFAULT — autonomous expanding search scan
 
 
 # ==========================================================================
@@ -275,7 +276,7 @@ GATE_MAX_DISTANCE = 120.0               # ENGINEERING_DEFAULT — pixels (robust
 STATE_LOCK_THRESHOLD = 0.6              # ENGINEERING_DEFAULT
 STATE_LOSS_THRESHOLD = 0.3              # ENGINEERING_DEFAULT
 STATE_LOCK_CONFIRM_FRAMES = 3           # ENGINEERING_DEFAULT
-STATE_LOSS_CONFIRM_FRAMES = 5           # ENGINEERING_DEFAULT
+STATE_LOSS_CONFIRM_FRAMES = 10          # ENGINEERING_DEFAULT — multi-frame predictive coasting buffer (survives 8 frames)
 STATE_REACQUIRE_CONFIRM_FRAMES = 3      # ENGINEERING_DEFAULT
 
 

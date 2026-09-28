@@ -31,6 +31,7 @@ class ModelPackage:
     std: np.ndarray
     classification_threshold: float
     metadata: Dict[str, Any]
+    layers: Optional[List[Tuple[np.ndarray, np.ndarray, str]]] = None
 
 
 class ModelLoader:
@@ -89,6 +90,18 @@ class ModelLoader:
         ):
             raise ValueError(f"Model package at {model_dir} contains non-finite parameters")
 
+        # Parse optional MLP hidden layers
+        layers = None
+        if "layers" in model_data and isinstance(model_data["layers"], list):
+            layers = []
+            for idx, lyr in enumerate(model_data["layers"]):
+                lw = np.array(lyr["weights"], dtype=np.float32)
+                lb = np.array(lyr["bias"], dtype=np.float32)
+                l_act = str(lyr.get("activation", "relu"))
+                if not (np.isfinite(lw).all() and np.isfinite(lb).all()):
+                    raise ValueError(f"Model package layer {idx} contains non-finite parameters")
+                layers.append((lw, lb, l_act))
+
         model_name = model_data.get("model_name", "candidate_classifier")
         model_version = model_data.get("model_version", "v001")
         algorithm = model_data.get("algorithm", "logistic_regression")
@@ -109,4 +122,5 @@ class ModelLoader:
             std=std,
             classification_threshold=classification_threshold,
             metadata=metadata,
+            layers=layers,
         )

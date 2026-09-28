@@ -226,6 +226,12 @@ class EvaluationHarness:
             # Apply output directory
             app.config_manager.update_section("logging", output_dir=out_dir)
 
+            # Apply configuration overrides if provided
+            if experiment.config_overrides:
+                for sec, val in experiment.config_overrides.items():
+                    if isinstance(val, dict) and hasattr(app.config_manager.config, sec):
+                        app.config_manager.update_section(sec, **val)
+
             # Calculate config digest for reproducibility
             cfg_dict = app.config_manager.config.to_dict()
             config_hasher.update(json.dumps(cfg_dict, sort_keys=True).encode("utf-8"))

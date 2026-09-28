@@ -31,9 +31,27 @@ class AIClassifier(CandidateIdentifier):
         self.bias = None
         self.is_trained = False
         
+        candidates = [self.model_path]
+        import sys
+        from pathlib import Path
+        if hasattr(sys, "_MEIPASS"):
+            candidates.append(os.path.join(getattr(sys, "_MEIPASS"), self.model_path))
+        if hasattr(sys, "executable"):
+            exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+            candidates.append(os.path.join(exe_dir, self.model_path))
+            candidates.append(os.path.join(exe_dir, "_internal", self.model_path))
+        module_root = Path(__file__).resolve().parents[2]
+        candidates.append(str(module_root / self.model_path))
+
+        resolved_path = None
+        for cand in candidates:
+            if os.path.exists(cand):
+                resolved_path = cand
+                break
+
         # Load model if exists, else train a dummy
-        if os.path.exists(self.model_path):
-            with open(self.model_path, 'r') as f:
+        if resolved_path:
+            with open(resolved_path, 'r') as f:
                 data = json.load(f)
                 self.weights = np.array(data["weights"], dtype=np.float32)
                 self.bias = float(data["bias"])

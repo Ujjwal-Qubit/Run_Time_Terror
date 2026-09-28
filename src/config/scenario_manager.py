@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import json
 import os
+import sys
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from src.config.config_manager import ConfigManager, SystemConfig
@@ -30,8 +32,27 @@ class ScenarioManager:
     """
 
     def __init__(self, scenario_dir: str = "scenarios") -> None:
-        self._scenario_dir = scenario_dir
+        self._scenario_dir = self._resolve_scenario_dir(scenario_dir)
         os.makedirs(self._scenario_dir, exist_ok=True)
+
+    @staticmethod
+    def _resolve_scenario_dir(scenario_dir: str) -> str:
+        candidates = [
+            scenario_dir,
+        ]
+        if hasattr(sys, "_MEIPASS"):
+            candidates.append(os.path.join(getattr(sys, "_MEIPASS"), scenario_dir))
+        if hasattr(sys, "executable"):
+            exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+            candidates.append(os.path.join(exe_dir, scenario_dir))
+            candidates.append(os.path.join(exe_dir, "_internal", scenario_dir))
+        module_root = Path(__file__).resolve().parents[2]
+        candidates.append(str(module_root / scenario_dir))
+
+        for cand in candidates:
+            if os.path.isdir(cand) and any(f.endswith(".json") for f in os.listdir(cand)):
+                return cand
+        return scenario_dir
 
     def list_scenarios(self) -> List[str]:
         """List available scenario files."""
@@ -47,7 +68,17 @@ class ScenarioManager:
         self, name: str, config_manager: ConfigManager
     ) -> None:
         """Load a named scenario into the ConfigManager."""
-        path = os.path.join(self._scenario_dir, f"{name}.json")
+        if os.path.isfile(name):
+            path = name
+        elif name.endswith(".json"):
+            path = os.path.join(self._scenario_dir, name)
+        else:
+            path = os.path.join(self._scenario_dir, f"{name}.json")
+            if not os.path.isfile(path) and os.path.isdir(self._scenario_dir):
+                for f in os.listdir(self._scenario_dir):
+                    if f.endswith(".json") and name.lower() in f.lower():
+                        path = os.path.join(self._scenario_dir, f)
+                        break
         if not os.path.isfile(path):
             raise FileNotFoundError(f"Scenario not found: {path}")
         config_manager.load_from_file(path)

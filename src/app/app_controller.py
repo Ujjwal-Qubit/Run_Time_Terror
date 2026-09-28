@@ -77,6 +77,8 @@ from src.api.v1 import (
 from src.plugins.loader import PluginLoader
 from src.plugins.models import DiscoveredPlugin, LoadedPlugin
 from src.plugins.algorithms.baseline_tracker.baseline_tracker import BaselineTracker
+from src.app.visualization_state import VisualizationStateManager
+from src.app.simulation_worker import SimulationWorkerThread
 
 logger = logging.getLogger(__name__)
 
@@ -151,10 +153,27 @@ class AppController:
         # Multi-beacon and PTZ actuation controls
         self._multi_beacon_manager: Optional[MultiBeaconManager] = None
         self._ptz_enabled: bool = True
+        self._had_tracking_lock: bool = False
 
-        # Phase 5.10 internal execution mechanism
-        self._sim_thread: Optional[threading.Thread] = None
-        self._viz_queue: queue.Queue = queue.Queue(maxsize=30)
+        # Phase 5.10 / F-ARCH-01 decoupled execution and visualization state
+        self._viz_manager = VisualizationStateManager(maxsize=30)
+        self._sim_worker = SimulationWorkerThread(self, self._viz_manager)
+
+    @property
+    def _viz_queue(self) -> queue.Queue:
+        return self._viz_manager.queue
+
+    @property
+    def _sim_thread(self) -> Optional[threading.Thread]:
+        return self._sim_worker.thread
+
+    @property
+    def simulation_worker(self) -> SimulationWorkerThread:
+        return self._sim_worker
+
+    @property
+    def visualization_manager(self) -> VisualizationStateManager:
+        return self._viz_manager
 
     @property
     def plugin_loader(self) -> PluginLoader:
@@ -380,6 +399,7 @@ class AppController:
         """
         if config:
             self._config_manager._config = config
+        self._had_tracking_lock = False
 
         # Validate configuration against PS requirements
         errors = self._config_manager.validate()
@@ -587,7 +607,16 @@ class AppController:
                 logger.warning(f"Algorithm '{self._active_algorithm_name}' returned non-finite coordinates: ({cent_x}, {cent_y})")
                 is_tracking = False
 
-        state = TrackingState.TRACKING if is_tracking else TrackingState.SEARCHING
+        if hasattr(self._active_algorithm, "current_state"):
+            state = self._active_algorithm.current_state
+        elif is_tracking:
+            self._had_tracking_lock = True
+            state = TrackingState.TRACKING
+        else:
+            state = TrackingState.LOST if getattr(self, "_had_tracking_lock", False) else TrackingState.SEARCHING
+
+        if state == TrackingState.TRACKING:
+            self._had_tracking_lock = True
         state_res = TrackingStateResult(state=state, confidence_level=conf)
 
         roi_contract = None
@@ -614,6 +643,18 @@ class AppController:
                 frame_number=packet.frame_number,
                 processing_time_ms=t_elapsed_ms,
             )
+        elif state == TrackingState.REACQUIRING and hasattr(self._active_algorithm, "_tracker"):
+            tr = getattr(self._active_algorithm, "_tracker", None)
+            if tr is not None and getattr(tr, "is_initialized", False):
+                track_res = TrackResult(
+                    estimated_x=float(tr.state_vector[0, 0]),
+                    estimated_y=float(tr.state_vector[1, 0]),
+                    confidence=conf,
+                    frame_number=packet.frame_number,
+                    timestamp=packet.timestamp,
+                    measurement_valid=False,
+                    is_coasting=True,
+                )
 
         cand_list = []
         if coords_valid and cent_x is not None and cent_y is not None:
@@ -707,175 +748,26 @@ class AppController:
 
     def start_background_loop(self) -> None:
         """Starts the internal simulation loop in a background thread for GUI mode."""
-        if self._sim_thread and self._sim_thread.is_alive():
-            print("[AppController] Simulation is already running.")
-            return
-
         self._running = True
         self._paused = False
-        # Clear queue
-        while not self._viz_queue.empty():
-            try:
-                self._viz_queue.get_nowait()
-            except queue.Empty:
-                break
-                
-        self._sim_thread = threading.Thread(target=self._simulation_loop, daemon=True)
-        self._sim_thread.start()
+        self._sim_worker.start()
 
     def pause(self) -> None:
         self._paused = True
+        self._sim_worker.pause()
 
     def resume(self) -> None:
         self._paused = False
-
-    def _simulation_loop(self) -> None:
-        """
-        Internal worker thread executing the tracker pipeline.
-        Publishes VisualizationState to _viz_queue.
-        """
-        print("[AppController] Background simulation loop started.")
-        while self._running:
-            if self._paused:
-                time.sleep(0.01)
-                continue
-
-            loop_t0 = time.perf_counter()
-
-            packet = self.get_next_frame()
-            if packet is None:
-                # EOF
-                self._running = False
-                break
-
-            # Execute active algorithm via public API
-            (
-                public_res,
-                t_elapsed_ms,
-                track_res,
-                state_res,
-                centroid_res,
-                detection_res,
-            ) = self.step_algorithm(packet)
-
-            # Control (PTZ) — only active in SIMULATION mode
-            ptz_cmd = None
-            if self.ptz_controller and packet.source == FrameSource.SIMULATION:
-                dt = 1.0 / self.config_manager.config.camera.update_rate_hz
-                pm = self.camera_model.projection_model if self.camera_model else None
-                ptz_cmd = self.ptz_controller.compute(
-                    track_res,
-                    state_res.state,
-                    packet.width,
-                    packet.height,
-                    dt=dt,
-                    projection_model=pm,
-                )
-                if self._ptz_enabled and self.camera_model and ptz_cmd.valid:
-                    self.camera_model.apply_pan_tilt(ptz_cmd.delta_pan_deg, ptz_cmd.delta_tilt_deg)
-
-            # Telemetry/Metrics update
-            tracker_output = TrackerOutput(
-                frame_number=packet.frame_number,
-                timestamp=packet.timestamp,
-                state=state_res.state,
-                previous_state=state_res.previous_state if hasattr(state_res, "previous_state") else None,
-                transition_reason=state_res.transition_reason if hasattr(state_res, "transition_reason") else "",
-                centroid=centroid_res,
-                track=track_res,
-                detection_valid=bool(public_res.algorithm_is_tracking),
-                candidate_count=1 if public_res.algorithm_is_tracking else 0,
-                confidence=state_res.confidence_level,
-                roi=ROI(x=public_res.roi[0], y=public_res.roi[1], width=public_res.roi[2], height=public_res.roi[3]) if public_res.roi else None,
-                processing_time_ms=t_elapsed_ms,
-            )
-
-            gt = None
-            if self.ground_truth_provider:
-                gt = self.ground_truth_provider.get_truth(packet.frame_number)
-            
-            cam_pan = self.camera_model.pan_deg if self.camera_model else 0.0
-            cam_tilt = self.camera_model.tilt_deg if self.camera_model else 0.0
-
-            if self.metrics_engine and state_res:
-                telemetry = self.metrics_engine.update(
-                    frame_packet=packet,
-                    track_result=track_res,
-                    state_result=state_res,
-                    centroid_result=centroid_res,
-                    detection_result=detection_res,
-                    ptz_command=ptz_cmd,
-                    ground_truth=gt,
-                    camera_pan_deg=cam_pan,
-                    camera_tilt_deg=cam_tilt,
-                    processing_time_ms=t_elapsed_ms,
-                )
-                self.logging_engine.log_frame(telemetry)
-
-            # Build VisualizationState for frontend
-            cam_fov = self.config_manager.config.camera.fov_h_deg
-
-            roi_contract = None
-            if public_res.roi:
-                roi_contract = ROI(x=public_res.roi[0], y=public_res.roi[1], width=public_res.roi[2], height=public_res.roi[3])
-
-            tgt_spd = self._config_manager.config.target.speed if (self._config_manager and self._config_manager.config and self._config_manager.config.target) else None
-
-            viz_state = VisualizationState(
-                frame_number=packet.frame_number,
-                timestamp=packet.timestamp,
-                pan_angle_deg=cam_pan,
-                tilt_angle_deg=cam_tilt,
-                camera_fov=cam_fov,
-                display_image=packet.image,
-                camera_fov_v=self.config_manager.config.camera.fov_v_deg,
-                camera_width=packet.width,
-                camera_height=packet.height,
-                estimated_centroid_x=centroid_res.x if centroid_res and centroid_res.valid else None,
-                estimated_centroid_y=centroid_res.y if centroid_res and centroid_res.valid else None,
-                tracking_state=state_res.state.name,
-                tracking_error_px=None, # Computed in UI or later if needed
-                roi=roi_contract,
-                processing_latency_ms=t_elapsed_ms,
-                fps=1000.0 / t_elapsed_ms if t_elapsed_ms > 0 else 0.0,
-                ground_truth_x=gt.ideal_projected_x if gt else None,
-                ground_truth_y=gt.ideal_projected_y if gt else None,
-                target_speed_px_s=tgt_spd,
-                ptz_enabled=self._ptz_enabled,
-            )
-
-            # Put in queue (discard oldest if full to avoid blocking processing)
-            try:
-                self._viz_queue.put_nowait(viz_state)
-            except queue.Full:
-                try:
-                    self._viz_queue.get_nowait()
-                    self._viz_queue.put_nowait(viz_state)
-                except queue.Empty:
-                    pass
-            
-            # Pace simulation loop to match camera update rate in real time
-            target_fps = float(self.config_manager.config.camera.update_rate_hz) if (self.config_manager and self.config_manager.config and self.config_manager.config.camera) else 30.0
-            target_period = 1.0 / max(1.0, min(120.0, target_fps))
-            loop_duration = time.perf_counter() - loop_t0
-            sleep_time = max(0.001, target_period - loop_duration)
-            time.sleep(sleep_time)
+        self._sim_worker.resume()
 
     def get_latest_visualization_state(self) -> Optional[VisualizationState]:
         """Called by GUI to drain the queue and get the freshest frame."""
-        latest_state = None
-        while not self._viz_queue.empty():
-            try:
-                latest_state = self._viz_queue.get_nowait()
-            except queue.Empty:
-                break
-        return latest_state
+        return self._viz_manager.get_latest_state()
 
     def stop(self) -> None:
         """Stop the application."""
         self._running = False
-        if self._sim_thread and self._sim_thread.is_alive():
-            self._sim_thread.join(timeout=1.0)
+        self._sim_worker.stop(timeout=1.0)
         if self._frame_provider:
             self._frame_provider.close()
         self._logging_engine.finalize()
@@ -888,12 +780,8 @@ class AppController:
         self._sim_time = 0.0
         self._running = False
         self._paused = False
-        
-        while not self._viz_queue.empty():
-            try:
-                self._viz_queue.get_nowait()
-            except queue.Empty:
-                break
+        self._had_tracking_lock = False
+        self._viz_manager.clear()
 
         if self._active_algorithm:
             self._active_algorithm.reset()

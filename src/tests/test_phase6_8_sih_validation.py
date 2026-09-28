@@ -203,8 +203,8 @@ class TestPerformanceSpecifications:
                 f"Acquisition time {result.acquisition_time_s:.2f}s exceeds 2s limit"
             )
 
-    def test_req17_tracking_error_le_15px(self):
-        """Req 17: Tracking error ≤ 10px (allowing 20px tolerance for baseline)."""
+    def test_req17_tracking_error_le_10px(self):
+        """Req 17: Tracking error ≤ 10px under nominal conditions per SIH PS Row 17."""
         from src.evaluation.harness import EvaluationHarness, EvaluationExperiment
         import tempfile
 
@@ -220,13 +220,13 @@ class TestPerformanceSpecifications:
             harness = EvaluationHarness(None)
             result = harness.run_experiment(exp)
 
-        if result.centroid_rmse is not None:
-            assert result.centroid_rmse <= 25.0, (
-                f"Tracking RMSE {result.centroid_rmse:.2f}px exceeds nominal target"
-            )
+        assert result.centroid_rmse is not None, "Centroid RMSE was not computed"
+        assert result.centroid_rmse <= 10.0, (
+            f"Tracking RMSE {result.centroid_rmse:.2f}px exceeds SIH PS limit of 10.0px"
+        )
 
     def test_req18_target_loss_lt_5_percent(self):
-        """Req 18: Target loss rate < 20% for baseline (SIH target: <5%)."""
+        """Req 18: Target loss rate < 5% per SIH PS Row 18."""
         from src.evaluation.harness import EvaluationHarness, EvaluationExperiment
         import tempfile
 
@@ -241,16 +241,53 @@ class TestPerformanceSpecifications:
             harness = EvaluationHarness(None)
             result = harness.run_experiment(exp)
 
-        if result.target_loss_rate is not None:
-            assert result.target_loss_rate < 0.30, (
-                f"Target loss rate {result.target_loss_rate*100:.1f}% too high"
-            )
+        assert result.target_loss_rate is not None, "Target loss rate was not computed"
+        assert result.target_loss_rate < 0.05, (
+            f"Target loss rate {result.target_loss_rate*100:.1f}% exceeds SIH PS limit of 5%"
+        )
 
-    def test_req19_reacquisition_time_metric_computed(self):
-        """Req 19: Re-acquisition time metric field is present in EvaluationRunResult."""
-        from src.evaluation.harness import EvaluationRunResult
+    def test_req19_reacquisition_time_le_1s(self):
+        """Req 19: Re-acquisition time ≤ 1.0s following target occlusion per SIH PS Row 19."""
+        from src.evaluation.harness import EvaluationHarness, EvaluationExperiment, EvaluationRunResult
+        from src.frame.simulation_provider import SimulationFrameProvider
+        from src.frame.data_contracts import FramePacket
+        from unittest.mock import patch
+        import tempfile
+        import numpy as np
+
         fields = {f.name for f in dataclasses.fields(EvaluationRunResult)}
         assert "reacquisition_time_s" in fields
+
+        orig_fn = SimulationFrameProvider.get_next_frame
+        def mock_get_next(self):
+            pkt = orig_fn(self)
+            # 10-frame total occlusion window: frames 25 to 34
+            if pkt and 25 <= pkt.frame_number <= 34:
+                dark_img = np.full_like(pkt.image, 30)
+                dark_img.flags.writeable = False
+                pkt = FramePacket(pkt.frame_number, pkt.timestamp, dark_img, pkt.width, pkt.height, pkt.source)
+            return pkt
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch.object(SimulationFrameProvider, "get_next_frame", mock_get_next):
+                exp = EvaluationExperiment(
+                    experiment_id="req19_reacquisition",
+                    algorithm_name="baseline_tracker",
+                    source_type="SIMULATION",
+                    max_frames=60,
+                    config_overrides={
+                        "target": {"speed": 0.0},
+                        "ptz": {"proportional_gain": 0.0},
+                    },
+                    output_dir=tmpdir,
+                )
+                harness = EvaluationHarness(None)
+                result = harness.run_experiment(exp)
+
+        assert result.reacquisition_time_s is not None, "Reacquisition time was not computed after occlusion recovery"
+        assert result.reacquisition_time_s <= 1.0, (
+            f"Measured reacquisition time {result.reacquisition_time_s:.3f}s exceeds 1.0s limit"
+        )
 
     def test_req20_processing_speed_ge_20fps(self):
         """Req 20: Processing speed ≥ 20 FPS."""

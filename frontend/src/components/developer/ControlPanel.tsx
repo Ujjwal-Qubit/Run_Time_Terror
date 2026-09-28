@@ -91,6 +91,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={!isIdle}
             className={`btn ${mode === 'SIMULATION' ? 'btn-primary' : 'btn-secondary'}`}
             style={{ fontSize: '11px', padding: '6px 8px' }}
+            aria-label="Switch to BM1 Simulation Mode"
           >
             <Layers className="w-3.5 h-3.5" />
             <span>BM1 (Simulation)</span>
@@ -100,6 +101,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={!isIdle}
             className={`btn ${mode === 'MP4' ? 'btn-primary' : 'btn-secondary'}`}
             style={{ fontSize: '11px', padding: '6px 8px' }}
+            aria-label="Switch to BM2 MP4 Video Mode"
           >
             <Video className="w-3.5 h-3.5" />
             <span>BM2 (MP4 Video)</span>
@@ -110,9 +112,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* Scenario / MP4 picker */}
       {mode === 'SIMULATION' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Scenario Preset:</label>
+          <label htmlFor="scenario-preset-select" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Scenario Preset:</label>
           <div style={{ display: 'flex', gap: '4px' }}>
             <select
+              id="scenario-preset-select"
+              aria-label="Select scenario preset"
               value={selectedScenario}
               onChange={(e) => onSelectScenario(e.target.value)}
               disabled={!isIdle}
@@ -131,6 +135,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               className="btn btn-secondary"
               style={{ padding: '4px 8px', fontSize: '11px' }}
               title="Save current config as new scenario preset"
+              aria-label="Save current config as new scenario preset"
             >
               Save
             </button>
@@ -140,6 +145,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               className="btn btn-secondary"
               style={{ padding: '4px 8px', fontSize: '11px', color: '#f87171' }}
               title="Delete selected scenario preset"
+              aria-label="Delete selected scenario preset"
             >
               X
             </button>
@@ -147,8 +153,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>MP4 Video File:</label>
+          <label htmlFor="mp4-video-path-input" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>MP4 Video File:</label>
           <input
+            id="mp4-video-path-input"
+            aria-label="MP4 video file path"
             type="text"
             placeholder="e.g. data/test_flight.mp4"
             value={mp4Path}
@@ -164,7 +172,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600 }}>
             <Cpu className="w-3.5 h-3.5" style={{ color: '#00d2ff' }} />
-            <span>Algorithm Under Test (UUT)</span>
+            <label htmlFor="algorithm-select">Algorithm Under Test (UUT)</label>
           </div>
           <span className={`badge ${algorithmError ? 'badge-unlocked' : 'badge-locked'}`} style={{ fontSize: '9px', padding: '2px 6px' }}>
             {algorithmError ? 'ERROR' : (currentAlgoObj?.status || 'READY')}
@@ -172,6 +180,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         </div>
 
         <select
+          id="algorithm-select"
+          aria-label="Select algorithm under test"
           value={activeAlgorithm}
           onChange={(e) => onSelectAlgorithm(e.target.value)}
           disabled={!isIdle}
@@ -210,6 +220,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={!isIdle}
             className="btn btn-success"
             style={{ fontSize: '11px', padding: '6px 8px' }}
+            aria-label="Start tracking simulation"
+            title="Start tracking simulation"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Start</span>
@@ -220,6 +232,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={isIdle}
             className="btn btn-danger"
             style={{ fontSize: '11px', padding: '6px 8px' }}
+            aria-label="Stop tracking simulation"
+            title="Stop tracking simulation"
           >
             <Square className="w-3.5 h-3.5 fill-current" />
             <span>Stop</span>
@@ -231,6 +245,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               disabled={!isPaused}
               className="btn btn-primary"
               style={{ fontSize: '11px', padding: '6px 8px' }}
+              aria-label="Resume tracking simulation"
+              title="Resume tracking simulation"
             >
               <Play className="w-3.5 h-3.5" />
               <span>Resume</span>
@@ -241,6 +257,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               disabled={!isRunning}
               className="btn btn-secondary"
               style={{ fontSize: '11px', padding: '6px 8px' }}
+              aria-label="Pause tracking simulation"
+              title="Pause tracking simulation"
             >
               <Pause className="w-3.5 h-3.5" />
               <span>Pause</span>
@@ -252,6 +270,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={!isIdle}
             className="btn btn-secondary"
             style={{ fontSize: '11px', padding: '6px 8px' }}
+            aria-label="Reset simulation tracking state"
+            title="Reset simulation tracking state"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset</span>

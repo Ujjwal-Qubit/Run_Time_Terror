@@ -136,19 +136,29 @@ class TargetManager:
         """Initialize position and velocity for the selected motion pattern."""
         self._time = 0.0
         # Determine initial position
-        if self._target_cfg.initial_position.lower() == "random":
-            # Random position constrained to a central region to ensure
-            # initial visibility for typical camera FOV at scene center.
-            # (e.g., +/- 150 pixels from center)
+        # Explicit coordinates take unconditional precedence over random placement per PS Row 11
+        if self._target_cfg.initial_x is not None and self._target_cfg.initial_y is not None:
+            self._init_x = float(np.clip(self._target_cfg.initial_x, self._margin, self._scene_w - self._margin))
+            self._init_y = float(np.clip(self._target_cfg.initial_y, self._margin, self._scene_h - self._margin))
+        elif self._target_cfg.initial_position.lower() == "random":
             center_x = self._scene_w / 2.0
             center_y = self._scene_h / 2.0
-            spawn_range = 150.0
-            low_x = max(self._margin, center_x - spawn_range)
-            high_x = min(self._scene_w - self._margin, center_x + spawn_range)
-            low_y = max(self._margin, center_y - spawn_range)
-            high_y = min(self._scene_h - self._margin, center_y + spawn_range)
+            spawn_range = getattr(self._target_cfg, "spawn_range", 150.0)
+            if spawn_range is not None and spawn_range > 0:
+                low_x = max(self._margin, center_x - spawn_range)
+                high_x = min(self._scene_w - self._margin, center_x + spawn_range)
+                low_y = max(self._margin, center_y - spawn_range)
+                high_y = min(self._scene_h - self._margin, center_y + spawn_range)
+            else:
+                low_x = float(self._margin)
+                high_x = float(self._scene_w - self._margin)
+                low_y = float(self._margin)
+                high_y = float(self._scene_h - self._margin)
             self._init_x = float(self._rng.uniform(low_x, high_x))
             self._init_y = float(self._rng.uniform(low_y, high_y))
+        elif self._target_cfg.initial_position.lower() == "center":
+            self._init_x = self._scene_w / 2.0
+            self._init_y = self._scene_h / 2.0
         else:
             self._init_x = (
                 float(self._target_cfg.initial_x)

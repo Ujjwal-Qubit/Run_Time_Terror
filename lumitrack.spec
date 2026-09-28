@@ -13,6 +13,7 @@ added_files = [
     ('scenarios/*.json', 'scenarios'),
     ('lr_model.json', '.'),
     ('src/plugins/algorithms', 'src/plugins/algorithms'),
+    ('models', 'models'),
 ]
 
 hidden_imports = [
@@ -22,7 +23,6 @@ hidden_imports = [
     'PySide6.QtWidgets',
     'cv2',
     'numpy',
-    'scipy',
 ] + collect_submodules('src')
 
 a = Analysis(

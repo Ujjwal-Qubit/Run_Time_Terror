@@ -33,6 +33,7 @@ class ModelExporter:
         validation_metrics: Optional[Dict[str, float]] = None,
         test_metrics: Optional[Dict[str, float]] = None,
         random_seed: int = 42,
+        layers: Optional[List[Dict[str, Any]]] = None,
     ) -> str:
         os.makedirs(output_dir, exist_ok=True)
 
@@ -53,6 +54,9 @@ class ModelExporter:
             "test_metrics": test_metrics or {},
             "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
+
+        if layers is not None:
+            model_data["layers"] = layers
 
         metadata_data = {
             "model_name": model_name,
