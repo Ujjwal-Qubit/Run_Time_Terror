@@ -4,7 +4,7 @@
 **Date:** 2026-09-28  
 **Phase:** Phase 4 — Legacy Cleanup, Standalone Windows Packaging & Evaluator Readiness  
 **Release Target:** Standalone Offline Windows Desktop Executable (`LumiTrack.exe`)  
-**Formal System Status:** **FROZEN PRODUCTION BASELINE — 100% GREEN (464/464 TESTS PASSED)**
+**Formal System Status:** **FROZEN PRODUCTION BASELINE — 100% GREEN (455/455 TESTS PASSED)**
 
 ---
 
@@ -14,7 +14,7 @@ This document provides the authoritative, exhaustive deliverable manifest for **
 
 Phase 4 concludes the development lifecycle by achieving:
 1. **Zero-Dependency Standalone Delivery:** Built a self-contained Windows desktop executable bundle (`dist/LumiTrack/`) with embedded Python 3.11 runtime, PySide6 Qt6 GUI, OpenCV computer vision engine, pure-NumPy 11-feature AI classifier weights (`models/candidate_classifier/v001/model.json`), scenario configurations (`scenarios/`), and modular algorithm plugins (`src/plugins/algorithms/baseline_tracker/`).
-2. **Clean-Machine Validation:** 100% pass across all 10 automated standalone runtime verification gates via `scratch/validate_standalone_exe.py` (covering `--validate`, `--help`, bundled assets, default simulation, named scenario loading, Benchmark-1 SMOKE matrix, Benchmark-2 MP4 with and without reference CSV, AI scenario workflow, and repeated relaunch stability).
+2. **Clean-Machine Validation:** 100% pass across all 10 automated standalone runtime verification gates via `scripts/validate_standalone_exe.py` (covering `--validate`, `--help`, bundled assets, default simulation, named scenario loading, Benchmark-1 SMOKE matrix, Benchmark-2 MP4 with and without reference CSV, AI scenario workflow, and repeated relaunch stability).
 3. **Rigorous Requirement Disambiguation:** Formally reconciled the exact count of requirements:
    - **Official SIH PS Specification Table (25 Rows):** **24 PASS / 1 PARTIAL** (Row 16 Bounded / Partial Compliance).
    - **Official SIH Deliverables (5 Deliverables):** **5 of 5 Complete (PASS)**.
@@ -31,9 +31,9 @@ Phase 4 concludes the development lifecycle by achieving:
 
 | Deliverable | Description | Primary Location | Verification Method | Status |
 |:---|:---|:---|:---|:---:|
-| **1. Software Application** | Standalone offline Windows executable requiring zero external installations (no Python, no npm, no pip). Dual-mode: interactive PySide6 desktop GUI + batch CLI. | [LumiTrack.exe](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/dist/LumiTrack/LumiTrack.exe)<br>[run_lumitrack.bat](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/run_lumitrack.bat) | Automated clean-machine runtime suite (`validate_standalone_exe.py`) | ✅ **DELIVERED** |
-| **2. Source Code** | Fully modular, PEP-8 compliant Python codebase structured into 19 decoupled modules adhering to Architecture v1.2. | [src/](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/src/) | Automated test suite: 464 tests passing in 11.72s (`pytest src/tests/`) | ✅ **DELIVERED** |
-| **3. Technical Report** | Comprehensive mathematical formulation, kinematic derivations, PTZ control laws, ML architecture, and forensic boundary audits. | [FINAL_VALIDATED_SYSTEM_SPECIFICATION.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/audit/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md)<br>[SIH_26_Engineering_Context_Technical_Model.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/docs/SIH_26_Engineering_Context_Technical_Model.md) | Technical inspection & peer-review signoff | ✅ **DELIVERED** |
+| **1. Software Application** | Standalone offline Windows executable requiring zero external installations (no Python, no npm, no pip). Dual-mode: interactive PySide6 desktop GUI + batch CLI. | [LumiTrack.exe](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/dist/LumiTrack/LumiTrack.exe)<br>[run_lumitrack.bat](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/run_lumitrack.bat) | Automated clean-machine runtime suite (`scripts/validate_standalone_exe.py`) | ✅ **DELIVERED** |
+| **2. Source Code** | Fully modular, PEP-8 compliant Python codebase structured into 19 decoupled modules adhering to Architecture v1.2. | [src/](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/src/) | Automated test suite: 455 tests passing in 16.76s (`pytest src/tests/`) | ✅ **DELIVERED** |
+| **3. Technical Report** | Comprehensive mathematical formulation, kinematic derivations, PTZ control laws, ML architecture, and forensic boundary audits. | [FINAL_VALIDATED_SYSTEM_SPECIFICATION.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/docs/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md)<br>[SIH_26_Engineering_Context_Technical_Model.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/docs/SIH_26_Engineering_Context_Technical_Model.md) | Technical inspection & peer-review signoff | ✅ **DELIVERED** |
 | **4. User & Evaluator Manual** | Step-by-step evaluator testing guide, CLI flags reference, GUI walkthrough, BM1/BM2 instructions, and demo scripts. | [USER_AND_EVALUATOR_MANUAL.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/docs/USER_AND_EVALUATOR_MANUAL.md)<br>[README.md](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/README.md) | Step-by-step reproduction and verification | ✅ **DELIVERED** |
 | **5. Performance Logs** | Machine-readable and human-readable evaluation logs (JSON, CSV, Markdown) generated automatically for all benchmarks and boundary tests. | [output/](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/output/)<br>[phase4_packaging_validation.json](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/output/phase4_packaging_validation.json) | Automated validation and parser verification | ✅ **DELIVERED** |
 
@@ -155,7 +155,7 @@ To ensure complete lifecycle traceability beyond the problem statement rows, Lum
 
 ## 6. Standalone Executable Verification Results
 
-The automated clean-machine verification script (`scratch/validate_standalone_exe.py`) evaluated the compiled binary `dist/LumiTrack/LumiTrack.exe` across 10 critical validation gates:
+The automated clean-machine verification script (`scripts/validate_standalone_exe.py`) evaluated the compiled binary `dist/LumiTrack/LumiTrack.exe` across 10 critical validation gates:
 
 ```json
 {
@@ -195,9 +195,9 @@ For on-site evaluators and technical juries, the following 6 deterministic demon
 | **Demo A** | **Nominal Baseline Tracking** | Verify closed-loop tracking of moving beacon under nominal conditions with zero tracking lag. | `.\dist\LumiTrack\LumiTrack.exe --headless --scenario scenario_2_circular --max-frames 60` | • State: `TRACKING`<br>• Lock: `LOCKED`<br>• RMSE: $< 0.05\text{ px}$<br>• Target Loss: $0.0\%$<br>• Speed: $> 60\text{ FPS}$ loop |
 | **Demo B** | **In-FOV & Uncertainty Acquisition** | Verify autonomous detection and gimbal alignment when target is spawned away from sensor center ($R \le 460\text{ px}$). | `.\dist\LumiTrack\LumiTrack.exe --headless --scenario scenario_1_static --max-frames 90` | • Acquisition Time: $\le 1.73\text{ s}$<br>• Lock established smoothly<br>• Anti-windup prevents overshoot |
 | **Demo C** | **Multi-Disturbance Stress** | Verify candidate classifier discriminating beacon from compact noise and clutter under heavy fog and jitter. | `.\dist\LumiTrack\LumiTrack.exe --headless --scenario scenario_4_fog_gaussian --max-frames 90` | • State: `TRACKING`<br>• Clutter rejected<br>• Target retained despite $\pm 20\text{ px}$ drift |
-| **Demo D** | **Occlusion & Predictive Coasting** | Verify predictive coasting buffer keeping camera on trajectory during transient dropout and relocking within $\le 0.067\text{ s}$. | `python scratch/test_adversarial_firewall.py` *(or interactive toggle in GUI)* | • State: `COASTING` $\to$ `TRACKING`<br>• Relock: $\le 0.067\text{ s}$ post-occlusion<br>• Zero loss of target trajectory |
-| **Demo E** | **Benchmark-2 MP4 with Reference CSV** | Verify independent video ingestion, PTZ bypass, and sub-pixel reference comparison. | `python scratch/validate_standalone_exe.py` *(executes step 7)* | • PTZ Controller: Bypassed<br>• Centroid RMSE: $\le 0.42\text{ px}$<br>• Evaluator Summary logged |
-| **Demo F** | **Honest Boundary Falsification** | Demonstrate empirical breakdown points (unrestricted corner search $> 2\text{ s}$; noise breakdown at $\sigma = 20$). | `python scratch/test_boundary_falsification.py` | • Corner search: $2.27\text{--}5.47\text{ s}$ (R16 PARTIAL)<br>• Noise $\sigma \le 16$: Robust<br>• Noise $\sigma = 20$: Breakdown ($81.4\%$ loss) |
+| **Demo D** | **Occlusion & Predictive Coasting** | Verify predictive coasting buffer keeping camera on trajectory during transient dropout and relocking within $\le 0.067\text{ s}$. | `python scripts/test_adversarial_firewall.py` *(or interactive toggle in GUI)* | • State: `COASTING` $\to$ `TRACKING`<br>• Relock: $\le 0.067\text{ s}$ post-occlusion<br>• Zero loss of target trajectory |
+| **Demo E** | **Benchmark-2 MP4 with Reference CSV** | Verify independent video ingestion, PTZ bypass, and sub-pixel reference comparison. | `python scripts/validate_standalone_exe.py` *(executes step 7)* | • PTZ Controller: Bypassed<br>• Centroid RMSE: $\le 0.42\text{ px}$<br>• Evaluator Summary logged |
+| **Demo F** | **Honest Boundary Falsification** | Demonstrate empirical breakdown points (unrestricted corner search $> 2\text{ s}$; noise breakdown at $\sigma = 20$). | `python scripts/test_boundary_disturbances_and_falsification.py` | • Corner search: $2.27\text{--}5.47\text{ s}$ (R16 PARTIAL)<br>• Noise $\sigma \le 16$: Robust<br>• Noise $\sigma = 20$: Breakdown ($81.4\%$ loss) |
 
 ---
 

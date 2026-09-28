@@ -2,11 +2,10 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![UI Framework](https://img.shields.io/badge/GUI-PySide6%20%2F%20Qt6-green.svg)](https://doc.qt.io/qtforpython/)
-[![Test Suite](https://img.shields.io/badge/tests-464%20passed%20%2F%200%20failed-brightgreen.svg)](https://pytest.org/)
+[![Test Suite](https://img.shields.io/badge/tests-455%20passed%20%2F%200%20failed-brightgreen.svg)](https://pytest.org/)
 [![SIH Problem Statement](https://img.shields.io/badge/SIH%20%2726-PS%2026169%20%2F%20PS--4-orange.svg)](https://sih.gov.in/)
 [![Organization](https://img.shields.io/badge/Organization-ISRO%20%2F%20Dept%20of%20Space-blueviolet.svg)](https://www.isro.gov.in/)
-[![Architecture](https://img.shields.io/badge/Architecture-v1.2%20Frozen%20Baseline-success.svg)](docs/FRESH_ARCHITECTURE_BASELINE.md)
-[![Graph Analysis](https://img.shields.io/badge/Graphify-1836%20nodes%20%7C%2089%20communities-indigo.svg)](graphify-out/GRAPH_REPORT.md)
+[![Architecture](https://img.shields.io/badge/Architecture-v1.2%20Frozen%20Baseline-success.svg)](docs/system_architecture.md)
 
 ---
 
@@ -101,7 +100,7 @@ LumiTrack is engineered in strict compliance with **Smart India Hackathon 2026 P
 > - **Official SIH PS 26169 Specification Table (25 Table Rows):** **24 of 25 fully satisfied (PASS)**; **1 bounded/partially satisfied (PARTIAL: Row 16 Acquisition Time)** within the validated operational envelope ($R \le 460\text{ px}$ acquires in $\le 1.73\text{ s}$; post-visibility lock in $0.07\text{ s}$), with unrestricted extreme-corner blind acquisition requiring $2.27\text{--}5.47\text{ s}$ under the mandated $10^\circ/\text{s}$ PTZ rate limit.
 > - **Official SIH Deliverables:** **5 of 5 complete (PASS)** (Standalone Windows Application `.exe`, Modular Source Code, Technical Architecture Specifications, User/Evaluator Manual, Structured Performance Logs).
 > - **Official Expected Solution Requirements:** **8 of 8 functional requirements verified (PASS)** (FR1–FR8).
-> - **Internal Engineering Specification (R01–R28):** **27 of 28 fully satisfied (PASS)**; **1 bounded/partially satisfied (PARTIAL: R16)**. Zero runtime ground-truth leakage verified via static AST and dynamic adversarial memory poisoning. Test suite 100% green (464/464 passed).
+> - **Internal Engineering Specification (R01–R28):** **27 of 28 fully satisfied (PASS)**; **1 bounded/partially satisfied (PARTIAL: R16)**. Zero runtime ground-truth leakage verified via static AST and dynamic adversarial memory poisoning. Test suite 100% green (455/455 passed).
 
 ---
 
@@ -359,86 +358,57 @@ LumiTrack features a dark-themed UI built in **PySide6 (Qt6)**.
 ## 🚀 Installation & Quickstart
 
 ### Prerequisites
-- **Operating System:** Windows 10/11, Linux, or macOS.
-- **Python:** Python `3.10`, `3.11`, or `3.12` (Python `3.11`/`3.12` recommended).
-- **Node.js / Bun (Optional for Web Frontend dev):** Node.js `18+` or Bun `1.0+`.
+- **Operating System:** Windows 10/11 64-bit (or Linux/macOS for Python source).
+- **Python (Optional):** Python `3.10` or `3.11` (only needed if running from source).
+- **Zero Dependencies:** Running the standalone binary requires NO Python, NO pip, and NO external installations.
 
 ---
 
-### Option 1: Modern Web Interface (Recommended) 🌐
+### Option 1: Standalone Windows Executable (Zero-Install, Recommended) 📦
 
-LumiTrack includes a high-performance **React + Vite + Three.js** aerospace web interface backed by a **FastAPI** REST and WebSocket streaming engine.
-
-#### Step 1: Clone and Set Up Python Environment
-```bash
-git clone https://github.com/Ujjwal-Qubit/Run_Time_Terror.git
-cd Run_Time_Terror
-git checkout F1
-```
+LumiTrack is fully packaged as a self-contained offline Windows desktop executable:
 
 ```powershell
-# Create virtual environment:
+# Interactive GUI:
+.\dist\LumiTrack\LumiTrack.exe --gui
+
+# OR simply double-click the one-click batch launcher:
+run_lumitrack.bat
+```
+
+---
+
+### Option 2: Running from Source via Python Environment 🖥️
+
+```powershell
+# 1. Create and activate virtual environment:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# Install requirements:
-pip install --upgrade pip
+# 2. Install core desktop dependencies:
 pip install -r requirements.txt
-# OR manually:
-pip install PySide6 numpy opencv-python pytest fastapi uvicorn websockets pydantic
-```
 
-#### Step 2: Launch the Web Platform
-```powershell
-# One-Click Launcher (Windows):
-.\run_web.bat
-
-# OR via Python Module:
-python -m src.main --web --port 8000
-```
-Open your browser at **`http://localhost:8000`** to access the live 2D HUD Sensor View, 3D Three.js orbital geometry scene, telemetry bar, benchmark matrix runner, and AI scenario studio.
-
-#### (Optional) Frontend Development with Hot-Reloading:
-```bash
-# Terminal 1 (Backend API & WebSocket Server):
-python -m src.main --web --port 8000
-
-# Terminal 2 (Vite Frontend Dev Server):
-cd frontend
-bun install     # or: npm install
-bun dev         # or: npm run dev
-```
-Open **`http://localhost:5173`** or **`http://localhost:3000`**.
-
----
-
-### Option 2: Desktop PySide6 GUI 🖥️
-
-```powershell
-# Launch Desktop GUI:
-.\run_lumitrack.bat
-
-# OR via Python Module:
+# 3. Launch Desktop GUI:
 python -m src.main --gui
 ```
 
 ---
 
-### Option 3: Standalone Windows Executable (Zero-Install) 📦
+### Option 3: Automated Regression & Behavioral Test Suite ✅
 
 ```powershell
-# Run the bundled standalone binary directly without installing Python:
-.\dist\LumiTrack\LumiTrack.exe --gui
+# Run the complete test suite:
+pytest src/tests/
 ```
+**Latest verified result:** `455 passed, 0 failed, 0 errors in 16.76s` (100% Green).
 
 ---
 
-### Option 4: Full Test Suite & Validation ✅
+### Option 4: Standalone Clean-Machine Verification Suite 🛡️
 
 ```powershell
-# Run the complete system integration, compliance, and AIML regression suite:
-pytest -v
-**Latest verified result:** `444 passed, 1 skipped`. The skip is an environment-dependent test; no test failures or collection errors remain.
+# Run the 10-gate standalone binary validator:
+python scripts/validate_standalone_exe.py
 ```
 
 #### 2. Evaluate External Video with Reference Ground Truth (BM2)
@@ -596,37 +566,39 @@ Outputs detailed JSON metrics and Markdown reports to `output/robustness_campaig
 ## 📁 Repository Layout
 
 ```
-Run_Time_Error/
-├── docs/                                  # Primary Engineering Documentation
-│   ├── AIML_TRAINING_RUNBOOK.md            # Dataset generation, model training & runtime setup
-│   ├── FRESH_ARCHITECTURE_BASELINE.md     # Architectural baseline & forensic audit
-│   ├── FINAL_ENGINEERING_REPORT.md        # Comprehensive phase-by-phase report
-│   ├── SIH_REQUIREMENT_TRACEABILITY_MATRIX.md # Full requirement compliance matrix
-│   ├── USER_AND_EVALUATOR_MANUAL.md       # Evaluator guide & user instructions
-│   └── LumiTrack_v1.0_Technical_Report.pdf# Technical report deliverable
-├── graphify-out/                          # Graphify Knowledge Graph & Reports
-│   ├── GRAPH_REPORT.md                    # Structural graph analysis & god nodes
-│   ├── graph.json                         # Serialized graph topology
-│   └── graph.html                         # Interactive 3D visual graph explorer
-├── Imp. .md/                              # Project Specification & System Models
-│   ├── PS.md                              # SIH Problem Statement 26169 definition
+LumiTrack/
+├── dist/LumiTrack/                        # Packaged Standalone Windows Executable
+│   ├── LumiTrack.exe                      # Standalone 6.11 MB executable binary
+│   └── _internal/                         # Bundled runtime, models, plugins, scenarios
+├── docs/                                  # Authoritative Engineering Documentation
+│   ├── official_problem_statement.md      # Official SIH 2026 Problem Statement 26169 (ISRO / DOS)
+│   ├── FINAL_VALIDATED_SYSTEM_SPECIFICATION.md # Authoritative frozen system specification
+│   ├── SIH_REQUIREMENT_TRACEABILITY_MATRIX.md # Clause-by-clause requirement traceability
+│   ├── USER_AND_EVALUATOR_MANUAL.md       # Complete evaluator guide & user instructions
+│   ├── SIH_26_Engineering_Context_Technical_Model.md # Theoretical & mathematical foundations
+│   ├── system_architecture.md             # Detailed 19-module platform architecture
 │   ├── PRD.md                             # Product Requirements Document
-│   ├── system_architecture.md             # System architecture specification
-│   ├── SIH_26_Engineering_Context_Technical_Model.md # Engineering technical model
-│   └── AGENTS.md                          # Multi-agent development conventions
-├── scenarios/                             # Standard Preconfigured Scenarios
-│   ├── scenario_1_static.json             # Static beacon verification scenario
-│   ├── scenario_2_circular.json           # Circular orbit trajectory scenario
-│   ├── scenario_3_figure8.json            # Figure-8 trajectory scenario
-│   └── scenario_4_fog_gaussian.json       # Fog & Gaussian noise scenario
-├── src/                                   # Source Code (19 Modules)
-│   ├── aiml/                              # Learned classifier, bounded-history predictor & model contracts
-│   ├── api/v1/                            # Frozen Public Plugin API (Contracts & Interfaces)
-│   ├── app/                               # Application Controller & PySide6 GUI
-│   │   └── gui/                           # 2D Viewport, 3D Orbital Widget, Panels
+│   ├── AIML_TRAINING_RUNBOOK.md           # Dataset generation, model training & runtime setup
+│   └── LumiTrack_v1.0_Technical_Report.pdf# Technical report deliverable
+├── datasets/                              # Versioned grouped datasets (candidate-v1, temporal-v1)
+├── models/                                # Versioned models (candidate_classifier, temporal_predictor)
+├── output/                                # Authoritative validation results & benchmark reports
+├── scenarios/                             # Standard Preconfigured Scenarios (Static, Circular, Fig8, Fog)
+├── scripts/                               # Reproducibility, Benchmark & Validation Scripts
+│   ├── validate_standalone_exe.py         # 10-gate clean-machine standalone validation suite
+│   ├── test_adversarial_firewall.py       # Adversarial ground-truth firewall audit & dynamic test
+│   ├── test_boundary_disturbances_and_falsification.py # Boundary stress & empirical limits
+│   ├── test_r16_first_principles.py       # R16 acquisition first-principles benchmark
+│   ├── test_r15_loop_latency.py           # End-to-end loop rate & latency benchmark
+│   ├── run_robustness_campaign.py         # Robustness sweep campaign script
+│   └── generate_technical_report_pdf.py   # PDF technical report generator
+├── src/                                   # Source Code (19 Modules per Architecture v1.2)
+│   ├── aiml/                              # Learned classifier, predictor & feature schemas
+│   ├── api/v1/                            # Public Plugin API (Contracts & Interfaces)
+│   ├── app/                               # Application Controller, PySide6 GUI, Visualizer
 │   ├── config/                            # Configuration & Scenario Managers
-│   ├── control/                           # Proportional-Deadband PTZ Controller
-│   ├── data/                              # Grouped synthetic dataset generation and schemas
+│   ├── control/                           # PI PTZ Gimbal Controller with Anti-Windup
+│   ├── data/                              # Grouped synthetic dataset generation
 │   ├── evaluation/                        # Benchmark Harness, Matrix, AI Scenarios, Reporting
 │   ├── frame/                             # Internal Data Contracts & Enumerations
 │   ├── interfaces/                        # Internal Strategy Interfaces
@@ -634,18 +606,17 @@ Run_Time_Error/
 │   ├── plugins/                           # Manifest-based Plugin Discovery System
 │   │   └── algorithms/baseline_tracker/   # Official Baseline Tracking Algorithm Plugin
 │   ├── simulation/                        # Scene, Target, Camera, Disturbance & Frame Providers
-│   ├── tests/                             # 403-Test Regression Suite (100% Pass)
+│   ├── tests/                             # Automated Regression & Behavioral Test Suite (455 tests)
 │   ├── tracker/                           # Baseline Detector, Centroid, Kalman & State Manager
-│   ├── training/                          # Offline classifier/predictor training and artifact evaluation
-│   └── main.py                            # Unified CLI & GUI Application Entry Point
-├── dist/LumiTrack/                        # Packaged Standalone Executable
-├── lumitrack.spec                         # PyInstaller Packaging Specification
+│   ├── training/                          # Offline model training & evaluation utilities
+│   └── main.py                            # Standalone Application Entry Point (CLI & GUI)
+├── lumitrack.spec                         # PyInstaller Standalone Packaging Specification
 ├── run_lumitrack.bat                      # Windows One-Click Application Launcher
-├── run_robustness_campaign.py             # Robustness Sweep Campaign Script
-├── datasets/                              # Versioned grouped training/validation/test datasets
-├── models/                                # Versioned candidate and temporal model packages
+├── requirements.txt                       # Core Python Dependencies (NumPy, OpenCV, PySide6, Pytest)
 ├── pytest.ini                             # Pytest Configuration
-├── pyrefly.toml                           # Pyrefly Static Analysis Configuration
+├── pyrefly.toml                           # Static Analysis Configuration
+├── PHASE_4_FINAL_DELIVERABLE_MANIFEST.md  # Official deliverable manifest & asset inventory
+├── PHASE_4_FINAL_READINESS_REPORT.md      # Final readiness report & evaluator playbook
 └── README.md                              # Master Repository Documentation
 ```
 
@@ -656,13 +627,16 @@ Run_Time_Error/
 | Document | Location | Purpose |
 |---|---|---|
 | **Evaluator & User Manual** | [docs/USER_AND_EVALUATOR_MANUAL.md](docs/USER_AND_EVALUATOR_MANUAL.md) | Step-by-step evaluator instructions, GUI walkthrough, and operations guide. |
-| **Final Engineering Report** | [docs/FINAL_ENGINEERING_REPORT.md](docs/FINAL_ENGINEERING_REPORT.md) | Architectural evolution, phase-by-phase implementation summary, and verification results. |
-| **Requirement Traceability Matrix** | [docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md](docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md) | 100% clause-by-clause mapping against SIH Problem Statement 26169. |
-| **Fresh Architecture Baseline** | [docs/FRESH_ARCHITECTURE_BASELINE.md](docs/FRESH_ARCHITECTURE_BASELINE.md) | Architectural audit, ground-truth firewall verification, and Graphify metrics. |
-| **AIML Training Runbook** | [docs/AIML_TRAINING_RUNBOOK.md](docs/AIML_TRAINING_RUNBOOK.md) | Reproducible grouped dataset generation, held-out model training, and optional classifier activation. |
-| **SIH Problem Statement** | [Imp. .md/PS.md](Imp.%20.md/PS.md) | Official SIH 2026 Problem Statement 4 (ISRO / Department of Space). |
-| **System Architecture Specification** | [Imp. .md/system_architecture.md](Imp.%20.md/system_architecture.md) | Detailed technical model of all 19 platform modules. |
-| **Graphify Analysis Report** | [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md) | Codebase knowledge graph topology, God nodes, and dependency clusters. |
+| **System Specification** | [docs/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md](docs/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md) | Authoritative validated system specification and engineering constraints. |
+| **Requirement Traceability Matrix** | [docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md](docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md) | Clause-by-clause mapping against SIH Problem Statement 26169 (25 table rows + deliverables). |
+| **Technical Context & Mathematical Model** | [docs/SIH_26_Engineering_Context_Technical_Model.md](docs/SIH_26_Engineering_Context_Technical_Model.md) | Physical equations, kinematic models, noise formulations, and optical derivations. |
+| **System Architecture Specification** | [docs/system_architecture.md](docs/system_architecture.md) | Complete architectural definition of all 19 platform modules. |
+| **Official Problem Statement** | [docs/official_problem_statement.md](docs/official_problem_statement.md) | Official SIH 2026 Problem Statement 26169 / PS-4 (ISRO / Department of Space). |
+| **AIML Training Runbook** | [docs/AIML_TRAINING_RUNBOOK.md](docs/AIML_TRAINING_RUNBOOK.md) | Reproducible grouped dataset generation, held-out model training, and feature extraction. |
+| **Final Deliverable Manifest** | [PHASE_4_FINAL_DELIVERABLE_MANIFEST.md](PHASE_4_FINAL_DELIVERABLE_MANIFEST.md) | Complete deliverable catalog, binary asset inventory, and traceability mapping. |
+| **Final Readiness Report** | [PHASE_4_FINAL_READINESS_REPORT.md](PHASE_4_FINAL_READINESS_REPORT.md) | Final readiness audit, 10-gate validation logs, firewall proofs, and evaluator playbook. |
+| **Technical Report (PDF)** | [docs/LumiTrack_v1.0_Technical_Report.pdf](docs/LumiTrack_v1.0_Technical_Report.pdf) | Official printable technical report deliverable. |
+
 
 ---
 

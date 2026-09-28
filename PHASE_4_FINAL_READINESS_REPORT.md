@@ -3,7 +3,7 @@
 **Problem Statement:** SIH 2026 / PS 26169 (PS-4) · Department of Space / ISRO  
 **Date:** 2026-09-28  
 **Document Status:** FINAL PRODUCTION SIGN-OFF  
-**Overall System Verdict:** **READY FOR EVALUATOR JURY INSPECTION (100% GREEN, 464/464 TESTS PASSED)**
+**Overall System Verdict:** **READY FOR EVALUATOR JURY INSPECTION (100% GREEN, 455/455 TESTS PASSED)**
 
 ---
 
@@ -13,14 +13,14 @@ Phase 4 concludes the development of **LumiTrack** by transitioning the verified
 
 ### Key Milestones Achieved:
 1. **Standalone Windows Packaging:** Successfully built `dist/LumiTrack/LumiTrack.exe` using PyInstaller. The package bundles Python 3.11, PySide6 Qt6 desktop GUI, OpenCV, NumPy, the pre-trained pure-NumPy 11-feature AI classifier (`models/candidate_classifier/v001/model.json`), baseline tracker plugins, and all scenario definitions into an offline, self-contained distribution (~282.6 MB total, 6.11 MB entrypoint `.exe`).
-2. **Clean-Machine Automated Verification:** Executed the complete 10-gate standalone runtime test suite (`scratch/validate_standalone_exe.py`) directly against the compiled binary. All 10 gates achieved **100% PASS**, verifying `--validate`, `--help`, bundled assets, headless simulation, named scenario execution, Benchmark-1 SMOKE matrix, Benchmark-2 MP4 mode (with and without reference CSV), AI scenario workflow, and relaunch stability.
+2. **Clean-Machine Automated Verification:** Executed the complete 10-gate standalone runtime test suite (`scripts/validate_standalone_exe.py`) directly against the compiled binary. All 10 gates achieved **100% PASS**, verifying `--validate`, `--help`, bundled assets, headless simulation, named scenario execution, Benchmark-1 SMOKE matrix, Benchmark-2 MP4 mode (with and without reference CSV), AI scenario workflow, and relaunch stability.
 3. **Requirement Count Reconciliation:** Resolved all prior documentation ambiguities regarding requirement totals:
    - **Official SIH PS Specification Table (25 Rows):** **24 PASS / 1 PARTIAL** (Row 16 Bounded / Partial Compliance).
    - **Official SIH Deliverables (5 Deliverables):** **5 of 5 Complete (PASS)**.
    - **Official Expected Solution Requirements (8 Functional Requirements):** **8 of 8 Verified (PASS)**.
    - **Internal Engineering / Traceability Requirements (R01–R28):** **27 PASS / 1 PARTIAL**.
 4. **Zero Ground-Truth Leakage Guarantee:** Static AST inspection of all Unit Under Test (UUT) modules and dynamic adversarial memory poisoning confirmed zero information leakage ($0.0000000000\text{ px}$ centroid difference between nominal and poisoned runs).
-5. **Full Regression Health:** The entire regression test suite remains 100% green: **464 passed, 0 failed, 0 errors in 11.72s**.
+5. **Full Regression Health:** The entire regression test suite remains 100% green: **455 passed, 0 failed, 0 errors in 16.76s** (exact reduction of 9 tests explained by the purge of retired FastAPI server endpoints; core algorithm, tracking, controller, and scenario suites intact).
 6. **Honest Operational Boundaries:** Maintained strict scientific integrity by truthfully reporting empirical limits:
    - **Acquisition Time (R16):** Fully satisfied for in-FOV ($0.07\text{ s}$) and operational uncertainty zones ($R \le 460\text{ px}$, $\le 1.73\text{ s}$). Formally marked **PARTIAL** because unconstrained blind search to extreme canvas corners ($R > 600\text{ px}$) requires $2.27\text{--}5.47\text{ s}$ under the physical $10^\circ/\text{s}$ PTZ rate limit.
    - **Gaussian Noise (R22):** Formal SIH parameter range $\sigma \in [0, 20]$ supported; robust tracking verified up to $\sigma \le 16.0$ ($0.0\%$ loss, $\text{RMSE} < 0.09\text{ px}$); degradation observed at $\sigma \approx 18.0$; breakdown at $\sigma = 20.0$ ($81.4\%$ loss due to low optical SNR).
@@ -93,7 +93,7 @@ candidates = [
 
 ## 4. Standalone Runtime Verification (10-Gate Suite)
 
-The automated script [`scratch/validate_standalone_exe.py`](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/scratch/validate_standalone_exe.py) was executed directly against `dist/LumiTrack/LumiTrack.exe`. Summary results:
+The automated script [`scripts/validate_standalone_exe.py`](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/scripts/validate_standalone_exe.py) was executed directly against `dist/LumiTrack/LumiTrack.exe`. Summary results:
 
 ```
 ================================================================================
@@ -135,7 +135,7 @@ Audited all tracking and perception modules:
 **Result:** Zero occurrences of `GroundTruth`, `ground_truth`, `ScenarioDefinition`, `TargetManager`, or `SceneManager` imports in any UUT module.
 
 ### 5.2 Closed-Loop Dynamic Adversarial Poisoning
-In [`scratch/test_adversarial_firewall.py`](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/scratch/test_adversarial_firewall.py), a simulation was run twice with identical random seeds:
+In [`scripts/test_adversarial_firewall.py`](file:///e:/Newfolder/Project2O/Projects/SIH%20%2726/external/scripts/test_adversarial_firewall.py), a simulation was run twice with identical random seeds:
 - **Run A (Nominal):** Standard ground-truth generation.
 - **Run B (Poisoned):** Ground-truth provider actively corrupted with extreme adversarial coordinates:
   $$\mathbf{x}_{\text{true}} = (999999.0, -888888.0)$$
@@ -241,7 +241,7 @@ This playbook enables evaluators to reproduce all functional capabilities and em
 * **Objective:** Demonstrate standalone video processing on external evaluator MP4 video with PTZ bypass and automated comparison against ground truth.
 * **CLI Execution:**
   ```powershell
-  python scratch/validate_standalone_exe.py
+  python scripts/validate_standalone_exe.py
   ```
   *(Step 7 runs BM2 on a 40-frame synthetic video with reference CSV).*
 * **Manual CLI Command:**
@@ -260,7 +260,7 @@ This playbook enables evaluators to reproduce all functional capabilities and em
 * **Objective:** Transparently demonstrate the empirical physical and mathematical boundaries of the system to the evaluation jury.
 * **Execution:**
   ```powershell
-  python scratch/test_boundary_falsification.py
+  python scripts/test_boundary_disturbances_and_falsification.py
   ```
 * **Boundary Findings Demonstrated:**
   1. **R16 Physical Rate Ceiling:** Blind search from canvas center $(1000, 1000)$ to extreme unconstrained corner $(1900, 1900)$ ($R = 1272.8\text{ px} \approx 7.95^\circ$) takes $2.27\text{--}5.47\text{ s}$ because the camera's maximum pan/tilt speed is physically clamped at $10.0^\circ/\text{s}$ per PS Rows 13–14. This proves why R16 is formally classified as **PARTIAL / BOUNDED COMPLIANCE**.
@@ -277,8 +277,8 @@ This playbook enables evaluators to reproduce all functional capabilities and em
 |:---|:---|:---:|:---:|
 | **Standalone Executable** | Runs without Python/pip installed | `dist/LumiTrack/LumiTrack.exe` | ✅ READY |
 | **One-Click Launcher** | `run_lumitrack.bat` launches GUI | Verified functional | ✅ READY |
-| **CLI Argument Parser** | Full suite of options supported | All 16 CLI flags verified | ✅ READY |
-| **Unit Test Suite** | 100% green | 464/464 passed (11.72s) | ✅ READY |
+| **CLI Argument Parser** | Full suite of options supported | All 14 CLI flags verified | ✅ READY |
+| **Unit Test Suite** | 100% green | 455/455 passed (16.76s) | ✅ READY |
 | **Ground-Truth Firewall** | Zero leakage | Bitwise identical ($0.0\text{ px}$ diff) | ✅ READY |
 | **Standard Scenarios** | 4 JSON scenarios bundled | Pre-packaged in `_internal` | ✅ READY |
 | **AI Model Weights** | 11-feature pure-NumPy MLP | Bundled in `_internal/models` | ✅ READY |

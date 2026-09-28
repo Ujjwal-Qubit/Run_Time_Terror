@@ -111,14 +111,14 @@
  
 | Test Suite Category | Tests | Status |
 |:---|:---:|:---:|
-| Core Algorithms & Unit Tests | 233 | ✅ 233/233 PASSED |
+| Core Algorithms & Unit Tests | 224 | ✅ 224/224 PASSED |
 | SIH Acceptance & Boundary Validation (`test_phase6_8_sih_validation.py`) | 59 | ✅ 59/59 PASSED |
 | AI Scenario & Generation (`test_phase6_7_ai_scenario.py`) | 17 | ✅ 17/17 PASSED |
 | Benchmark Matrix & BM1 Runner (`test_phase6_6_matrix.py`) | 9 | ✅ 9/9 PASSED |
 | Evaluation Harness (`test_phase6_5_harness.py`) | 9 | ✅ 9/9 PASSED |
 | Disturbance Injection (`test_phase6_4_injection.py`) | 12 | ✅ 12/12 PASSED |
 | Phase 1 & 2 Behavioral & Rigorous Validation | 125 | ✅ 125/125 PASSED |
-| **TOTAL** | **464** | ✅ **464/464 PASSED** (100% Green) |
+| **TOTAL** | **455** | ✅ **455/455 PASSED** (100% Green, 9 retired web server tests removed) |
 
 ---
 

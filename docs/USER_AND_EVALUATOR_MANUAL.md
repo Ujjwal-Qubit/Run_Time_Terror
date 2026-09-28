@@ -187,8 +187,8 @@ Executed across 6 experimental dimensions (Target Size, Motion Pattern, Sensor N
 - **Gaussian Noise Boundary:** Robust tracking verified for $\sigma \le 16.0$; degradation at $\sigma \approx 18.0$; breakdown at $\sigma = 20.0$.
 
 ### 4.5 Automated Regression Test Suite
-- **Total Tests:** 464 collected
-- **Results:** 464 passed, 0 failed, 0 errors, 0 skipped (100.0% pass rate in 18.64s)
+- **Total Tests:** 455 collected (9 legacy web-server tests retired)
+- **Results:** 455 passed, 0 failed, 0 errors, 0 skipped (100.0% pass rate in ~17s)
 
 ### 4.6 Official Requirement Reconciliation & Compliance Summary
 - **Official SIH PS 26169 Specification Table (25 Table Rows):** 24 of 25 fully satisfied (PASS); 1 bounded/partially satisfied (PARTIAL: Row 16 Acquisition Time).
