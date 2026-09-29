@@ -259,7 +259,7 @@ CENTROID_BG_METHOD = "annulus"          # ENGINEERING_DEFAULT — perimeter ring
 
 # Kalman filter (constant-velocity model)
 KALMAN_PROCESS_NOISE_POS = 1.0          # ENGINEERING_DEFAULT
-KALMAN_PROCESS_NOISE_VEL = 5.0          # ENGINEERING_DEFAULT
+KALMAN_PROCESS_NOISE_VEL = 30.0         # ENGINEERING_DEFAULT — responsive tracking under camera slew
 KALMAN_MEASUREMENT_NOISE = 2.0          # ENGINEERING_DEFAULT
 KALMAN_INITIAL_COVARIANCE_POS = 100.0   # ENGINEERING_DEFAULT
 KALMAN_INITIAL_COVARIANCE_VEL = 1000.0  # ENGINEERING_DEFAULT
@@ -270,7 +270,7 @@ ROI_MAX_SIZE = 300                      # ENGINEERING_DEFAULT — pixels
 ROI_MARGIN_FACTOR = 3.0                 # ENGINEERING_DEFAULT — multiplier
 
 # Candidate gating
-GATE_MAX_DISTANCE = 120.0               # ENGINEERING_DEFAULT — pixels (robust tracking during camera motion)
+GATE_MAX_DISTANCE = 200.0               # ENGINEERING_DEFAULT — pixels (robust tracking during camera motion)
 
 # State machine thresholds
 STATE_LOCK_THRESHOLD = 0.6              # ENGINEERING_DEFAULT

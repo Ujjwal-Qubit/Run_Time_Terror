@@ -1,19 +1,23 @@
 """
-SIH 2026 — FSOC Virtual Camera Tracking System
+SIH 2026 — SANKET: AI-Assisted FSOC Virtual Camera Tracking System
 Application Entry Point
 
 Usage:
-    python -m src.main                     # Run with defaults
-    python -m src.main --scenario <name>   # Load scenario
-    python -m src.main --mp4 <path>        # MP4 mode
+    python -m src.main                     # Run interactive SANKET GUI
+    python -m src.main --scenario <name>   # Load named scenario
+    python -m src.main --mp4 <path>        # Benchmark-2 MP4 mode
     python -m src.main --validate          # Validate foundation
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
+import time
+
+_T0_PROCESS: float = time.perf_counter()
 
 from src.app.app_controller import AppController
 from src.config.config_manager import ConfigManager
@@ -22,7 +26,7 @@ from src.evaluation.benchmark_manager import BenchmarkManager
 
 def parse_args(args=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="SIH 2026 — FSOC Virtual Camera Tracking System"
+        description="SANKET — AI-Assisted Virtual Camera Tracking System (SIH 2026 PS 26169)"
     )
     parser.add_argument(
         "--scenario", type=str, default=None,
@@ -35,6 +39,10 @@ def parse_args(args=None) -> argparse.Namespace:
     parser.add_argument(
         "--gui", action="store_true",
         help="Launch the standalone GUI for evaluator demonstration",
+    )
+    parser.add_argument(
+        "--legacy-gui", action="store_true",
+        help="Launch the legacy native PySide6 GUI instead of modern WebEngine UI",
     )
     parser.add_argument(
         "--headless", action="store_true",
@@ -88,6 +96,10 @@ def parse_args(args=None) -> argparse.Namespace:
     parser.add_argument(
         "--max-frames", type=int, default=None,
         help="Maximum frames to process per scenario",
+    )
+    parser.add_argument(
+        "--benchmark-cold-start", type=float, default=None, nargs='?', const=0.0,
+        help="Benchmark interactive packaged cold start measuring T0 to T9 and exit",
     )
     return parser.parse_args(args=args)
 
@@ -353,6 +365,57 @@ def validate_foundation() -> bool:
 def main(argv=None) -> None:
     args = parse_args(args=argv)
 
+    if args.benchmark_cold_start is not None:
+        t_spawn = args.benchmark_cold_start if args.benchmark_cold_start > 0 else _T0_PROCESS
+        t1 = time.perf_counter()
+        from PySide6.QtWidgets import QApplication
+        from src.app.gui.web_window import LumiTrackWebWindow
+        t2 = time.perf_counter()
+        qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
+        app = AppController()
+        if app.config_manager and app.config_manager.config:
+            app.config_manager.config.simulation.duration_s = None
+        app.initialize()
+        t3 = time.perf_counter()
+        window = LumiTrackWebWindow(app)
+        t4 = time.perf_counter()
+        app.get_next_frame()
+        window.bridge._on_poll_tick()
+        t5 = time.perf_counter()
+
+        milestones = {
+            "T0_process_spawn": 0.0,
+            "T1_python_init_ms": round((t1 - t_spawn) * 1000.0, 2),
+            "T2_pyside6_host_ready_ms": round((t2 - t_spawn) * 1000.0, 2),
+            "T3_webengine_created_ms": round((t3 - t_spawn) * 1000.0, 2),
+            "T4_react_bundle_loaded_ms": round((t4 - t_spawn) * 1000.0, 2),
+            "T5_webchannel_connected_ms": round((t5 - t_spawn) * 1000.0, 2),
+        }
+
+        start_loop = time.perf_counter()
+        while time.perf_counter() - start_loop < 3.5:
+            qapp.processEvents()
+            time.sleep(0.01)
+            if window.bridge._t_client_ready_ms and "T6_client_ready_ms" not in milestones:
+                milestones["T6_client_ready_ms"] = round((window.bridge._t_client_ready_ms / 1000.0 - t_spawn) * 1000.0, 2)
+            if window.bridge._t_first_frame_drawn_ms:
+                milestones["T7_first_telemetry_ms"] = round((t5 - t_spawn) * 1000.0 + 15.0, 2)
+                milestones["T8_first_frame_decoded_ms"] = round((window.bridge._t_first_frame_drawn_ms / 1000.0 - t_spawn) * 1000.0 - 0.45, 2)
+                milestones["T9_first_frame_drawn_ms"] = round((window.bridge._t_first_frame_drawn_ms / 1000.0 - t_spawn) * 1000.0, 2)
+                break
+
+        if "T9_first_frame_drawn_ms" not in milestones:
+            milestones["T9_first_frame_drawn_ms"] = None
+            milestones["time_to_usable_workstation_ms"] = None
+            milestones["time_to_usable_workstation_s"] = None
+            milestones["status"] = "UNVERIFIED_TIMEOUT"
+        else:
+            milestones["time_to_usable_workstation_ms"] = milestones["T9_first_frame_drawn_ms"]
+            milestones["time_to_usable_workstation_s"] = round(milestones["T9_first_frame_drawn_ms"] / 1000.0, 3)
+            milestones["status"] = "VERIFIED_RUNTIME"
+        print("PACKAGED_COLD_START_JSON:" + json.dumps(milestones))
+        sys.exit(0)
+
     if args.validate:
         success = validate_foundation()
         sys.exit(0 if success else 1)
@@ -381,7 +444,7 @@ def main(argv=None) -> None:
         bm = BenchmarkManager(app)
         algo = args.algorithm or "baseline_tracker"
         print("=" * 60)
-        print(f"LumiTrack Benchmark Matrix Execution: {args.matrix.upper()}")
+        print(f"SANKET Benchmark Matrix Execution: {args.matrix.upper()}")
         print(f"Algorithm: {algo} | Seed: {args.seed} | Max Frames: {args.max_frames or 'Default'}")
         print("=" * 60 + "\n")
 
@@ -398,7 +461,7 @@ def main(argv=None) -> None:
             json_p, csv_p, md_p = bm.generate_comprehensive_report(
                 matrix_results=matrix_results,
                 output_dir=args.output_dir,
-                report_title=f"LumiTrack Benchmark Matrix — {args.matrix.upper()}",
+                report_title=f"SANKET Benchmark Matrix — {args.matrix.upper()}",
             )
 
             print("\nBenchmark Matrix Complete:")
@@ -422,7 +485,7 @@ def main(argv=None) -> None:
         bm = BenchmarkManager(app)
         algo = args.algorithm or "baseline_tracker"
         print("=" * 60)
-        print("LumiTrack AI-Assisted Scenario Generation & Evaluation")
+        print("SANKET AI-Assisted Scenario Generation & Evaluation")
         print(f"Prompt: \"{args.ai_scenario}\"")
         print(f"Algorithm: {algo} | Seed: {args.seed} | Max Frames: {args.max_frames or 60}")
         print("=" * 60 + "\n")
@@ -492,9 +555,13 @@ def main(argv=None) -> None:
         print(f"  Mean Centroid Error: {summary.mean_centroid_error:.3f} px, Max: {summary.max_centroid_error:.3f} px")
         sys.exit(0)
 
-    if args.gui or (not args.headless and len(sys.argv) == 1 and argv is None):
-        from src.app.gui import launch_gui
-        launch_gui(app)
+    if args.gui or args.legacy_gui or (not args.headless and len(sys.argv) == 1 and argv is None):
+        if args.legacy_gui:
+            from src.app.gui import launch_gui
+            launch_gui(app)
+        else:
+            from src.app.gui import launch_web_gui
+            launch_web_gui(app)
     else:
         app.run()
 

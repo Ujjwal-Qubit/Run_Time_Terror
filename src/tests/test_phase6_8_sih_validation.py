@@ -397,14 +397,14 @@ class TestEntryPoint:
         )
 
     def test_run_lumitrack_bat_exists(self):
-        """run_lumitrack.bat standalone launcher exists."""
-        bat = PROJECT_ROOT / "run_lumitrack.bat"
-        assert bat.exists(), "run_lumitrack.bat standalone launcher not found"
+        """Standalone launcher script exists."""
+        bat = (PROJECT_ROOT / "run_sanket.bat") if (PROJECT_ROOT / "run_sanket.bat").exists() else (PROJECT_ROOT / "run_lumitrack.bat")
+        assert bat.exists(), "Standalone launcher script (run_sanket.bat / run_lumitrack.bat) not found"
 
     def test_pyinstaller_spec_exists(self):
-        """lumitrack.spec packaging specification exists."""
-        spec = PROJECT_ROOT / "lumitrack.spec"
-        assert spec.exists(), "lumitrack.spec not found"
+        """PyInstaller packaging specification exists."""
+        spec = (PROJECT_ROOT / "sanket.spec") if (PROJECT_ROOT / "sanket.spec").exists() else (PROJECT_ROOT / "lumitrack.spec")
+        assert spec.exists(), "Packaging specification (sanket.spec / lumitrack.spec) not found"
 
     def test_requirements_resolvable(self):
         """Core dependencies (cv2, numpy, PySide6) are importable."""

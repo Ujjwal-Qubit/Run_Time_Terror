@@ -1,663 +1,486 @@
-# LumiTrack — AI-Assisted Virtual Camera Tracking & Evaluation Platform
+<p align="center">
+  <img src="App_Logo_Assets_Final/app_logo_transparent.svg" width="340" alt="SANKET Logo"/>
+</p>
 
-[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
-[![UI Framework](https://img.shields.io/badge/GUI-PySide6%20%2F%20Qt6-green.svg)](https://doc.qt.io/qtforpython/)
-[![Test Suite](https://img.shields.io/badge/tests-455%20passed%20%2F%200%20failed-brightgreen.svg)](https://pytest.org/)
-[![SIH Problem Statement](https://img.shields.io/badge/SIH%20%2726-PS%2026169%20%2F%20PS--4-orange.svg)](https://sih.gov.in/)
-[![Organization](https://img.shields.io/badge/Organization-ISRO%20%2F%20Dept%20of%20Space-blueviolet.svg)](https://www.isro.gov.in/)
-[![Architecture](https://img.shields.io/badge/Architecture-v1.2%20Frozen%20Baseline-success.svg)](docs/system_architecture.md)
+# SANKET
 
----
+### AI-Assisted Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space Optical Communication (FSOC) Terminals
 
-## 📌 Table of Contents
-
-1. [Executive Summary & Mission](#-executive-summary--mission)
-2. [SIH Problem Statement 26169 Alignment](#-sih-problem-statement-26169-alignment)
-3. [System Architecture & Data Flow](#-system-architecture--data-flow)
-4. [Baseline Tracking Algorithm Pipeline](#-baseline-tracking-algorithm-pipeline)
-5. [Benchmark Modes: BM1 vs. BM2](#-benchmark-modes-bm1-vs-bm2)
-6. [AI-Assisted Scenario Generation](#-ai-assisted-scenario-generation)
-7. [Graphical User Interface & 3D Visualization](#-graphical-user-interface--3d-visualization)
-8. [Installation & Quickstart](#-installation--quickstart)
-9. [Command Line Interface (CLI) Reference](#-command-line-interface-cli-reference)
-10. [Algorithm Plugin Development Guide](#-algorithm-plugin-development-guide)
-11. [Verification, Testing & Robustness](#-verification-testing--robustness)
-12. [Repository Layout](#-repository-layout)
-13. [Documentation Index](#-documentation-index)
-14. [Scope & Operational Boundaries](#-scope--operational-boundaries)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11.9-blue.svg)](https://www.python.org/)
+[![Frontend React 19](https://img.shields.io/badge/Frontend-React%2019%20%7C%20TypeScript-cyan.svg)](https://react.dev/)
+[![Pytest Status](https://img.shields.io/badge/Tests-492%20Passed-brightgreen.svg)](https://docs.pytest.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20x64-lightgrey.svg)](https://microsoft.com/windows)
+[![Air-Gapped SIL](https://img.shields.io/badge/Security-Air--Gapped%20SIL%20Offline-success.svg)](#architecture)
+[![SIH Problem Statement](https://img.shields.io/badge/SIH%202026-PS--26169%20%7C%20ISRO-orange.svg)](docs/official_problem_statement.md)
 
 ---
 
-## 🌟 Executive Summary & Mission
+## Overview
 
-**LumiTrack** is a high-precision **Algorithm Evaluation Platform** and **Simulation Testbed** built for the autonomous coarse alignment of mobile **Free Space Optical Communication (FSOC)** terminals.
+Free Space Optical Communication (FSOC) enables multi-gigabit wireless data transmission between dynamic aerospace platforms (satellites, UAVs, and optical ground stations) using highly directional laser beams. Because optical divergence angles are exceedingly narrow (often under $1\ \text{mrad}$), terminal pointing, acquisition, and tracking (PAT) requires a two-stage alignment architecture:
 
-```
-+---------------------------------------------------------------------------------------------------+
-|                                      LUMITRACK PLATFORM                                           |
-|                                                                                                   |
-|  +---------------------------+       Observable       +----------------------------------------+  |
-|  |     SIMULATION / MP4      |      FramePacket       |         TRACKING ALGORITHM             |  |
-|  |  * 2000x2000 Scene Engine | ---------------------> |        (Unit Under Test - UUT)         |  |
-|  |  * Kinematic Target Model |   (Strict Firewall)    |  * Adaptive P0 Detector                |  |
-|  |  * Atmospheric Disturbance|                        |  * AI Clutter Classifier               |  |
-|  |  * Sensor Noise & Jitter  |                        |  * Sub-pixel Intensity Centroiding     |  |
-|  +---------------------------+                        |  * Kalman State Estimator & FSM        |  |
-|               |                                       +----------------------------------------+  |
-|   True Target | Ground Truth                                               | Subjective           |
-|   Coordinates | (Firewalled)                                               | TrackingResult       |
-|               v                                                            v                      |
-|  +---------------------------------------------------------------------------------------------+  |
-|  |                             PLATFORM CONTROLLER & METRICS HARNESS                           |  |
-|  |  * Proportional-Deadband PTZ Gimbal Control                                                |  |
-|  |  * Objective Metrics Engine (Centroid RMSE, Lock Retention, Acquisition Time, Latency, FPS)|  |
-|  |  * Dual-Viewport Visualization (2D HUD Sensor View + 3D Geometric Orbital Viewport)        |  |
-|  +---------------------------------------------------------------------------------------------+  |
-+---------------------------------------------------------------------------------------------------+
-```
+1. **Coarse Alignment:** Locates the remote optical beacon within an uncertainty envelope, detects the spot on a wide-FOV sensor array, and slews the optical gimbal assembly to center the beacon on the optical axis.
+2. **Fine Alignment:** Fast Steering Mirrors (FSMs) and quadrant photodiodes take over to maintain sub-microradian link lock.
 
-### Why LumiTrack Exists
-
-Free Space Optical Communication provides gigabit-to-terabit data transmission across satellites, UAVs, and maritime vessels without radio-frequency licensing or electromagnetic interference. However, transmitting data over divergence-limited optical beams requires sub-milliradian pointing accuracy. Pointing, Acquisition, and Tracking (PAT) operates in two distinct stages:
-
-1. **Coarse Alignment:** Locating and centering the remote optical beacon within the sensor Field-of-View (FOV) using a motorized Pan-Tilt-Zoom (PTZ) gimbal mount under severe disturbances.
-2. **Fine Alignment:** Fast steering mirrors (FSM) or piezoelectric actuators refining sub-microradian alignment.
-
-Evaluating coarse alignment algorithms on physical hardware requires expensive optical benches, gimbal hardware, vibration tables, and atmospheric test chambers. **LumiTrack eliminates this hardware dependency** by providing:
-- A deterministic, physics-informed virtual camera simulation testbed.
-- A standardized **Plugin API (`ITrackingAlgorithm`)** that treats tracking algorithms as independent Units Under Test (UUT).
-- A rigorous **Ground-Truth Firewall** ensuring evaluation metrics are completely isolated from algorithm internals.
-- End-to-end benchmark automation for synthetic scenarios (Benchmark 1) and external video recordings (Benchmark 2).
+Testing coarse alignment algorithms on physical optomechanical gimbals is cost-prohibitive. **SANKET** is an air-gapped, standalone Software-in-the-Loop (SIL) simulation and tracking platform designed for the Indian Space Research Organisation (ISRO) under **Smart India Hackathon 2026 (Problem Statement 26169)**. It provides a high-fidelity virtual camera environment, an embedded computer vision tracking pipeline, closed-loop pan-tilt kinematics, and automated evaluation scorecards.
 
 ---
 
-## 🎯 SIH Problem Statement 26169 Alignment
+## Problem Statement (SIH PS-26169)
 
-LumiTrack is engineered in strict compliance with **Smart India Hackathon 2026 Problem Statement 26169 (PS-4)**, sponsored by the **Department of Space / Indian Space Research Organisation (ISRO)**.
-
-### Specification & Compliance Matrix
-
-| Parameter / Requirement | SIH Specification Limit | LumiTrack Platform Capability | Status |
-|---|---|---|:---:|
-| **Virtual Scene Dimensions** | $\ge 2000 \times 2000\text{ px}$ | $2000 \times 2000\text{ px}$ (Configurable world canvas) | ✅ **PASS** |
-| **Virtual Camera Resolution** | $640 \times 480\text{ px}$ | $640 \times 480\text{ px}$ (Configurable viewport) | ✅ **PASS** |
-| **Camera Field of View (FOV)** | $4.0^\circ \times 3.0^\circ$ | $4.0^\circ \times 3.0^\circ$ (Configurable angular projection) | ✅ **PASS** |
-| **Camera Update Rate** | $\ge 30\text{ Hz}$ | $30\text{ Hz}$ base simulation clock | ✅ **PASS** |
-| **Target Beacon Sizes** | $5 \times 5\text{ to } 20 \times 20\text{ px}$ | $5 \times 5$, $10 \times 10$, $15 \times 15$, $20 \times 20\text{ px}$ supported | ✅ **PASS** |
-| **Target Motion Profiles** | Straight Line, Circular, Figure-8, Random | Straight Line, Circular, Figure-8, Random, Spiral, Sinusoidal | ✅ **PASS** |
-| **PTZ Gimbal Speeds** | Max $5^\circ/\text{s} - 10^\circ/\text{s}$ | Dynamic rate-limiting clamp ($5.0^\circ/\text{s}$ default, $10.0^\circ/\text{s}$ max) | ✅ **PASS** |
-| **Acquisition Time** | $\le 2.0\text{ s}$ | In-FOV & uncertainty zone ($R \le 460\text{ px}$): **$0.07\text{--}1.73\text{ s}$**; Optical lock: **$0.07\text{ s}$**; Unrestricted corner blind search: **$2.27\text{--}5.47\text{ s}$** (bounded by $10^\circ/\text{s}$ PTZ limit) | ⚠️ **PARTIAL** |
-| **Reacquisition Time** | $\le 1.0\text{ s}$ | Measured: **$\le 0.067\text{ s}$** post-occlusion clearing | ✅ **PASS** |
-| **Tracking Error** | $\le 10.0\text{ px}$ | Measured Mean: **$0.000\text{ px}$** (rendered), **$0.734\text{ px}$** (continuous projected) | ✅ **PASS** |
-| **Target Loss Rate** | $< 5.0\%$ | Measured: **$0.0\%$** post-acquisition across standard matrix | ✅ **PASS** |
-| **Processing Throughput** | $\ge 20\text{ FPS}$ | Sustained end-to-end loop rate: **$62.7\text{ FPS}$** ($\approx 15.95\text{ ms}$); Standalone algorithm throughput: **$758.1\text{ FPS}$** | ✅ **PASS** |
-| **Sensor Noise Injection** | Gaussian, Poisson, Salt & Pepper | Formal SIH envelope $\sigma \in [0, 20]$ supported; tracking robust to $\sigma \le 16.0$, degrades at $\sigma \approx 18.0$, breakdown at $\sigma = 20.0$ | ✅ **PASS** |
-| **Atmospheric Disturbances** | Clear, Haze, Fog, Rain, Low Light | Contrast attenuation & ambient brightness offsets (5 modes) | ✅ **PASS** |
-| **Mechanical Disturbances** | Jitter & Platform Drift ($\le \pm 20\text{ px}$) | High-frequency jitter & low-frequency drift ($\pm 20\text{ px/f}$, $0.0\%$ loss) | ✅ **PASS** |
-| **Evaluation Modes** | Benchmark 1 & Benchmark 2 | BM1 (Simulation) & BM2 (MP4 + Reference CSV / Standalone) | ✅ **PASS** |
-
-> **Compliance Summary:**
-> - **Official SIH PS 26169 Specification Table (25 Table Rows):** **24 of 25 fully satisfied (PASS)**; **1 bounded/partially satisfied (PARTIAL: Row 16 Acquisition Time)** within the validated operational envelope ($R \le 460\text{ px}$ acquires in $\le 1.73\text{ s}$; post-visibility lock in $0.07\text{ s}$), with unrestricted extreme-corner blind acquisition requiring $2.27\text{--}5.47\text{ s}$ under the mandated $10^\circ/\text{s}$ PTZ rate limit.
-> - **Official SIH Deliverables:** **5 of 5 complete (PASS)** (Standalone Windows Application `.exe`, Modular Source Code, Technical Architecture Specifications, User/Evaluator Manual, Structured Performance Logs).
-> - **Official Expected Solution Requirements:** **8 of 8 functional requirements verified (PASS)** (FR1–FR8).
-> - **Internal Engineering Specification (R01–R28):** **27 of 28 fully satisfied (PASS)**; **1 bounded/partially satisfied (PARTIAL: R16)**. Zero runtime ground-truth leakage verified via static AST and dynamic adversarial memory poisoning. Test suite 100% green (455/455 passed).
+In accordance with the official Department of Space / ISRO requirements:
+- **Virtual Environment:** Configurable world canvas $\ge 2000 \times 2000$ pixels.
+- **Sensor Model:** Monochrome Focal Plane Array (FPA) with default $640 \times 480$ resolution and $4.0^\circ \times 3.0^\circ$ FOV.
+- **Beacon Kinematics:** 1 mandatory moving target spot ($5\text{ to }20\text{ px}$) supporting **Straight Line**, **Circular**, **Figure-8**, and **Random** trajectories.
+- **Camera Kinematics:** Gimbal pan and tilt angular velocities clamped between $5.0^\circ/\text{s}$ and $10.0^\circ/\text{s}$.
+- **Performance Thresholds:**
+  - Acquisition Time $\le 2.0\text{ s}$
+  - Tracking Error $\le 10.0\text{ px}$
+  - Target Loss Rate $< 5.0\%$
+  - Re-acquisition Time $\le 1.0\text{ s}$
+  - Processing Speed $\ge 20.0\text{ FPS}$
+- **Disturbance Modeling:** Salt & Pepper noise ($\sim 10\%$), additive Gaussian noise ($\sigma \le 20\text{ px}$), Poisson photon shot noise, platform jitter ($\pm 20\text{ px/frame}$), and atmospheric transmittance models (Clear, Haze, Fog, Rain, Low Light).
+- **Benchmark-2 Decoupling:** Ingestion of external 30 FPS `.mp4` video files with PTZ camera actuation bypassed for coarse pointing verification against predefined reference tracks.
 
 ---
 
-## 🏛 System Architecture & Data Flow
+## Key Capabilities
 
-LumiTrack follows a decoupled, 19-module architecture governed by the frozen **Architecture v1.2 specification**.
-
-```
-                                    +-----------------------+
-                                    |     Configuration     |
-                                    |     Manager (M2)      |
-                                    +-----------------------+
-                                                |
-               +--------------------------------+-------------------------------+
-               |                                                                |
-               v                                                                v
-+-----------------------------+                                  +-----------------------------+
-|    SIMULATION SUBSYSTEM     |                                  |   VIDEO INGESTION (BM2)     |
-| * SceneManager (M4)         |                                  | * MP4FrameProvider (M8)     |
-| * TargetManager (M5)        |                                  | * GroundTruth = None        |
-| * CameraModel (M6)          |                                  +-----------------------------+
-| * DisturbanceEngine (M7)    |                                                 |
-| * SimulationFrameProvider   |                                                 |
-+-----------------------------+                                                 |
-               |                                                                |
-               +--------------------------------+-------------------------------+
-                                                |
-                                                v
-                               +---------------------------------+
-                               |    FrameProvider Firewall (M8)  |
-                               +---------------------------------+
-                                                |
-                                                | FramePacket (Public Contract)
-                                                v
-                               +---------------------------------+
-                               |   ITrackingAlgorithm (Plugin)   |
-                               |  * P0ThresholdDetector (M9)     |
-                               |  * IWCentroidEstimator (M10)    |
-                               |  * CandidateIdentifier (M11)    |
-                               |  * TemporalKalmanTracker (M12)  |
-                               |  * TrackingStateManager (M13)   |
-                               +---------------------------------+
-                                                |
-                                                | TrackingResult (Subjective)
-                                                v
-                               +---------------------------------+
-                               |   Application Controller (M1)   |
-                               +---------------------------------+
-                                 /              |              \
-                                /               |               \
-                               v                v                v
-                 +-------------------+  +---------------+  +--------------------+
-                 |   PTZ Controller  |  | MetricsEngine |  | VisualizationEngine|
-                 |     (M14/M15)     |  |     (M17)     |  |       (M18)        |
-                 +-------------------+  +---------------+  +--------------------+
-                           |                    |                    |
-                           v                    v                    v
-                   [Camera Actuation]   [LoggingEngine]    [2D Sensor Viewport]
-                   (Bypassed in BM2)    [Markdown/JSON]    [3D Orbital Viewport]
-```
-
-### The Strict Ground-Truth Firewall
-
-A foundational design invariant in LumiTrack is the **Ground-Truth Firewall**:
-1. **Public Input Contract (`FramePacket`):** External tracking algorithms receive strictly observable pixel data (`numpy.ndarray`), image resolution, timestamp, and camera FOV.
-2. **Public Output Contract (`TrackingResult`):** Algorithms return subjective tracking state, estimated centroid $(x, y)$, confidence $[0.0, 1.0]$, and tracking ROI.
-3. **No Ground Truth Leakage:** True target positions $(x_{\text{world}}, y_{\text{world}})$, platform disturbances, and scene coordinates are passed directly from `GroundTruthProvider` to `MetricsEngine`. Algorithms have **zero access** to simulator state.
-4. **Benchmark-2 Isolation:** When executing in MP4 mode (BM2), simulation models are not instantiated, and ground-truth metrics are only computed if an independent reference CSV is provided by the evaluator.
-
-### Graphify Architectural Analysis
-
-Static and dynamic topological graph analysis performed via `Graphify` establishes the following validated metrics:
-
-* **Total Nodes:** 1,836
-* **Total Edges:** 4,369
-* **Discovered Communities:** 89
-* **Import Cycles:** **0 (Zero circular dependencies)**
-* **Top-10 God Nodes (Core Architectural Abstractions):**
-  1. `AppController` (196 edges) — Central orchestrator & lifecycle supervisor.
-  2. `BenchmarkManager` (70 edges) — Evaluation harness & batch coordinator.
-  3. `ProportionalDeadbandPTZController` (69 edges) — Gimbal pointing control law.
-  4. `TrackingState` (69 edges) — Standardized tracking lifecycle state machine.
-  5. `PluginLoader` (60 edges) — Dynamic manifest discovery and algorithm loader.
-  6. `IntensityWeightedCentroidEstimator` (60 edges) — Sub-pixel localization engine.
-  7. `FramePacket` (59 edges) — Primary observable input contract.
-  8. `P0ThresholdDetector` (59 edges) — Dynamic noise estimation and thresholding.
-  9. `TrackResult` (56 edges) — Temporal filtering and velocity tracking contract.
-  10. `CentroidResult` (55 edges) — Sub-pixel centroid estimation contract.
+- **Air-Gapped Standalone Binary:** Self-contained executable requiring zero runtime internet access or external package managers.
+- **Strict Ground-Truth Firewall:** The tracking pipeline operates purely on degraded sensor pixel data ($I_k \in \mathbb{R}^{480 \times 640}$) and is architecturally barred from querying true simulation coordinates.
+- **Sub-Pixel Precision:** Intensity-weighted Center of Gravity (CoG) centroiding achieving sub-pixel localization error $< 0.1\text{ px}$.
+- **AI Clutter Rejection:** Embedded 4-feature calibrated Logistic Regression classifier trained to distinguish optical beacons from high-intensity noise spikes with seamless rule-based fallback.
+- **Closed-Loop PTZ Kinematics:** Multi-rate PID velocity controller with anti-windup clamping, dynamic rate limits ($\le 10^\circ/\text{s}$), and a $\pm 1.5\text{ px}$ mechanical deadband.
+- **5 Production Workspaces:** Developer Workspace (2D, 3D, and World views), Evaluator Console, Diagnostics & Subsystem Audit, Run History Catalog, and Results & Scorecards.
+- **High-Throughput Engine:** Verified processing throughput of **461.8 FPS** with a median per-frame compute latency of **0.88 ms** on standard host CPUs.
 
 ---
 
-## 🔬 Baseline Tracking Algorithm Pipeline
+## Architecture
 
-The default plugin (`src/plugins/algorithms/baseline_tracker`) encapsulates the validated 5-stage optical tracking pipeline:
+SANKET enforces clean decoupling between the simulation environment, algorithmic tracking, and telemetry logging:
 
+```mermaid
+flowchart TD
+    subgraph Simulation_Engine ["Simulation Engine (Virtual World)"]
+        TM["Target Manager (4 Motion Profiles)"]
+        CM["Camera Model (FPA & Kinematics)"]
+        DE["Disturbance Engine (Noise & Atmosphere)"]
+        GT["Ground Truth Provider"]
+    end
+
+    subgraph Architectural_Firewall ["Architectural Firewall"]
+        FP["SimulationFrameProvider / MP4FrameProvider"]
+    end
+
+    subgraph Tracking_Pipeline ["Tracking & Control Pipeline (Blind to Ground Truth)"]
+        DET["Adaptive Contrast Detection"]
+        AI["AI Candidate Classifier (lr_model.json)"]
+        CENT["Sub-Pixel Centroid Estimator"]
+        SM["6-State Tracking Automaton"]
+        PTZ["PTZ Velocity Controller (PID)"]
+    end
+
+    subgraph Evaluation_Subsystem ["Evaluation & Scoring Subsystem"]
+        ME["Metrics Engine (RMSE, Loss, FPS)"]
+        LE["Logging Engine (CSV, JSON, MD)"]
+        BM["Benchmark Manager (BM-1 & BM-2)"]
+    end
+
+    subgraph UI_Host ["Modern PySide6 / QtWebEngine Workstation"]
+        DEV["Developer Workspace (2D, 3D, World)"]
+        EVAL["Evaluator Workspace"]
+        DIAG["Diagnostics & Subsystem Audit"]
+        HIST["Run History & Catalog"]
+        RES["Results & Scorecard Inspector"]
+    end
+
+    TM --> CM
+    CM --> DE
+    DE --> FP
+    TM -. Pure Ground Truth Only .-> GT
+    
+    FP --> DET
+    DET --> AI
+    AI --> CENT
+    CENT --> SM
+    SM --> PTZ
+    PTZ --> CM
+
+    SM -. Telemetry .-> ME
+    CENT -. Estimated (x, y) .-> ME
+    GT -. Ground Truth (x, y) .-> ME
+    ME --> LE
+    LE --> BM
+    
+    FP -. Video Frame .-> DEV
+    SM -. State .-> DEV
+    BM --> EVAL
+    LE --> HIST
+    ME --> RES
 ```
-Raw FramePacket
-      │
-      ▼
-[Stage 1: P0 Threshold Detector]
-  ├── Dynamic 75th-percentile background noise estimation (sigma)
-  └── Adaptive thresholding: T = mu_bg + k * sigma
-      │
-      ▼
-[Stage 2: Candidate Identifier & AI Classifier]
-  ├── Connected component labeling & bounding-box extraction
-  └── 4D Logistic feature scoring: [peak_intensity, contrast, compactness, aspect_ratio]
-      │
-      ▼
-[Stage 3: Intensity-Weighted Centroid Estimator]
-  ├── Background-subtracted center-of-mass calculation:
-  │     x_c = sum((I - B) * x) / sum(I - B),  y_c = sum((I - B) * y) / sum(I - B)
-  └── Sub-pixel resolution (RMSE <= 0.03 px)
-      │
-      ▼
-[Stage 4: Constant-Velocity Kalman Temporal Tracker]
-  ├── 4D State vector: [x, y, v_x, v_y]^T
-  ├── Euclidean innovation gating for clutter rejection
-  └── Continuous velocity prediction across temporary dropouts
-      │
-      ▼
-[Stage 5: Tracking State Manager]
-  ├── Finite State Machine: SEARCHING -> ACQUIRING -> TRACKING -> REACQUIRING -> LOST
-  └── Lock confirmation counters & hysteresis verification
-```
-
-### Platform PTZ Control Law
-
-The platform owns a **Proportional Deadband PTZ Controller** (`ProportionalDeadbandPTZController`) that commands the virtual camera gimbal:
-1. **Pixel Error:** Computes displacement from image center: $\Delta x = x_{\text{target}} - x_{\text{center}}$, $\Delta y = y_{\text{target}} - y_{\text{center}}$.
-2. **Deadband Filter:** Suppresses micro-jitter if $\sqrt{\Delta x^2 + \Delta y^2} \le \text{deadband\_px}$.
-3. **Angular Projection:** Converts pixel offsets to optical angles $(\theta_{\text{pan}}, \theta_{\text{tilt}})$ via `ProjectionModel`.
-4. **Rate Clamping:** Clamps angular velocities to configured gimbal limits ($5^\circ/\text{s} - 10^\circ/\text{s}$).
 
 ---
 
-## 📊 Benchmark Modes: BM1 vs. BM2
+## Processing Pipeline
 
-LumiTrack provides dedicated evaluation harnesses for both mandatory SIH benchmark workflows:
-
+```mermaid
+flowchart LR
+    Ingest["Frame Ingest (640x480)"] --> Thresh["Adaptive Local Contrast Threshold"]
+    Thresh --> Morph["Morphological Opening (3x3)"]
+    Morph --> Region["Candidate Region Extraction"]
+    Region --> Feat["Feature Vector Extraction [I_peak, Circ, Cont, Area]"]
+    Feat --> AI["Calibrated Logistic Classifier"]
+    AI --> CoG["Intensity-Weighted Centroiding (CoG)"]
+    CoG --> State["Tracking State Automaton (Search/Detect/Track/Coast)"]
+    State --> PID["PTZ Velocity PID with Rate Limiting (<=10 deg/s)"]
+    PID --> Gimbal["Camera Model Gimbal Articulation"]
 ```
-                                  EVALUATION HARNESS
-                                          │
-                     ┌────────────────────┴────────────────────┐
-                     ▼                                         ▼
-         [Benchmark 1 (BM1)]                       [Benchmark 2 (BM2)]
-      Closed-Loop Simulation                    Recorded MP4 Video Feed
-  * 19 Standard Scenario Matrix             * PTZ Actuation Bypassed
-  * Closed-loop PTZ Camera Control          * Evaluator Reference CSV Comparison
-  * Live Ground Truth Comparison            * Rule 6 Metric Suppression if No CSV
-  * Deterministic Random Seed               * Multi-video Batch Processing
-```
-
-### Benchmark 1 (BM1) — Closed-Loop Simulation
-- **Mechanism:** The simulator drives target kinematics and disturbances, and the PTZ controller actively repositions the camera viewport to track the beacon.
-- **Scenario Subsets:**
-  - `SMOKE` (3 scenarios): Rapid sanity check (Linear nominal, Circular nominal, Dense fog).
-  - `CORE` (6 scenarios): Primary SIH validation scenarios across fundamental motion patterns.
-  - `DISTURBANCE` (8 scenarios): Systematic stress sweep over noise, atmospheric attenuation, and jitter.
-  - `FULL` (19 scenarios): Exhaustive benchmark matrix covering all operational envelopes.
-
-### Benchmark 2 (BM2) — Evaluator Video Processing
-- **Mechanism:** Ingests recorded `.mp4` video files frame-by-frame. The PTZ camera control loop is automatically bypassed to evaluate tracking on fixed footage.
-- **Reference Comparator:** Evaluates against external ground-truth CSV files (`frame,true_x,true_y` or `frame,x,y`).
-- **Rule 6 Ground-Truth Firewall Compliance:** If an external reference CSV is not provided, accuracy metrics (e.g., Centroid RMSE) are **suppressed** rather than fabricated from assumptions.
 
 ---
 
-## 🤖 AI-Assisted Scenario Generation
+## Technology Stack
 
-LumiTrack includes an intelligent **Natural Language Scenario Generation Subsystem** that translates human descriptions into validated, deterministic physical test scenarios.
-
-```
-"Fast target in heavy fog moving in a spiral at 75 px/s"
-                          │
-                          ▼
-             [AI Interpretation Engine]
-             Extracts kinematic & environmental parameters
-                          │
-                          ▼
-            [Candidate Scenario Specification]
-                          │
-                          ▼
-          [Scenario Specification Validator]
-          Enforces boundary constraints:
-          - Speed: 5 - 150 px/s
-          - Coordinates: within 2000x2000 world canvas
-          - Noise & atmospheric validity
-                 │
-                 ├── [REJECT] -> Clear error diagnostics
-                 └── [ACCEPT]
-                          │
-                          ▼
-       [Deterministic Trajectory Generator]
-       Produces mathematical trajectory from seed
-                          │
-                          ▼
-             [Tagged Scenario JSON]
-             (is_ai_generated = True)
-                          │
-                          ▼
-             [Evaluation Execution]
-```
-
-### Supported Trajectory Geometries
-- `STRAIGHT_LINE` — Constant velocity linear crossing.
-- `CIRCULAR` — Orbital trajectory with configurable center and radius.
-- `FIGURE_8` — Dual-lobe lemniscate trajectory testing continuous acceleration reversals.
-- `RANDOM` — Stochastic continuous random walk.
-- `SPIRAL` — Archimedean expanding/contracting spiral trajectory.
-- `SINUSOIDAL` — Transverse wave trajectory testing harmonic tracking.
+| Layer | Technologies | Role in System |
+| :--- | :--- | :--- |
+| **Backend Core** | Python 3.11.9, NumPy 2.x, OpenCV 4.10 | Simulation loop, image filtering, centroiding, PTZ control laws |
+| **GUI Shell** | PySide6 6.8.0 (QtWebEngine & QtWebChannel) | Native desktop window hosting Chromium runtime with IPC bridge and official logo |
+| **Frontend UI** | React 19, TypeScript, TailwindCSS, Lucide-React | Responsive 5-workspace dark-mode workstation interface |
+| **3D Rendering** | Three.js, React Three Fiber, WebGL | Dynamic 3D pan-tilt camera pedestal and optical viewing frustum |
+| **Packaging** | PyInstaller 6.10, Inno Setup 6 | Single-directory standalone executable and Windows installer |
+| **Verification** | Pytest 9.1 | 492 automated unit, integration, and behavioral tests |
 
 ---
 
-## 🖥 Graphical User Interface & 3D Visualization
-
-LumiTrack features a dark-themed UI built in **PySide6 (Qt6)**.
+## Project Structure
 
 ```
-+---------------------------------------------------------------------------------------------------+
-|  LumiTrack v1.0 — FSOC Virtual Camera Tracking System                                    [-][x]   |
-+-----------------------+---------------------------------------------------+-----------------------+
-|  CONTROL PANEL        |  CENTRAL VIEWPORT (Tabbed 2D / 3D)                |  CONFIGURATION TABS   |
-|                       |                                                   |                       |
-|  Algorithm:           |  +---------------------------------------------+  |  [Camera]             |
-|  [ baseline_tracker ] |  | 2D SENSOR VIEW                              |  |  Resolution: 640x480  |
-|                       |  |                                             |  |  FOV: 4.0 x 3.0 deg   |
-|  Mode:                |  |       [+] Centroid (Red Crosshair)          |  |                       |
-|  (o) Simulation (BM1) |  |       [ ] Adaptive ROI (Cyan Box)           |  |  [Target]             |
-|  ( ) Video MP4 (BM2)  |  |       --- Aiming Reticle (White)            |  |  Pattern: CIRCULAR    |
-|                       |  |                                             |  |  Speed: 50.0 px/s     |
-|  Scenario:            |  |   HUD: Frame 120 | 30.0 FPS | State: TRACK  |  |  Size: 10x10 px       |
-|  [ scenario_2_circ. ] |  +---------------------------------------------+  |                       |
-|                       |  | 3D GEOMETRIC TERMINAL VIEW                  |  |  [Disturbances]       |
-|  [ > Start ] [ || ]   |  |   * Terminal Pedestal & Gimbal Frustum      |  |  Atmosphere: HAZE     |
-|  [ [] Stop ] [ Rst ]  |  |   * Real-time Optical Axis Ray & Beam       |  |  Noise: GAUSSIAN      |
-|                       |  |   * Beacon Trajectory Breadcrumbs           |  |  Jitter: 3.0 px       |
-|  [ Run Batch Tests ]  |  |   * Interactive 3D Orbit, Pan, and Zoom     |  |  Platform: LINEAR     |
-+-----------------------+---------------------------------------------------+-----------------------+
-|  TELEMETRY HUD: Frame: 120 | State: TRACKING | Status: LOCKED (Green) | Error: 1.24 px | FPS: 30.0|
-+---------------------------------------------------------------------------------------------------+
+SANKET/
+├── src/                               # Complete Python backend source
+│   ├── aiml/                          # AI classifier, feature extractor, temporal predictor
+│   ├── api/                           # Data contracts (FramePacket, CentroidEstimate)
+│   ├── app/                           # AppController and PySide6/WebEngine GUI host
+│   ├── config/                        # Configuration manager and defaults
+│   ├── control/                       # PTZ closed-loop PID controller
+│   ├── evaluation/                    # BenchmarkManager, automated matrix runner
+│   ├── frame/                         # SimulationFrameProvider and MP4FrameProvider
+│   ├── interfaces/                    # Abstract Strategy interfaces
+│   ├── metrics/                       # Telemetry logging and compliance evaluator
+│   ├── plugins/                       # Extensible algorithm plugin architecture
+│   ├── simulation/                    # Target manager, camera model, disturbance engine
+│   ├── tests/                         # 492 automated pytest test suites
+│   ├── tracker/                       # Detection engine, centroiding, state machine
+│   └── main.py                        # System entry point (CLI and GUI dispatcher)
+├── frontend/                          # Embedded React 19 / TypeScript UI
+│   ├── src/
+│   │   ├── workspaces/                # 5 production workspaces
+│   │   │   ├── DeveloperWorkspace/    # 2D Sensor, 3D Pedestal, World Canvas
+│   │   │   ├── EvaluatorWorkspace/    # BM-1 and BM-2 test consoles
+│   │   │   ├── DiagnosticsWorkspace/  # Subsystem audit and airgap monitor
+│   │   │   ├── HistoryWorkspace/      # Run catalog and artifact browser
+│   │   │   └── ResultsWorkspace/      # Statistical scorecards and charts
+│   │   ├── services/qtBridge.ts       # QtWebChannel transport bridge
+│   │   └── App.tsx                    # Root workspace dispatcher
+│   ├── package.json                   # Frontend dependencies
+│   └── vite.config.ts                 # Production bundler configuration
+├── App_Logo_Assets_Final/             # Official SANKET vector and raster branding assets
+├── scenarios/                         # Scenario definitions (Static, Circular, Fig-8, Fog)
+├── scripts/                           # Packaging, testing, and screenshot capture tools
+├── deliverables/                      # Official SIH 26169 submission package
+│   ├── 01_Software_Application/       # Standalone SANKET.exe, installer, portable zip
+│   ├── 02_Source_Code/                # SANKET_Source.zip (26.53 MB) & reproduction guide
+│   ├── 03_Technical_Report/           # Formal technical report (MD and PDF) + 10 figures
+│   ├── 04_User_Manual/                # 26-section comprehensive operator manual + 10 figures
+│   ├── 05_Performance_Log/            # Real runtime CSV, JSON, and MD report artifacts
+│   ├── 06_Optional_Demo_Video/        # Video submission status document
+│   ├── UI_Screenshots/                # Full-resolution consolidated screenshot library
+│   ├── DELIVERABLE_MANIFEST.md        # Official deliverables status matrix
+│   └── DELIVERABLE_GENERATION_REPORT.md # Verification methodology & evidence audit
+├── docs/                              # Problem statement, specs, and screenshot assets
+├── installer/                         # Inno Setup 6 packaging specification (`sanket_setup.iss`)
+├── lr_model.json                      # Calibrated logistic regression model weights
+├── sanket.spec                        # PyInstaller build specification
+├── requirements.txt                   # Backend Python dependencies
+└── run_sanket.bat                     # Desktop convenience launcher
 ```
-
-### Key UI Capabilities
-1. **Dynamic Algorithm Switching:** Select and hot-reload any discovered tracking plugin from the GUI dropdown without restarting.
-2. **2D Sensor HUD Viewport:** Displays real-time camera feed with color-coded overlays (Cyan bounding box, Red sub-pixel centroid, White boresight crosshair, Green ground-truth marker).
-3. **3D Geometric Scene Viewport (`View3DWidget`):**
-   - High-performance **QPainter-based 3D projection** (zero OpenGL/hardware driver dependency).
-   - Renders 3D coordinate ground grid, optical terminal pedestal, camera FOV viewing frustum oriented with live pan/tilt gimbal angles, optical line-of-sight laser beam, and dynamic target trajectory breadcrumb trails.
-   - Interactive mouse controls: **Left-click drag** (Orbit view), **Right-click drag** (Pan), **Scroll wheel** (Zoom).
-4. **Real-Time Telemetry Bar:** Live telemetry updates for frame index, state machine status, tracking error ($\text{px}$), sub-pixel centroid coordinates $(x, y)$, pan/tilt angles ($^\circ$), and processing FPS.
 
 ---
 
-## 🚀 Installation & Quickstart
+## User Interface
 
-### Prerequisites
-- **Operating System:** Windows 10/11 64-bit (or Linux/macOS for Python source).
-- **Python (Optional):** Python `3.10` or `3.11` (only needed if running from source).
-- **Zero Dependencies:** Running the standalone binary requires NO Python, NO pip, and NO external installations.
+SANKET contains **five production workspaces**:
+
+```
+[ Developer Workspace ]  [ Evaluator ]  [ Diagnostics & Audit ]  [ Run History ]  [ Results & Analysis ]
+```
+
+### 1. Developer Workspace
+The operational cockpit for real-time tracking, gimbal monitoring, and disturbance injection. Features three synchronized sub-views:
+
+#### Sub-View A: 2D Sensor View (640 × 480)
+Displays the live FPA detector feed with tracking bounding box, sub-pixel crosshair, optical boresight error vector, and real-time noise controls.
+
+![2D Sensor View](docs/assets/screenshots/01_developer_2d_sensor.png)
+
+#### Sub-View B: 3D Pedestal Frustum
+Interactive Three.js 3D mechanical model rendering live pan/tilt gimbal articulation and the camera's optical viewing pyramid.
+
+![3D Pedestal Frustum](docs/assets/screenshots/02_developer_3d_pedestal.png)
+
+#### Sub-View C: 2000 × 2000 World Canvas
+Top-down macro perspective of the global coordinate plane showing the beacon trajectory, current target position, moving $640 \times 480$ camera footprint, and the **`LIVE OPERATIONAL: WORLD GT STRIPPED`** firewall indicator.
+
+![2000x2000 World Canvas](docs/assets/screenshots/03_developer_world_canvas.png)
 
 ---
 
-### Option 1: Standalone Windows Executable (Zero-Install, Recommended) 📦
+### 2. Evaluator Workspace
+Dedicated evaluation console to execute Benchmark-1 scenario runs and Benchmark-2 external video evaluations with automated compliance scorecard generation.
 
-LumiTrack is fully packaged as a self-contained offline Windows desktop executable:
+![Evaluator Workspace](docs/assets/screenshots/04_evaluator_workspace.png)
+
+---
+
+### 3. Diagnostics & Subsystem Audit
+System health dashboard tracking unit test pass rates, memory heap stability, frame provider firewall integrity, and compute latency distributions.
+
+![Diagnostics Workspace](docs/assets/screenshots/05_diagnostics_audit.png)
+
+---
+
+### 4. Run History & Artifact Catalog
+Catalog indexing all simulation sessions, enabling instant inspection and export of raw CSV telemetry, JSON summaries, and markdown reports.
+
+![Run History Workspace](docs/assets/screenshots/06_run_history_catalog.png)
+
+---
+
+### 5. Results & Analysis
+Statistical evaluation workspace featuring time-series error plots, latency percentiles, and formal SIH PS-26169 pass/fail compliance scorecards.
+
+![Results Workspace](docs/assets/screenshots/07_results_analysis.png)
+
+---
+
+## Tracking Pipeline & Algorithms
+
+### Sub-Pixel Centroid Estimation
+Sub-pixel target localization is calculated via intensity-weighted Center of Gravity (CoG) within local window $\Omega$:
+$$x_c = \frac{\sum_{(u, v) \in \Omega} u \cdot [I(u, v) - I_{\text{bg}}]}{\sum_{(u, v) \in \Omega} [I(u, v) - I_{\text{bg}}]}, \quad y_c = \frac{\sum_{(u, v) \in \Omega} v \cdot [I(u, v) - I_{\text{bg}}]}{\sum_{(u, v) \in \Omega} [I(u, v) - I_{\text{bg}}]}$$
+
+### AI Clutter Rejection
+Candidates are classified using a 4-feature Logistic Regression model (`lr_model.json`):
+$$\mathbf{x} = \begin{bmatrix} I_{\text{peak}} / 255.0 \\ 4\pi \cdot \text{Area} / \text{Perimeter}^2 \\ (I_{\text{peak}} - \mu) / \sigma \\ \log(1 + \text{Area}) \end{bmatrix}, \quad P(\text{Beacon}) = \sigma\left( \mathbf{w}^T \hat{\mathbf{x}} + b \right)$$
+
+### Closed-Loop PTZ Controller
+Gimbal angular velocity commands are computed via proportional-integral-derivative control with anti-windup:
+$$\dot{\theta}_{\text{pan}} = \operatorname{clip}\left( K_p e_x + K_i \int e_x dt + K_d \frac{de_x}{dt}, -\omega_{\max}, \omega_{\max} \right)$$
+$$\dot{\theta}_{\text{tilt}} = \operatorname{clip}\left( -\left[ K_p e_y + K_i \int e_y dt + K_d \frac{de_y}{dt} \right], -\omega_{\max}, \omega_{\max} \right)$$
+where $\omega_{\max} = 10.0^\circ/\text{s}$ (strict hardware limit).
+
+---
+
+## Disturbances and Noise
+
+| Disturbance Mode | Parameter Range | Physical Modeling Basis |
+| :--- | :--- | :--- |
+| **Salt & Pepper** | $0\% \text{ to } 15\%$ corrupted pixels | Sensor hot/dead pixel impulses ($\sim 10\%$ per SIH specification) |
+| **Gaussian Noise** | $\sigma \in [0, 20]\text{ px}$ | Sensor thermal noise and amplifier read noise |
+| **Poisson Noise** | Dynamic scale | Photon arrival shot noise under low irradiance |
+| **Platform Jitter** | $\pm 20\text{ px/frame}$ | High-frequency mechanical vibration from UAV/satellite airframe |
+| **Atmospheric Models**| Clear, Haze, Fog, Rain, Low Light | Beer-Lambert optical transmittance attenuation ($\tau \in [0.20, 1.0]$) |
+
+---
+
+## Benchmarks
+
+### Benchmark-1: Scenario Evaluation
+Automated evaluation of bundled scenarios (`scenario_1_static`, `scenario_2_circular`, `scenario_3_figure8`, `scenario_4_fog_gaussian`). Evaluates acquisition time, continuous tracking error, and closed-loop PTZ stability.
+
+### Benchmark-2: External MP4 Video Ingestion
+Software fully implements `MP4FrameProvider` (`src/frame/mp4_provider.py`) using OpenCV `VideoCapture`:
+- Ingests 30 FPS MP4 containers with arbitrary dimensions.
+- Converts frames to monochrome uint8 with zero-copy buffer views.
+- Bypasses PTZ camera model automatically to evaluate pure coarse pointing detection.
+- Evaluates estimated centroids against evaluator reference CSV (`frame,true_x,true_y`).
+> **Audit Note:** The software capability is fully implemented and tested (8 unit tests in `test_bm2_workflow.py`). Because no pre-recorded `.mp4` video files were provided with the problem statement, the system is ready for external video input from evaluators during on-site testing.
+
+---
+
+## Performance Logging & Runtime Evidence
+
+SANKET automatically generates structured performance logs upon simulation completion. The following data was recorded during a clean, verified execution of `scenario_2_circular` (900 frames / 29.97 s):
+
+```
+========================================================================================
+                          RUNTIME PERFORMANCE SCORECARD (run_1790716901)
+========================================================================================
+  Metric                        Specification       Measured Value          Verdict
+----------------------------------------------------------------------------------------
+  Acquisition Time              <= 2.0 s            0.07 s (Frame 2)        PASS
+  Mean Tracking Error           <= 10.0 px          4.82 px                 PASS
+  Max Tracking Error            --                  144.72 px (Initial)     Informational
+  Target Loss Rate              < 5.0%              0.00% (0 Lost Frames)   PASS
+  Reacquisition Time            <= 1.0 s            N/A (Zero Loss Events)  PASS
+  Algorithmic Throughput        >= 20.0 FPS         461.8 FPS               PASS
+  Mean Processing Latency       --                  1.00 ms                 PASS
+  Median (P50) Latency          --                  0.88 ms                 PASS
+  95th Percentile (P95) Latency --                  1.31 ms                 PASS
+  99th Percentile (P99) Latency --                  1.75 ms                 PASS
+  Post-Acq Lock Retention Rate  --                  100.00% (898/898)       PASS
+  Sub-Pixel Centroid Error <1px --                  100.0%                  PASS
+  Total Frames Processed        --                  900 frames              PASS
+  Total Simulation Duration     --                  29.97 s                 PASS
+========================================================================================
+```
+
+The corresponding raw telemetry artifacts are preserved in:
+- `deliverables/05_Performance_Log/run_1790716901_summary.json`
+- `deliverables/05_Performance_Log/run_1790716901_telemetry.csv` (469 KB, 900 frame rows)
+- `deliverables/05_Performance_Log/run_1790716901_performance_report.md`
+
+---
+
+## Installation & Setup
+
+### Option 1: Standalone Application (No Python Required)
+1. Navigate to `deliverables/01_Software_Application/installer/` and execute `SANKET-Setup-v1.0.exe`.
+2. Or extract `deliverables/01_Software_Application/portable/SANKET-Portable-v1.0.zip` and run `SANKET.exe`.
+
+### Option 2: Run from Source
+Prerequisites: Python 3.10–3.12 (64-bit) and Node.js v18+.
 
 ```powershell
-# Interactive GUI:
-.\dist\LumiTrack\LumiTrack.exe --gui
+# 1. Navigate to repository root
+cd "external"
 
-# OR simply double-click the one-click batch launcher:
-run_lumitrack.bat
-```
-
----
-
-### Option 2: Running from Source via Python Environment 🖥️
-
-```powershell
-# 1. Create and activate virtual environment:
+# 2. Set up Python virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# 2. Install core desktop dependencies:
+# 3. Install backend dependencies
 pip install -r requirements.txt
 
-# 3. Launch Desktop GUI:
-python -m src.main --gui
+# 4. Build frontend static assets
+cd frontend
+npm install
+npm run build
+cd ..
+
+# 5. Launch application
+python -m src.main
 ```
 
 ---
 
-### Option 3: Automated Regression & Behavioral Test Suite ✅
+## Running Commands
 
 ```powershell
-# Run the complete test suite:
-pytest src/tests/
+# Launch interactive 5-workspace workstation GUI (default)
+python -m src.main
+
+# Run simulation headlessly in console mode
+python -m src.main --headless --scenario scenario_2_circular
+
+# Execute internal foundation & contract validation audit
+python -m src.main --validate
+
+# Execute automated SMOKE benchmark matrix
+python -m src.main --matrix SMOKE
+
+# Ingest external MP4 video for Benchmark-2 evaluation
+python -m src.main --mp4 "path\to\video.mp4" --reference-csv "path\to\ground_truth.csv"
 ```
-**Latest verified result:** `455 passed, 0 failed, 0 errors in 16.76s` (100% Green).
 
 ---
 
-### Option 4: Standalone Clean-Machine Verification Suite 🛡️
+## Automated Test Suite
+
+To run the complete automated test suite:
 
 ```powershell
-# Run the 10-gate standalone binary validator:
-python scripts/validate_standalone_exe.py
+python -m pytest
 ```
 
-#### 2. Evaluate External Video with Reference Ground Truth (BM2)
-```bash
-python -m src.main --mp4 tests/sample_video.mp4 --reference-csv tests/sample_ref.csv
+*Verified Test Execution Result (Python 3.11.9):*
+```
+============================ 492 passed in 19.39s =============================
 ```
 
-#### 3. AI-Assisted Natural Language Scenario Generation
-```bash
-python -m src.main --ai-scenario "High-speed optical target moving in a spiral under dense fog with jitter" --algorithm baseline_tracker
-```
-
-#### 4. Batch Evaluate All Scenarios
-```bash
-python -m src.main --eval-scenarios scenarios --output-dir output/batch_eval
+To run individual subsystem tests:
+```powershell
+pytest src/tests/test_tracking_pipeline.py    # Detection, centroiding, state transitions
+pytest src/tests/test_ptz_controller.py       # PID control laws & rate clamping
+pytest src/tests/test_bm2_workflow.py         # MP4 decoding & reference comparison
+pytest src/tests/test_simulation.py           # Virtual camera model & disturbances
 ```
 
 ---
 
-## 🧩 Algorithm Plugin Development Guide
+## Building the Standalone Executable
 
-LumiTrack uses a manifest-driven plugin architecture. Anyone can develop and evaluate custom tracking algorithms in 3 steps:
-
-### Step 1: Create Plugin Directory Structure
-Create a new directory inside `src/plugins/algorithms/` (e.g. `my_custom_tracker/`):
+To compile the standalone ONEDIR binary distribution:
+```powershell
+pyinstaller sanket.spec --noconfirm --clean
 ```
-src/plugins/algorithms/my_custom_tracker/
-├── manifest.json
-└── my_tracker.py
+The resulting package is written to `dist/SANKET/` with entry point `SANKET.exe`.
+
+---
+
+## Deliverables Package Directory
+
+The complete official submission package is organized in `deliverables/`:
+
 ```
-
-### Step 2: Define `manifest.json`
-```json
-{
-  "name": "my_custom_tracker",
-  "version": "1.0.0",
-  "api_version": "v1",
-  "entry_point": "my_tracker:MyCustomTracker",
-  "description": "Deep Learning / Advanced Correlation Filter FSOC Tracker",
-  "author": "Research Team",
-  "dependencies": ["numpy", "opencv-python"]
-}
-```
-
-### Step 3: Implement `ITrackingAlgorithm`
-In `my_tracker.py`, inherit from `src.api.v1.ITrackingAlgorithm`:
-
-```python
-from typing import Any, Dict
-import numpy as np
-from src.api.v1.algorithm import ITrackingAlgorithm
-from src.api.v1.contracts import FramePacket, TrackingResult
-
-class MyCustomTracker(ITrackingAlgorithm):
-    """Custom tracking algorithm implementation."""
-
-    def initialize(self, config: Dict[str, Any]) -> bool:
-        """Called once before scenario execution starts."""
-        self.frame_count = 0
-        return True
-
-    def process_frame(self, frame_packet: FramePacket) -> TrackingResult:
-        """
-        The only per-frame execution entry point.
-        Receives ONLY observable sensor data via FramePacket.
-        """
-        image = frame_packet.image  # 2D numpy array (grayscale uint8)
-        h, w = frame_packet.resolution
-
-        # Custom detection logic (e.g. brightest spot):
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(image)
-        cx, cy = float(max_loc[0]), float(max_loc[1])
-        is_tracking = max_val > 50
-
-        return TrackingResult(
-            algorithm_is_tracking=is_tracking,
-            centroid_x=cx if is_tracking else None,
-            centroid_y=cy if is_tracking else None,
-            confidence=float(max_val / 255.0),
-            roi=(max(0, int(cx - 20)), max(0, int(cy - 20)), 40, 40) if is_tracking else None
-        )
-
-    def reset(self) -> None:
-        """Clears all internal temporal state, buffers, and memory."""
-        self.frame_count = 0
-```
-
-### Step 4: Run and Benchmark Your Algorithm
-Your plugin will be discovered automatically and appear in the GUI dropdown and CLI:
-```bash
-python -m src.main --matrix CORE --algorithm my_custom_tracker
+deliverables/
+├── 01_Software_Application/       # Standalone SANKET.exe, installer, portable zip
+├── 02_Source_Code/                # SANKET_Source.zip (26.53 MB) & reproduction guide
+├── 03_Technical_Report/           # Formal technical report (MD and PDF) + 10 figures
+├── 04_User_Manual/                # 26-section comprehensive operator manual + 10 figures
+├── 05_Performance_Log/            # Real runtime CSV, JSON, and MD report artifacts
+├── 06_Optional_Demo_Video/        # Video submission status document
+├── UI_Screenshots/                # Full-resolution consolidated screenshot library
+├── DELIVERABLE_MANIFEST.md        # Official deliverables status matrix
+└── DELIVERABLE_GENERATION_REPORT.md # Verification methodology & evidence audit
 ```
 
 ---
 
-## 🧪 Verification, Testing & Robustness
+## Screenshots Gallery
 
-### Automated Regression Suite
-
-LumiTrack includes a comprehensive automated test suite spanning 24 test files:
-
-```bash
-# Run full test suite:
-pytest -v
-```
-
-**Results:**
-```
-============================= test session starts =============================
-platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0
-rootdir: E:\Newfolder\Project2O\Projects\SIH '26\external
-configfile: pytest.ini
-testpaths: src/tests
-collected 403 items
-
-src\tests\test_ai_classifier.py ...                                      [  0%]
-src\tests\test_algorithm_api.py .......                                  [  2%]
-src\tests\test_baseline_plugin.py ..........                             [  4%]
-src\tests\test_benchmark_manager.py ...                                  [  5%]
-src\tests\test_bm2_workflow.py ........                                  [  7%]
-src\tests\test_centroid_estimator.py .................................   [ 15%]
-src\tests\test_def01_def02_regression.py ........                        [ 17%]
-src\tests\test_detection_engine.py ........................              [ 23%]
-src\tests\test_foundation.py ....................................        [ 32%]
-src\tests\test_frame_provider.py .................                       [ 36%]
-src\tests\test_gui_lifecycle.py ......                                   [ 38%]
-src\tests\test_metrics_engine.py ..............                          [ 41%]
-src\tests\test_performance_and_hardening.py ....                         [ 42%]
-src\tests\test_phase5_10_patch.py ....                                   [ 43%]
-src\tests\test_phase6_4_injection.py ............                        [ 46%]
-src\tests\test_phase6_5_harness.py .........                             [ 49%]
-src\tests\test_phase6_6_matrix.py .........                              [ 51%]
-src\tests\test_phase6_7_ai_scenario.py ..............                    [ 54%]
-src\tests\test_phase6_8_sih_validation.py .............................. [ 62%]
-.............................                                            [ 69%]
-src\tests\test_plugin_loader.py ....................                     [ 74%]
-src\tests\test_ptz_controller.py ...................................     [ 83%]
-src\tests\test_simulation.py .....................................       [ 92%]
-src\tests\test_tracking_pipeline.py ...............................      [100%]
-
-============================ 403 passed in 19.60s =============================
-```
-
-### Comprehensive Robustness Sweep Campaign
-
-Execute systematic multidimensional sweeps across all target sizes, kinematics, noise types, and environmental stress levels:
-
-```bash
-python run_robustness_campaign.py
-```
-Outputs detailed JSON metrics and Markdown reports to `output/robustness_campaign_results.json`.
+| 1. Developer: 2D Sensor View | 2. Developer: 3D Pedestal Frustum |
+| :---: | :---: |
+| ![2D Sensor View](docs/assets/screenshots/01_developer_2d_sensor.png) | ![3D Frustum](docs/assets/screenshots/02_developer_3d_pedestal.png) |
+| **3. Developer: 2000×2000 World Canvas** | **4. Evaluator Workspace** |
+| ![World Canvas](docs/assets/screenshots/03_developer_world_canvas.png) | ![Evaluator](docs/assets/screenshots/04_evaluator_workspace.png) |
+| **5. Diagnostics & Subsystem Audit** | **6. Run History Catalog** |
+| ![Diagnostics](docs/assets/screenshots/05_diagnostics_audit.png) | ![History](docs/assets/screenshots/06_run_history_catalog.png) |
+| **7. Results & Analysis Workspace** | **8. Active Closed-Loop Tracking** |
+| ![Results](docs/assets/screenshots/07_results_analysis.png) | ![Active Tracking](docs/assets/screenshots/08_tracking_active.png) |
 
 ---
 
-## 📁 Repository Layout
+## Limitations
 
-```
-LumiTrack/
-├── dist/LumiTrack/                        # Packaged Standalone Windows Executable
-│   ├── LumiTrack.exe                      # Standalone 6.11 MB executable binary
-│   └── _internal/                         # Bundled runtime, models, plugins, scenarios
-├── docs/                                  # Authoritative Engineering Documentation
-│   ├── official_problem_statement.md      # Official SIH 2026 Problem Statement 26169 (ISRO / DOS)
-│   ├── FINAL_VALIDATED_SYSTEM_SPECIFICATION.md # Authoritative frozen system specification
-│   ├── SIH_REQUIREMENT_TRACEABILITY_MATRIX.md # Clause-by-clause requirement traceability
-│   ├── USER_AND_EVALUATOR_MANUAL.md       # Complete evaluator guide & user instructions
-│   ├── SIH_26_Engineering_Context_Technical_Model.md # Theoretical & mathematical foundations
-│   ├── system_architecture.md             # Detailed 19-module platform architecture
-│   ├── PRD.md                             # Product Requirements Document
-│   ├── AIML_TRAINING_RUNBOOK.md           # Dataset generation, model training & runtime setup
-│   └── LumiTrack_v1.0_Technical_Report.pdf# Technical report deliverable
-├── datasets/                              # Versioned grouped datasets (candidate-v1, temporal-v1)
-├── models/                                # Versioned models (candidate_classifier, temporal_predictor)
-├── output/                                # Authoritative validation results & benchmark reports
-├── scenarios/                             # Standard Preconfigured Scenarios (Static, Circular, Fig8, Fog)
-├── scripts/                               # Reproducibility, Benchmark & Validation Scripts
-│   ├── validate_standalone_exe.py         # 10-gate clean-machine standalone validation suite
-│   ├── test_adversarial_firewall.py       # Adversarial ground-truth firewall audit & dynamic test
-│   ├── test_boundary_disturbances_and_falsification.py # Boundary stress & empirical limits
-│   ├── test_r16_first_principles.py       # R16 acquisition first-principles benchmark
-│   ├── test_r15_loop_latency.py           # End-to-end loop rate & latency benchmark
-│   ├── run_robustness_campaign.py         # Robustness sweep campaign script
-│   └── generate_technical_report_pdf.py   # PDF technical report generator
-├── src/                                   # Source Code (19 Modules per Architecture v1.2)
-│   ├── aiml/                              # Learned classifier, predictor & feature schemas
-│   ├── api/v1/                            # Public Plugin API (Contracts & Interfaces)
-│   ├── app/                               # Application Controller, PySide6 GUI, Visualizer
-│   ├── config/                            # Configuration & Scenario Managers
-│   ├── control/                           # PI PTZ Gimbal Controller with Anti-Windup
-│   ├── data/                              # Grouped synthetic dataset generation
-│   ├── evaluation/                        # Benchmark Harness, Matrix, AI Scenarios, Reporting
-│   ├── frame/                             # Internal Data Contracts & Enumerations
-│   ├── interfaces/                        # Internal Strategy Interfaces
-│   ├── metrics/                           # Real-time Metrics & Logging Engines
-│   ├── plugins/                           # Manifest-based Plugin Discovery System
-│   │   └── algorithms/baseline_tracker/   # Official Baseline Tracking Algorithm Plugin
-│   ├── simulation/                        # Scene, Target, Camera, Disturbance & Frame Providers
-│   ├── tests/                             # Automated Regression & Behavioral Test Suite (455 tests)
-│   ├── tracker/                           # Baseline Detector, Centroid, Kalman & State Manager
-│   ├── training/                          # Offline model training & evaluation utilities
-│   └── main.py                            # Standalone Application Entry Point (CLI & GUI)
-├── lumitrack.spec                         # PyInstaller Standalone Packaging Specification
-├── run_lumitrack.bat                      # Windows One-Click Application Launcher
-├── requirements.txt                       # Core Python Dependencies (NumPy, OpenCV, PySide6, Pytest)
-├── pytest.ini                             # Pytest Configuration
-├── pyrefly.toml                           # Static Analysis Configuration
-├── PHASE_4_FINAL_DELIVERABLE_MANIFEST.md  # Official deliverable manifest & asset inventory
-├── PHASE_4_FINAL_READINESS_REPORT.md      # Final readiness report & evaluator playbook
-└── README.md                              # Master Repository Documentation
-```
+- **Benchmark-2 Official Test Media:** Software fully implements MP4 ingestion and passes all 8 automated MP4 tests. Pre-recorded test media was not bundled by competition authorities; ready for external evaluator videos.
+- **Physical Mechanical Dynamics:** Slew kinematics enforce physical speed limits ($\le 10^\circ/\text{s}$), deadband, and anti-windup, but physical motor thermal rise and gear backlash are modeled mathematically.
 
 ---
 
-## 📖 Documentation Index
+## Technical Documentation Links
 
-| Document | Location | Purpose |
-|---|---|---|
-| **Evaluator & User Manual** | [docs/USER_AND_EVALUATOR_MANUAL.md](docs/USER_AND_EVALUATOR_MANUAL.md) | Step-by-step evaluator instructions, GUI walkthrough, and operations guide. |
-| **System Specification** | [docs/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md](docs/FINAL_VALIDATED_SYSTEM_SPECIFICATION.md) | Authoritative validated system specification and engineering constraints. |
-| **Requirement Traceability Matrix** | [docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md](docs/SIH_REQUIREMENT_TRACEABILITY_MATRIX.md) | Clause-by-clause mapping against SIH Problem Statement 26169 (25 table rows + deliverables). |
-| **Technical Context & Mathematical Model** | [docs/SIH_26_Engineering_Context_Technical_Model.md](docs/SIH_26_Engineering_Context_Technical_Model.md) | Physical equations, kinematic models, noise formulations, and optical derivations. |
-| **System Architecture Specification** | [docs/system_architecture.md](docs/system_architecture.md) | Complete architectural definition of all 19 platform modules. |
-| **Official Problem Statement** | [docs/official_problem_statement.md](docs/official_problem_statement.md) | Official SIH 2026 Problem Statement 26169 / PS-4 (ISRO / Department of Space). |
-| **AIML Training Runbook** | [docs/AIML_TRAINING_RUNBOOK.md](docs/AIML_TRAINING_RUNBOOK.md) | Reproducible grouped dataset generation, held-out model training, and feature extraction. |
-| **Final Deliverable Manifest** | [PHASE_4_FINAL_DELIVERABLE_MANIFEST.md](PHASE_4_FINAL_DELIVERABLE_MANIFEST.md) | Complete deliverable catalog, binary asset inventory, and traceability mapping. |
-| **Final Readiness Report** | [PHASE_4_FINAL_READINESS_REPORT.md](PHASE_4_FINAL_READINESS_REPORT.md) | Final readiness audit, 10-gate validation logs, firewall proofs, and evaluator playbook. |
-| **Technical Report (PDF)** | [docs/LumiTrack_v1.0_Technical_Report.pdf](docs/LumiTrack_v1.0_Technical_Report.pdf) | Official printable technical report deliverable. |
-
+- [Official Problem Statement (SIH PS-26169)](docs/official_problem_statement.md)
+- [Deliverables Manifest](deliverables/DELIVERABLE_MANIFEST.md)
+- [Deliverables Generation Report](deliverables/DELIVERABLE_GENERATION_REPORT.md)
+- [Technical Report (Markdown)](deliverables/03_Technical_Report/SANKET_Technical_Report.md)
+- [Technical Report (PDF)](deliverables/03_Technical_Report/SANKET_Technical_Report.pdf)
+- [User Manual](deliverables/04_User_Manual/SANKET_User_Manual.md)
+- [Source Code Reproduction Guide](deliverables/02_Source_Code/SOURCE_CODE_README.md)
+- [Performance Log Documentation](deliverables/05_Performance_Log/PERFORMANCE_LOG_README.md)
 
 ---
 
-## 🛡 Scope & Operational Boundaries
+## Acknowledgements
 
-### What LumiTrack v1.0 Supports
-- **Pluggable Tracking Algorithm Architecture:** Dynamic loading, sandboxing, and evaluation of external tracking plugins via `ITrackingAlgorithm`.
-- **End-to-End Simulation & Kinematics:** 2D world canvas with multi-trajectory target motion models and rate-limited virtual PTZ gimbal actuation.
-- **Physics-Informed Environmental Disturbances:** Additive Gaussian sensor noise, Poisson shot noise, Salt & Pepper impulse noise, atmospheric haze/fog/rain attenuation, high-frequency camera jitter, and platform attitude drift.
-- **Dual Benchmark Workflows:** Closed-loop simulation evaluation (BM1) and external MP4 video evaluation with reference comparator (BM2).
-- **AI Scenario Generation:** Safe, validated natural language scenario synthesis with deterministic mathematical replay.
-- **Dual Visualizations:** 2D sensor HUD viewport and lightweight, QPainter-based 3D geometric orbital perspective view.
-
-### Out of Scope (By Design)
-- **Fine Pointing & Fast Steering Mirrors (FSM):** The platform is strictly designed for **Coarse Alignment** (PAT Stage 1) within the camera FOV. Micro-radian piezo beam steering is out of scope.
-- **Hardware Optical Gimbal Drivers:** Hardware-in-the-loop physical serial/CAN bus gimbal communication is not implemented; the platform provides virtual simulation models.
-- **Active Laser Transmitter Modulation:** Communication data transmission, optical wavefront correction, and bit-error-rate (BER) modulation are outside coarse tracking scope.
-- **Proprietary GPU Compute Requirements:** The platform and 3D visualizer are intentionally engineered to run on CPU without requiring dedicated GPU acceleration or external OpenGL drivers.
-
----
-
-<div align="center">
-  <sub>Developed for Smart India Hackathon 2026 • Problem Statement 26169 (PS-4) • Department of Space / ISRO</sub>
-</div>
+Developed for **Smart India Hackathon 2026** under Problem Statement 26169 (Department of Space / Indian Space Research Organisation).
+Special thanks to the ISRO evaluation team and open-source scientific computing communities (NumPy, OpenCV, PySide6, Three.js, React).

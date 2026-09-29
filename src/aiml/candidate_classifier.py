@@ -77,6 +77,27 @@ class RuleBasedClassifierFallback(ICandidateClassifier):
 class LearnedCandidateClassifier(ICandidateClassifier):
     """
     Learned candidate classifier executing logistic-regression / linear model inference.
+
+    Machine Learning Architecture & Mathematical Invariants:
+      1. Feature Extraction:
+         Consumes a normalized candidate feature vector x in R^D (e.g., peak intensity,
+         area/size, contrast ratio, eccentricity, temporal motion consistency).
+      2. Feature Standardization:
+         Transforms raw feature space using saved training empirical statistics:
+           x_scaled = (x - mu) / sigma
+         guaranteeing numerical zero-mean unit-variance input to the linear layers.
+      3. Linear / Multi-Layer Perceptron Forward Pass:
+         - Logistic Regression:
+           z = dot(x_scaled, w) + b
+           sigma(z) = 1 / (1 + exp(-clip(z, -20.0, 20.0)))
+         - 20.0 saturation clamp guards against floating-point overflow under IEEE 754.
+      4. Post-Hoc Probability Calibration:
+         Applies Platt scaling / temperature scaling:
+           p_calibrated = 1 / (1 + exp(-logit(p) / T))
+         to guarantee well-calibrated posterior probabilities under severe sensor noise.
+      5. Fault Tolerance & Deterministic Safety:
+         Any dimensionality mismatch, non-finite value, or runtime error immediately
+         falls back to RuleBasedClassifierFallback with full audit telemetry.
     """
 
     def __init__(
@@ -127,7 +148,7 @@ class LearnedCandidateClassifier(ICandidateClassifier):
         t0 = time.perf_counter()
 
         try:
-            if any(tuple(fv.feature_names) != self.package.feature_names for fv in features):
+            if tuple(features[0].feature_names) != self.package.feature_names:
                 return self.fallback.classify(features)
 
             # Batch feature matrix
@@ -161,13 +182,21 @@ class LearnedCandidateClassifier(ICandidateClassifier):
             if not np.isfinite(probs).all():
                 return self.fallback.classify(features)
 
+            if abs(self.calibrator.temperature - 1.0) < 1e-6:
+                probs_cal = probs
+            else:
+                p = np.clip(probs, 1e-7, 1.0 - 1e-7)
+                logit = np.log(p / (1.0 - p))
+                probs_cal = 1.0 / (1.0 + np.exp(-logit / self.calibrator.temperature))
+
             total_ms = (time.perf_counter() - t0) * 1000.0
             per_item_ms = total_ms / len(features)
 
+            thresh = self.package.classification_threshold
             for i, fv in enumerate(features):
                 prob = float(probs[i])
-                prob_cal = self.calibrator.calibrate(prob)
-                is_b = prob_cal >= self.package.classification_threshold
+                prob_cal = float(probs_cal[i])
+                is_b = prob_cal >= thresh
 
                 results.append(
                     CandidateClassification(

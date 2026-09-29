@@ -1,0 +1,31 @@
+{
+  "benchmark_timestamp": "2026-09-29 17:07:42",
+  "total_packets_audited": 1050,
+  "runtime_ground_truth_leaks": 0,
+  "unblinded_errors_detected": 0,
+  "static_source_violations": [],
+  "static_bundle_violations": [],
+  "telemetry_keys_present": [
+    "algorithmFps",
+    "boresightOffsetPx",
+    "cameraFovH",
+    "cameraFovV",
+    "cameraHeight",
+    "cameraWidth",
+    "centroid",
+    "confidence",
+    "frameNumber",
+    "panAngleDeg",
+    "processingLatencyMs",
+    "ptzActive",
+    "roi",
+    "sendTimestamp",
+    "tiltAngleDeg",
+    "timestamp",
+    "trackingErrorPx",
+    "trackingState"
+  ],
+  "dropout_protection_verified": true,
+  "validation_mode_seam_verified": true,
+  "firewall_audit_verdict": "PASS \u2014 ZERO GROUND-TRUTH LEAKAGE"
+}

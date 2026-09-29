@@ -128,8 +128,10 @@ class IntensityWeightedCentroidEstimator(ICentroidEstimator):
         # 1. Local ROI Extraction with Border Margin
         # -------------------------------------------------------------------
         # Geometry-aware margin: at least the configured minimum, but scaling with object size
-        # to prevent background pollution by anti-aliased edge glow on large targets (e.g. Size 20).
-        # We use a 0.2x multiplier to preserve noise immunity while scaling for large targets.
+        # Mathematical Rationale (Dynamic ROI Margin):
+        # A static margin fails on large optical beacons (size 15-20 px) where diffraction PSF tails
+        # bleed into the perimeter boundary, artificially inflating the estimated background level
+        # and clipping true beacon signal. We scale margin by 20% of candidate diameter.
         dynamic_margin = max(self._bg_margin, int(max(bw, bh) * 0.2))
         margin = dynamic_margin
         
@@ -139,7 +141,8 @@ class IntensityWeightedCentroidEstimator(ICentroidEstimator):
         y1 = min(img_h, by + bh + margin)
 
         if x1 <= x0 or y1 <= y0:
-            # Degenerate ROI
+            # Edge Case (Boundary clipping): Target detected partially outside sensor FOV
+            # Fall back to geometric center rather than crashing numerical pipeline
             elapsed_ms = (time.perf_counter() - t_start) * 1000.0
             return CentroidResult(
                 x=geom_cx,
@@ -155,25 +158,30 @@ class IntensityWeightedCentroidEstimator(ICentroidEstimator):
                 processing_time_ms=elapsed_ms,
             )
 
-        # Extract ROI as float64 (non-mutating view copy)
+        # Extract ROI as float64 (non-mutating view copy to avoid accumulator overflow during sums)
         roi_patch = raw_image[y0:y1, x0:x1].astype(np.float64)
 
         # -------------------------------------------------------------------
-        # 2. Local Background Estimation
+        # 2. Local Background Estimation (Outer Boundary Ring)
         # -------------------------------------------------------------------
+        # The perimeter ring represents background floor. Using median rather than mean
+        # grants a 50% breakdown point against isolated 255 Salt & Pepper noise spikes.
         bg_est = self.estimate_local_background(roi_patch)
 
         # -------------------------------------------------------------------
-        # 3. Positive Signal Weight Calculation
+        # 3. Positive Signal Weight Calculation (Rectified Irradiance)
         # -------------------------------------------------------------------
+        # w(u,v) = max(I(u,v) - B, 0). Half-wave rectification discards background sensor noise
+        # so zero-mean Gaussian read noise does not introduce centroid bias.
         weights = np.maximum(0.0, roi_patch - bg_est)
         total_weight = float(np.sum(weights))
 
         # -------------------------------------------------------------------
-        # 4. Numerical Stability & Zero-Signal Check
+        # 4. Numerical Stability & Zero-Signal Guard
         # -------------------------------------------------------------------
+        # Prevents 0.0/0.0 NaN propagation if atmospheric extinction or thresholding
+        # leaves zero net signal within the ROI.
         if total_weight < self._min_signal_weight or np.isnan(total_weight):
-            # No signal above background (e.g. uniform ROI or complete extinction)
             elapsed_ms = (time.perf_counter() - t_start) * 1000.0
             return CentroidResult(
                 x=geom_cx,
@@ -190,13 +198,15 @@ class IntensityWeightedCentroidEstimator(ICentroidEstimator):
             )
 
         # -------------------------------------------------------------------
-        # 5. Intensity-Weighted Sub-Pixel Centroiding
+        # 5. Intensity-Weighted Sub-Pixel Centroiding (Discrete 1st Moment)
         # -------------------------------------------------------------------
+        # Calculates the expectation value: \hat{x} = \sum(x * w) / \sum(w)
+        # Yields continuous sub-pixel coordinates unbiased by integer pixel grid discretization.
         y_grid, x_grid = np.mgrid[y0:y1, x0:x1]
         hat_x = float(np.sum(x_grid * weights) / total_weight)
         hat_y = float(np.sum(y_grid * weights) / total_weight)
 
-        # Quality metric: peak signal contrast ratio above background
+        # Quality metric: Normalized contrast ratio between peak signal and background floor
         peak_intensity = float(np.max(roi_patch))
         contrast_range = max(1.0, 255.0 - bg_est)
         quality = float(np.clip((peak_intensity - bg_est) / contrast_range, 0.0, 1.0))

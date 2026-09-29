@@ -1,0 +1,16 @@
+# Explicit binary attributes to prevent LF/CRLF corruption
+*.pdf binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.pyd binary
+*.pyc binary
+*.mp4 binary
+*.avi binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

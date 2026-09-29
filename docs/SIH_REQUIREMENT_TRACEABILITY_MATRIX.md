@@ -1,6 +1,6 @@
 # SIH 2026 — PS 26169 Requirement Traceability Matrix
 
-**System:** LumiTrack — Virtual Camera Tracking & FSOC Terminal Evaluation Platform  
+**System:** SANKET — Virtual Camera Tracking & FSOC Terminal Evaluation Platform  
 **Problem Statement:** PS 4 (SIH Internal Ref: 26169)  
 **Title:** Development of an AI-Based Virtual Camera Tracking System for FSOC Terminals  
 **Organisation:** Department of Space / ISRO  
@@ -88,7 +88,7 @@
 
 | Deliverable | Status | Location |
 |:---|:---:|:---|
-| **Software Application** (standalone executable) | ✅ | `lumitrack.spec` (PyInstaller); `run_lumitrack.bat` launcher |
+| **Software Application** (standalone executable) | ✅ | `sanket.spec` (PyInstaller); `run_sanket.bat` launcher |
 | **Source Code** (modular, documented) | ✅ | `src/` — 19 modules per Architecture v1.2 |
 | **Technical Report** | 🔶 | `docs/` — `USER_AND_EVALUATOR_MANUAL.md` (user manual); `SIH_26_Engineering_Context_Technical_Model.md`; `system_architecture.md` |
 | **User Manual** | ✅ | `docs/USER_AND_EVALUATOR_MANUAL.md` |
@@ -142,4 +142,4 @@
 
 ---
 
-*This traceability matrix was generated as part of Phase 6.8 (Final Productization, SIH Validation & Packaging) of the LumiTrack development goal.*
+*This traceability matrix was generated as part of Phase 6.8 (Final Productization, SIH Validation & Packaging) of the SANKET development goal.*

@@ -232,6 +232,11 @@ class BaselineTracker(ITrackingAlgorithm):
 
         # 3. Stage 1: Detection
         detection_res = self._detector.detect(internal_packet, roi=roi)
+        if not detection_res.candidates and roi is not None and (roi.width < width or roi.height < height):
+            # Fallback to full frame detection if restricted ROI missed the target (e.g. during rapid PTZ motion)
+            full_detection = self._detector.detect(internal_packet, roi=None)
+            if full_detection.candidates:
+                detection_res = full_detection
 
         # 4. Stage 2: Candidate Identification
         pred_pos = self._tracker.predict() if self._tracker.is_initialized else None

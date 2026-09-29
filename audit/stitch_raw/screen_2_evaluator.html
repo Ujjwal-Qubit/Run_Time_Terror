@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary-fixed-dim":"#adc6ff","on-primary-fixed-variant":"#004395","on-surface-variant":"#c2c6d6","on-background":"#e0e3e8","on-tertiary-fixed":"#2a1700","surface-container-highest":"#313539","on-secondary-fixed-variant":"#005236","on-error":"#690005","tertiary-fixed-dim":"#ffb95f","on-tertiary-container":"#3e2400","inverse-on-surface":"#2d3135","surface-bright":"#363a3e","surface-container":"#1c2024","inverse-primary":"#005ac2","tertiary":"#ffb95f","on-secondary":"#003824","secondary-container":"#00a572","outline":"#8c909f","on-primary-fixed":"#001a42","on-primary-container":"#00285d","error":"#ffb4ab","error-container":"#93000a","primary-container":"#4d8eff","surface":"#101418","on-secondary-container":"#00311f","on-primary":"#002e6a","primary-fixed":"#d8e2ff","secondary-fixed-dim":"#4edea3","on-tertiary":"#472a00","surface-tint":"#adc6ff","surface-container-low":"#181c20","background":"#101418","surface-container-lowest":"#0b0f12","outline-variant":"#424754","on-surface":"#e0e3e8","secondary":"#4edea3","secondary-fixed":"#6ffbbe","surface-dim":"#101418","on-error-container":"#ffdad6","surface-container-high":"#262a2f","primary":"#adc6ff","surface-variant":"#313539","on-tertiary-fixed-variant":"#653e00","tertiary-container":"#ca8100","on-secondary-fixed":"#002113","tertiary-fixed":"#ffddb8","inverse-surface":"#e0e3e8"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-xl":"1rem",margin:"0.5rem",gutter:"0.5rem","space-md":"0.5rem","space-sm":"0.25rem","space-lg":"0.75rem","space-xs":"0.125rem"},fontFamily:{"label-sm":["JetBrains Mono"],"body-md":["Inter"],"data-sm":["JetBrains Mono"],"data-md":["JetBrains Mono"],"body-sm":["Inter"],"label-md":["Inter"],"headline-sm":["Inter"],"headline-md":["Inter"],"body-lg":["Inter"],"data-lg":["JetBrains Mono"],"headline-lg":["Inter"]},fontSize:{"label-sm":["10px",{lineHeight:"12px",fontWeight:"500"}],"body-md":["12px",{lineHeight:"16px",fontWeight:"400"}],"data-sm":["11px",{lineHeight:"14px",fontWeight:"400"}],"data-md":["12px",{lineHeight:"16px",fontWeight:"500"}],"body-sm":["11px",{lineHeight:"14px",fontWeight:"400"}],"label-md":["11px",{lineHeight:"14px",fontWeight:"500"}],"headline-sm":["13px",{lineHeight:"18px",fontWeight:"600"}],"headline-md":["16px",{lineHeight:"22px",fontWeight:"600"}],"body-lg":["13px",{lineHeight:"18px",fontWeight:"400"}],"data-lg":["14px",{lineHeight:"18px",fontWeight:"500"}],"headline-lg":["20px",{lineHeight:"26px",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="p-space-md border-b border-outline-variant/30"><div class="flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-5 h-5 bg-primary text-on-primary flex items-center justify-center rounded"><span class="material-symbols-outlined text-[14px]">satellite_alt</span></div><span class="font-headline-sm text-headline-sm font-semibold tracking-wider text-on-surface">LUMITRACK</span></div><span class="font-data-sm text-data-sm px-space-xs py-space-xs bg-surface-container-highest text-primary rounded border border-outline-variant/30">v2.4.8</span></div><div class="font-label-sm text-label-sm tracking-tight text-outline mt-space-xs uppercase">Software Simulator &amp; Benchmark Harness</div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Core Workspaces</span></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-surface-container text-primary border-l-2 border-primary font-medium"><a class="flex items-center justify-between px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="developer" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">terminal</span><span class="font-label-md text-label-md">Developer Workspace</span></div></a><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm rounded transition-colors group bg-surface-container text-primary border-l-2 border-primary font-medium" data-path="evaluator" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">rule</span><span class="font-label-md text-label-md">Evaluator Workspace</span></div><span class="font-data-sm text-data-sm px-space-xs py-space-xs bg-secondary/10 text-secondary border border-secondary/30 rounded">19/19</span></a><a class="flex items-center justify-between px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="results" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">analytics</span><span class="font-label-md text-label-md">Results &amp; Analysis</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="diagnostics" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">security</span><span class="font-label-md text-label-md">Diagnostics &amp; Audit</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="history" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">folder_open</span><span class="font-label-md text-label-md">Run History</span></div><span class="font-data-sm text-data-sm px-space-xs py-space-xs bg-surface-container-highest text-on-surface-variant rounded border border-outline-variant/30">48</span></a></nav><div class="px-space-md pt-space-lg pb-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Quick-Jump Views</span></div><div class="flex flex-col gap-space-xs px-space-sm"><a class="flex items-center gap-space-md px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="sensor-view" href="#"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">videocam</span><span class="font-label-md text-label-md">2D Sensor View (640×480)</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="pedestal-frustum" href="#"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">view_in_ar</span><span class="font-label-md text-label-md">3D Pedestal Frustum</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded transition-colors group" data-path="world-canvas" href="#"><span class="material-symbols-outlined text-[16px] text-outline group-hover:text-on-surface">grid_4x4</span><span class="font-label-md text-label-md">2000×2000 World Canvas</span></a></div></div><div class="p-space-md border-t border-outline-variant/30 bg-surface-container-lowest/60"><div class="flex items-center gap-space-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface font-medium truncate">G. Seshadri</span><span class="font-label-sm text-label-sm text-outline truncate">FSOC Lead</span></div></div><div class="mt-space-sm pt-space-xs border-t border-outline-variant/20 flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span><span class="font-label-sm text-label-sm text-secondary truncate">SECURE / FIREWALL LOCKED</span></div></div></aside><div class="pl-60"><header class="fixed top-0 left-60 right-0 h-10 bg-surface-container-low border-b border-outline-variant/40 z-40 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container rounded border border-outline-variant/30"><span class="material-symbols-outlined text-primary text-[14px]">layers</span><span class="font-data-sm text-data-sm text-primary">SCN: 04_combined_stress_high.json</span><span class="font-data-sm text-data-sm text-outline">[LEO Extreme]</span></div><div class="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-highest rounded border border-outline-variant/30"><span class="font-data-sm text-data-sm text-on-surface-variant">Subpixel_CoG + Anti-Windup PI v2.4.8</span></div></div><div class="flex items-center gap-space-xs"><div class="flex items-center bg-surface-container rounded border border-outline-variant/40 p-space-xs"><button class="flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary rounded font-label-md text-label-md font-medium transition-colors" type="button"><span class="material-symbols-outlined text-[14px]">play_arrow</span><span>RUN</span></button><button class="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[14px]">pause</span><span>PAUSE</span></button><button class="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[14px]">stop</span><span>STOP</span></button><button class="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[14px]">redo</span><span>+1 FR STEP</span></button></div><div class="px-space-sm py-space-xs bg-surface-container rounded border border-outline-variant/30 flex items-center gap-space-xs"><span class="font-label-sm text-label-sm text-outline">RATE:</span><span class="font-data-sm text-data-sm text-secondary font-medium">62.7 Hz</span></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm font-data-sm text-data-sm"><div class="flex items-center gap-space-xs"><span class="text-outline">UTC</span><span class="text-on-surface">14:28:09.412</span></div><span class="text-outline-variant">|</span><div class="flex items-center gap-space-xs"><span class="text-outline">SIM MET</span><span class="text-primary">+02:44:18</span></div></div><div class="flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary border border-secondary/40 rounded"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm font-medium tracking-wide">LOCKED (100% SPEC)</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-10 pb-7 bg-surface min-h-[calc(100vh-28px)]"><div class="flex flex-col w-full">
+<div class="p-space-lg flex flex-col gap-space-lg">
+<!-- Top Hero Compliance & Audit Banner -->
+<section class="bg-surface-container-low rounded-xl p-space-lg flex flex-col gap-space-lg relative overflow-hidden shadow-md">
+<div class="absolute -right-16 -top-16 w-80 h-80 bg-secondary/5 rounded-full pointer-events-none"></div>
+<div class="absolute left-1/3 -bottom-20 w-96 h-96 bg-primary/5 rounded-full pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md z-10">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-data-sm text-data-sm px-space-sm py-space-xs bg-secondary-container/30 text-secondary rounded font-semibold uppercase tracking-wider">Official Jury Console</span>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">DOC ID: ISRO-DoS-AUDIT-2025-04</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-secondary">AIRGAP SEAL SECURE</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">ISRO DoS Problem Statement PS-26169 Verification Audit</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Autonomous Free-Space Optical Communication (FSOC) Beam Pointing, Acquisition &amp; Tracking Benchmark. Strict mathematical evaluation on ground truth coordinate delta and realtime loop execution.</p>
+</div>
+<!-- Suite Execution Controls -->
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<button class="flex items-center gap-space-xs px-space-md py-space-sm bg-primary text-on-primary hover:bg-primary-fixed-dim rounded font-headline-sm text-headline-sm shadow-sm transition-transform active:scale-95" id="btnRunSuite" type="button">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+<span>Execute Full Suite (19)</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm bg-surface-container-high text-on-surface hover:bg-surface-bright rounded font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">playlist_play</span>
+<span>Run Selected (4)</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm bg-surface-container-high text-error hover:bg-error-container/40 rounded font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">stop_circle</span>
+<span>Stop Batch</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary rounded font-label-md text-label-md transition-colors" id="btnExportDossier" type="button">
+<span class="material-symbols-outlined text-[16px]">download_for_offline</span>
+<span>Export Compliance Dossier (.ZIP)</span>
+</button>
+</div>
+</div>
+<!-- 4 Major KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md z-10">
+<!-- KPI 1 -->
+<div class="bg-surface-container p-space-md rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container-high transition-colors">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-outline">Benchmark Pass Rate</span>
+<span class="font-label-sm text-label-sm px-space-xs py-space-xs bg-secondary/15 text-secondary rounded font-semibold">STRICT COMPLIANT</span>
+</div>
+<div class="my-space-sm flex items-baseline gap-space-sm">
+<span class="font-data-lg text-[28px] leading-8 font-bold text-secondary">100.0%</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant font-medium">(19/19 Scenarios)</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline pt-space-xs">
+<span>ISRO PS Mandatory Metric</span>
+<span class="text-secondary font-medium">100% Minimum Spec</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container p-space-md rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container-high transition-colors">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-outline">Mean Tracking Error</span>
+<span class="font-label-sm text-label-sm px-space-xs py-space-xs bg-secondary/15 text-secondary rounded font-semibold">+64.6% MARGIN</span>
+</div>
+<div class="my-space-sm flex items-baseline gap-space-sm">
+<span class="font-data-lg text-[28px] leading-8 font-bold text-on-surface">3.54</span>
+<span class="font-data-sm text-data-sm text-outline">px</span>
+<span class="font-data-sm text-data-sm text-primary font-medium ml-space-xs">RMSE: 0.028 px</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline pt-space-xs">
+<span>Spec Ceiling</span>
+<span class="text-on-surface font-medium">≤ 10.0 px (Dynamic FOV)</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 35.4%"></div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container p-space-md rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container-high transition-colors">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-outline">Target Loss Frequency</span>
+<span class="font-label-sm text-label-sm px-space-xs py-space-xs bg-secondary/15 text-secondary rounded font-semibold">ZERO LOSS</span>
+</div>
+<div class="my-space-sm flex items-baseline gap-space-sm">
+<span class="font-data-lg text-[28px] leading-8 font-bold text-secondary">0.00%</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant font-medium">(0 Total Drops)</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline pt-space-xs">
+<span>Spec Ceiling</span>
+<span class="text-on-surface font-medium">&lt; 5.0% Fail Threshold</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container p-space-md rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container-high transition-colors">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-outline">Processing Throughput</span>
+<span class="font-label-sm text-label-sm px-space-xs py-space-xs bg-secondary/15 text-secondary rounded font-semibold">+313.5% MARGIN</span>
+</div>
+<div class="my-space-sm flex items-baseline gap-space-sm">
+<span class="font-data-lg text-[28px] leading-8 font-bold text-on-surface">62.7</span>
+<span class="font-data-sm text-data-sm text-outline">FPS</span>
+<span class="font-data-sm text-data-sm text-secondary font-medium ml-space-xs">Core: 898 FPS</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline pt-space-xs">
+<span>Spec Floor</span>
+<span class="text-on-surface font-medium">≥ 20.0 FPS Loop Time</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Workspace Tabs Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center bg-surface-container-low p-space-xs rounded-lg shadow-sm">
+<button class="flex items-center gap-space-sm px-space-md py-space-xs rounded bg-surface-container-highest text-primary font-headline-sm text-headline-sm transition-colors shadow-sm" id="tabBtn1" type="button">
+<span class="material-symbols-outlined text-[16px]">view_timeline</span>
+<span>Benchmark 1: Automated Scenario Suite</span>
+<span class="font-data-sm text-data-sm px-space-xs bg-secondary/20 text-secondary rounded">19/19 VERIFIED</span>
+</button>
+<button class="flex items-center gap-space-sm px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface font-headline-sm text-headline-sm transition-colors" id="tabBtn2" type="button">
+<span class="material-symbols-outlined text-[16px]">video_file</span>
+<span>Benchmark 2: Video Evaluator</span>
+<span class="font-data-sm text-data-sm px-space-xs bg-surface-container text-outline rounded">PTZ BYPASS</span>
+</button>
+</div>
+<div class="hidden sm:flex items-center gap-space-md font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>EVAL_RUN_MODE: STRICT_EVAL</span>
+</div>
+<span class="text-outline-variant">|</span>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px] text-primary">verified</span>
+<span>HASHED JURY ARTIFACTS</span>
+</div>
+</div>
+</div>
+<!-- TAB 1 CONTENT: Automated Scenario Suite (19/19 Verified) -->
+<div class="flex flex-col gap-space-md" id="tabContent1">
+<!-- Filter and Suite Summary Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-lg shadow-sm">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-md text-label-md text-outline">FILTER SUITE:</span>
+<button class="px-space-sm py-space-xs bg-surface-container-high text-primary rounded font-label-sm text-label-sm" type="button">ALL (19)</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-on-surface-variant hover:text-on-surface rounded font-label-sm text-label-sm" type="button">HIGH JERK (5)</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-on-surface-variant hover:text-on-surface rounded font-label-sm text-label-sm" type="button">ATMOSPHERIC TURBULENCE (6)</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-on-surface-variant hover:text-on-surface rounded font-label-sm text-label-sm" type="button">LOW SNR / CLOUD (4)</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-on-surface-variant hover:text-on-surface rounded font-label-sm text-label-sm" type="button">FOV BOUNDARY (4)</button>
+</div>
+<div class="flex items-center gap-space-sm font-data-sm text-data-sm text-outline">
+<span>SEED: <span class="text-on-surface font-mono">0x9F41C2B0</span></span>
+<span>TOLERANCE: <span class="text-secondary font-mono">≤ 10.00 px</span></span>
+</div>
+</div>
+<!-- Execution Matrix Table -->
+<div class="bg-surface-container-low rounded-lg overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest text-outline font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-sm px-space-md">Scenario ID</th>
+<th class="py-space-sm px-space-md">Motion Profile &amp; Orbit Tier</th>
+<th class="py-space-sm px-space-md">Atmospheric &amp; Noise Stack</th>
+<th class="py-space-sm px-space-md text-right">Mean Err (px)</th>
+<th class="py-space-sm px-space-md text-right">Centroid RMSE</th>
+<th class="py-space-sm px-space-md text-right">Acq Latency</th>
+<th class="py-space-sm px-space-md text-right">Loss Rate</th>
+<th class="py-space-sm px-space-md text-center">Status</th>
+<th class="py-space-sm px-space-md text-center">Audit Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs font-data-md text-data-md text-primary font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>SCN_01</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">scn_nominal_leo_pass.json</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface font-medium">Nominal LEO Pass (550 km)</div>
+<div class="font-label-sm text-label-sm text-outline">Constant velocity slewing • ω = 1.25°/s</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface-variant">Nominal Clear Sky (HV 5/7)</div>
+<div class="font-label-sm text-label-sm text-outline">Gaussian Noise σ=2.1 • SNR = 28.4 dB</div>
+</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md font-semibold text-secondary">1.12 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.012 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.038 s</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-secondary">0.00%</td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary rounded font-label-sm text-label-sm font-semibold">
+                    PASS
+                  </span>
+</td>
+<td class="py-space-md px-space-md text-center">
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-primary transition-colors" title="Inspect Telemetry Log" type="button">
+<span class="material-symbols-outlined text-[16px]">query_stats</span>
+</button>
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" title="Download SCN Vector" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-lowest/40 hover:bg-surface-container transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs font-data-md text-data-md text-primary font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>SCN_02</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">scn_circular_coning_track.json</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface font-medium">Circular Coning Motion</div>
+<div class="font-label-sm text-label-sm text-outline">Pedestal nutation wobble • f = 2.4 Hz</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface-variant">Moderate Scintillation (Rytov = 0.22)</div>
+<div class="font-label-sm text-label-sm text-outline">Poisson Shot Noise • SNR = 21.0 dB</div>
+</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md font-semibold text-secondary">2.84 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.019 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.052 s</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-secondary">0.00%</td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary rounded font-label-sm text-label-sm font-semibold">
+                    PASS
+                  </span>
+</td>
+<td class="py-space-md px-space-md text-center">
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">query_stats</span>
+</button>
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs font-data-md text-data-md text-primary font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>SCN_03</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">scn_figure8_high_jerk.json</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface font-medium">Figure-8 High Jerk Profile</div>
+<div class="font-label-sm text-label-sm text-outline">Multi-axis inversion jerk = 14.8 °/s³</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface-variant">Aerosol Backscatter + Stray Lunar Flare</div>
+<div class="font-label-sm text-label-sm text-outline">Non-uniform Background • SNR = 16.5 dB</div>
+</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md font-semibold text-secondary">4.18 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.034 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.064 s</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-secondary">0.00%</td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary rounded font-label-sm text-label-sm font-semibold">
+                    PASS
+                  </span>
+</td>
+<td class="py-space-md px-space-md text-center">
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">query_stats</span>
+</button>
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-lowest/40 hover:bg-surface-container transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs font-data-md text-data-md text-primary font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>SCN_04</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">04_combined_stress_high.json</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface font-medium">Combined Stress Extreme (LEO Heavy)</div>
+<div class="font-label-sm text-label-sm text-outline">Jerk spikes 18.2°/s³ + Crosswind gusts</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface-variant">Deep Turbulence + 45% Sun Glint</div>
+<div class="font-label-sm text-label-sm text-outline">Rytov = 0.58 • Low contrast SNR = 9.2 dB</div>
+</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md font-semibold text-secondary">5.91 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.046 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.071 s</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-secondary">0.00%</td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary rounded font-label-sm text-label-sm font-semibold">
+                    PASS
+                  </span>
+</td>
+<td class="py-space-md px-space-md text-center">
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">query_stats</span>
+</button>
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs font-data-md text-data-md text-primary font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>SCN_05</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">scn_out_of_fov_recovery.json</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface font-medium">Out-of-FOV Boundary Search</div>
+<div class="font-label-sm text-label-sm text-outline">Step offset excursion beyond 640×480 FPA edge</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="text-on-surface-variant">Atmospheric Extinction + Thermal Noise</div>
+<div class="font-label-sm text-label-sm text-outline">Cloud edge transition • SNR drops to 4.8 dB</div>
+</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md font-semibold text-secondary">3.67 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.031 px</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-on-surface">0.114 s</td>
+<td class="py-space-md px-space-md text-right font-data-md text-data-md text-secondary">0.00%</td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary/15 text-secondary rounded font-label-sm text-label-sm font-semibold">
+                    PASS
+                  </span>
+</td>
+<td class="py-space-md px-space-md text-center">
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">query_stats</span>
+</button>
+<button class="p-space-xs hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Suite Aggregates -->
+<div class="bg-surface-container-lowest p-space-md flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md font-label-sm text-label-sm text-outline">
+<span class="text-on-surface font-semibold">Displaying 5 of 19 Scenarios</span>
+<span>•</span>
+<span class="text-secondary font-medium">All 19 Scenarios Executed Without Fault</span>
+<span>•</span>
+<span>Last Full Run MET: +02:44:18 UTC</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-space-xs bg-surface-container text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md" type="button">
+              View All 19 Test Vectors
+            </button>
+<button class="px-space-md py-space-xs bg-primary text-on-primary hover:bg-primary-fixed-dim rounded font-label-md text-label-md" type="button">
+              Download Full CSV Telemetry
+            </button>
+</div>
+</div>
+</div>
+<!-- Mathematical Integrity Strip & Jitter Curves -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Chart 1: Tracking Error Distribution -->
+<div class="bg-surface-container-low p-space-md rounded-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Suite Error Distribution (px)</span>
+<span class="font-data-sm text-data-sm text-secondary font-medium">μ = 3.54 | σ = 0.89</span>
+</div>
+<div class="py-space-md flex items-center justify-center">
+<svg class="w-full h-28" fill="none" viewbox="0 0 300 100">
+<!-- Grid lines -->
+<line class="text-outline-variant/30" stroke="currentColor" stroke-dasharray="2 2" x1="0" x2="300" y1="20" y2="20"></line>
+<line class="text-outline-variant/30" stroke="currentColor" stroke-dasharray="2 2" x1="0" x2="300" y1="50" y2="50"></line>
+<line class="text-outline-variant/30" stroke="currentColor" stroke-dasharray="2 2" x1="0" x2="300" y1="80" y2="80"></line>
+<!-- Spec Ceiling at 10px (equivalent to y=10 on graph) -->
+<line class="text-error/80" stroke="currentColor" stroke-dasharray="4 2" stroke-width="1.5" x1="0" x2="300" y1="12" y2="12"></line>
+<text class="text-error font-data-sm text-[9px]" fill="currentColor" x="5" y="10">SPEC CEILING: 10.0 px</text>
+<!-- Error curve area -->
+<path class="text-primary/10" d="M 0,85 Q 35,82 70,68 T 140,55 T 210,62 T 260,78 T 300,80 L 300,95 L 0,95 Z" fill="currentColor"></path>
+<!-- Error Curve line -->
+<path class="text-primary" d="M 0,85 Q 35,82 70,68 T 140,55 T 210,62 T 260,78 T 300,80" fill="none" stroke="currentColor" stroke-width="2"></path>
+<!-- Subpixel markers -->
+<circle class="fill-secondary" cx="140" cy="55" r="3.5"></circle>
+<text class="text-secondary font-data-sm text-[10px]" fill="currentColor" x="148" y="53">Peak Mean: 5.91 px</text>
+</svg>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>SCN_01 (1.12 px)</span>
+<span>SCN_04 (LEO Extreme)</span>
+<span>SCN_19 (Boundary Out)</span>
+</div>
+</div>
+<!-- Chart 2: Loop Execution Latency -->
+<div class="bg-surface-container-low p-space-md rounded-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Execution Frequency (Hz)</span>
+<span class="font-data-sm text-data-sm text-secondary font-medium">62.7 FPS Loop Average</span>
+</div>
+<div class="py-space-md flex items-center justify-center">
+<svg class="w-full h-28" fill="none" viewbox="0 0 300 100">
+<!-- Spec Floor at 20 Hz (y=80) -->
+<line class="text-tertiary/70" stroke="currentColor" stroke-dasharray="4 2" stroke-width="1.5" x1="0" x2="300" y1="80" y2="80"></line>
+<text class="text-tertiary font-data-sm text-[9px]" fill="currentColor" x="5" y="76">SPEC FLOOR: 20.0 FPS</text>
+<!-- Bar chart of FPS across runs -->
+<rect class="fill-secondary/30" height="56" rx="2" width="16" x="20" y="24"></rect>
+<rect class="fill-secondary/50" height="58" rx="2" width="16" x="55" y="22"></rect>
+<rect class="fill-secondary/40" height="54" rx="2" width="16" x="90" y="26"></rect>
+<rect class="fill-secondary" height="59" rx="2" width="16" x="125" y="21"></rect>
+<rect class="fill-secondary/60" height="55" rx="2" width="16" x="160" y="25"></rect>
+<rect class="fill-secondary/50" height="57" rx="2" width="16" x="195" y="23"></rect>
+<rect class="fill-secondary/80" height="60" rx="2" width="16" x="230" y="20"></rect>
+<rect class="fill-secondary/60" height="58" rx="2" width="16" x="265" y="22"></rect>
+</svg>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>Minimum: 61.2 FPS</span>
+<span class="text-secondary font-medium">Nominal: 62.7 FPS</span>
+<span>Maximum: 65.4 FPS</span>
+</div>
+</div>
+<!-- Audit Signature Verification Block -->
+<div class="bg-surface-container-low p-space-md rounded-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Ground Truth Isolation Seal</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+</div>
+<div class="flex flex-col gap-space-xs my-space-xs font-label-sm text-label-sm">
+<div class="p-space-sm bg-surface-container rounded flex items-center justify-between">
+<span class="text-outline">AST Leaks:</span>
+<span class="font-data-sm text-data-sm text-secondary font-semibold">0 LEAKS (ZERO)</span>
+</div>
+<div class="p-space-sm bg-surface-container rounded flex items-center justify-between">
+<span class="text-outline">FrameProvider Firewall:</span>
+<span class="font-data-sm text-data-sm text-secondary font-semibold">LOCKED &amp; VERIFIED</span>
+</div>
+<div class="p-space-sm bg-surface-container rounded flex items-center justify-between">
+<span class="text-outline">Algorithmic Latency:</span>
+<span class="font-data-sm text-data-sm text-primary font-semibold">15.9 ms ± 0.4 ms</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>Cryptographic Nonce:</span>
+<span class="font-mono text-on-surface-variant">#B1-19-AUDIT-PASS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB 2 CONTENT: Video Evaluator (PTZ Bypass Mode) -->
+<div class="hidden flex flex-col gap-space-md" id="tabContent2">
+<!-- Top Video Ingest Banner -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-wrap items-center justify-between gap-space-sm shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-8 h-8 rounded bg-primary/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">movie</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Benchmark 2: Video Evaluator (PTZ Bypass Mode)</span>
+<span class="font-body-sm text-body-sm text-outline">Evaluation of optical tracking pipeline on real-world raw MP4 camera ingest feed without physical mount inertia.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-data-sm text-data-sm px-space-sm py-space-xs bg-surface-container text-secondary rounded border border-secondary/30">
+            SPEEDUP: 14.3× REALTIME
+          </span>
+<button class="px-space-md py-space-xs bg-primary text-on-primary hover:bg-primary-fixed-dim rounded font-headline-sm text-headline-sm transition-colors flex items-center gap-space-xs" id="btnRunVideoEval" type="button">
+<span class="material-symbols-outlined text-[14px]">play_circle</span>
+<span>Re-Evaluate Video Track</span>
+</button>
+</div>
+</div>
+<!-- Split Layout: Video Frame Player vs Markdown Compliance Report -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Left: Live Video Frame Ingest & Overlay (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface">Live Ingest Frame Player</span>
+<span class="font-data-sm text-data-sm px-space-xs py-space-xs bg-surface-container-highest text-primary rounded">FRAME #0742 / 1200</span>
+</div>
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm text-outline">
+<span>FPS: <strong class="text-secondary font-mono">898.2 FPS</strong></span>
+<span>•</span>
+<span>FORMAT: <strong class="text-on-surface font-mono">640×480 @ 8-bit</strong></span>
+</div>
+</div>
+<!-- Video Viewport Simulator Canvas -->
+<div class="relative w-full aspect-[4/3] bg-surface-container-lowest rounded-lg overflow-hidden flex items-center justify-center border border-outline-variant/30 group">
+<!-- Simulated Optical Beacon Image Placeholder with strict data-alt -->
+<img class="w-full h-full object-cover opacity-90" data-alt="High contrast optical sensor focal plane view showing dark aerospace space background with a brilliant collimated laser beacon spot at subpixel coordinates with subtle circular diffraction rings, faint background star field, and zero sensor blooming in cold graphite and emerald green palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC4hEUsxZPj2NZULdtdwwD1FKegjtv025LuoDkmOBgdsuLoq1B9CUv5U-kKyu2bPX2Ullbv0CcbfxQnLk7tuX8rHnsjeJfAfiFL7DrMo5t65HxjjBqq1xB6iYP5mzGn4Q1x_5ffVbFCblsep12tUWcZFew1Y7B3rtM9BdbhGsBtJ2q7OMJTh3s5marOPYU7CV0DjBYHlIHTx3Bex9n1hj-i5Q6Qvormmm2DNVR4YdXCsb_ugj7fxbtag"/>
+<!-- HUD Reticles & Optical Tracking Overlay -->
+<div class="absolute inset-0 pointer-events-none p-space-md flex flex-col justify-between">
+<!-- Top HUD Telemetry Overlay -->
+<div class="flex items-start justify-between">
+<div class="bg-surface/85 backdrop-blur-sm px-space-sm py-space-xs rounded font-data-sm text-data-sm text-primary flex flex-col gap-space-xs">
+<div>X_MEAS: <span class="text-on-surface">320.482 px</span></div>
+<div>Y_MEAS: <span class="text-on-surface">240.119 px</span></div>
+<div>GROUND_TRUTH: <span class="text-outline">320.120, 239.880</span></div>
+<div>DELTA ΔE: <span class="text-secondary font-bold">0.393 px</span></div>
+</div>
+<div class="bg-surface/85 backdrop-blur-sm px-space-sm py-space-xs rounded font-data-sm text-data-sm text-right flex flex-col gap-space-xs">
+<div class="text-secondary font-bold flex items-center gap-space-xs justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>CENTROID LOCK</span>
+</div>
+<div class="text-outline">FRAME MATCH: <span class="text-secondary">100.0%</span></div>
+<div class="text-outline">PIPELINE: <span class="text-primary font-mono">PTZ_BYPASS</span></div>
+</div>
+</div>
+<!-- Center Reticle Graphic (Boresight Crosshairs + Centroid Marker) -->
+<div class="absolute inset-0 flex items-center justify-center">
+<!-- Hairline Crosshairs -->
+<div class="w-full h-px bg-outline-variant/40"></div>
+<div class="h-full w-px bg-outline-variant/40 absolute"></div>
+<!-- Boresight 128x128 Tracking ROI box -->
+<div class="w-32 h-32 border border-primary/50 relative flex items-center justify-center">
+<span class="absolute -top-3 left-1 font-label-sm text-label-sm text-primary bg-surface px-1">ROI: 128×128</span>
+<!-- Subpixel Centroid Ring -->
+<div class="w-6 h-6 rounded-full border-2 border-secondary animate-pulse flex items-center justify-center">
+<div class="w-1 h-1 bg-secondary rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Timeline Progress Overlay -->
+<div class="bg-surface/85 backdrop-blur-sm p-space-sm rounded flex flex-col gap-space-xs">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface">MP4 Stream Ingest: <code class="text-primary">ISRO_PS_26169_EVAL_FEED_01.mp4</code></span>
+<span class="text-secondary font-mono">00:01.238 / 00:02.000 (100% Synced)</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 61.8%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Video Evaluator Performance Row -->
+<div class="grid grid-cols-3 gap-space-sm">
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-sm text-label-sm text-outline">Standalone Core Speed</span>
+<div class="font-data-lg text-data-lg text-secondary font-bold">898.2 FPS</div>
+<span class="font-label-sm text-label-sm text-outline">No Display Bottleneck</span>
+</div>
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-sm text-label-sm text-outline">Ref CSV Discrepancy</span>
+<div class="font-data-lg text-data-lg text-primary font-bold">0.393 px RMSE</div>
+<span class="font-label-sm text-label-sm text-secondary">Evaluator Spec ≤ 1.0 px</span>
+</div>
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-sm text-label-sm text-outline">Total Evaluated Frames</span>
+<div class="font-data-lg text-data-lg text-on-surface font-bold">1,200 / 1,200</div>
+<span class="font-label-sm text-label-sm text-secondary">0 Ingest Drops</span>
+</div>
+</div>
+</div>
+<!-- Right: Interactive Markdown Compliance Report Preview (5 cols) -->
+<div class="lg:col-span-5 bg-surface-container-low rounded-lg p-space-md flex flex-col justify-between shadow-sm">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-primary">description</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Compliance Report (PS-26169)</span>
+</div>
+<span class="font-label-sm text-label-sm px-space-xs py-space-xs bg-secondary/15 text-secondary rounded font-medium">SIGNED &amp; VERIFIED</span>
+</div>
+<!-- Markdown Document Viewer styled as an official aerospace brief -->
+<div class="bg-surface-container-lowest p-space-md rounded font-body-sm text-body-sm text-on-surface flex flex-col gap-space-sm max-h-[460px] overflow-y-auto leading-relaxed border border-outline-variant/30">
+<div class="font-headline-sm text-headline-sm text-primary font-bold border-b border-outline-variant/30 pb-space-xs">
+                # AUDIT VERIFICATION CERTIFICATE
+              </div>
+<p class="text-outline font-label-sm text-label-sm">
+                Generated: 2025-05-18T14:28:09.412Z | System: LumiTrack v2.4.8<br/>
+                Target Test Suite: ISRO Department of Space - PS-26169
+              </p>
+<div class="font-headline-sm text-[12px] font-bold text-on-surface mt-space-xs">
+                ## 1. Compliance Executive Summary
+              </div>
+<p class="text-on-surface-variant">
+                The optical tracking and subpixel centroid estimation pipeline developed for LumiTrack was subjected to dual-stage automated evaluation:
+              </p>
+<ul class="list-disc list-inside text-on-surface-variant flex flex-col gap-space-xs font-label-sm text-label-sm">
+<li><strong class="text-on-surface">Benchmark 1 (Full Suite):</strong> 19/19 Scenarios <span class="text-secondary font-semibold">[PASS]</span>. Mean Tracking Error of 3.54 px vs ≤ 10.0 px ceiling. Zero Target Losses.</li>
+<li><strong class="text-on-surface">Benchmark 2 (Video Evaluator):</strong> Frame match 100.0%. Mean pixel error against ground-truth CSV: <span class="text-primary font-semibold">0.393 px RMSE</span>. Standalone algorithm rate: <span class="text-secondary font-semibold">898.2 FPS</span>.</li>
+</ul>
+<div class="font-headline-sm text-[12px] font-bold text-on-surface mt-space-xs">
+                ## 2. Integrity &amp; Isolation Audit
+              </div>
+<p class="text-on-surface-variant font-label-sm text-label-sm">
+                Static AST Inspection confirmed zero ground truth metric leakage into tracking feedback loop. Algorithmic compute time per cycle is strictly decoupled from telemetry render routines.
+              </p>
+<!-- SHA-256 Official Seal -->
+<div class="mt-space-sm p-space-sm bg-surface-container rounded flex flex-col gap-space-xs border border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-outline">CRYPTOGRAPHIC SHA-256 AUDIT SEAL:</span>
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-data-sm text-data-sm text-secondary font-mono truncate select-all" id="shaHash">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span>
+<button class="px-space-sm py-space-xs bg-surface-container-highest text-primary hover:text-on-surface rounded font-label-sm text-label-sm shrink-0 transition-colors" id="btnCopyHash" type="button">
+                    Copy Hash
+                  </button>
+</div>
+</div>
+<!-- Signed Evaluators Block -->
+<div class="mt-space-sm p-space-sm bg-surface-container rounded flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Official Jury Sign-Off Block</span>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface pt-space-xs">
+<div>
+<div class="font-semibold text-primary">Dr. G. Seshadri</div>
+<div class="text-outline">Lead Optical Ground Station Evaluator</div>
+</div>
+<div class="text-right">
+<div class="text-secondary font-semibold">✓ DIGITALLY SIGNED</div>
+<div class="text-outline font-mono">KEY: 0x4892A-ISRO-DOS</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="flex items-center justify-end gap-space-sm mt-space-md pt-space-sm border-t border-outline-variant/30">
+<button class="px-space-md py-space-xs bg-surface-container text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" type="button">
+              Raw Markdown (.MD)
+            </button>
+<button class="px-space-md py-space-xs bg-primary text-on-primary hover:bg-primary-fixed-dim rounded font-label-md text-label-md transition-colors flex items-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[14px]">picture_as_pdf</span>
+<span>Generate Signed PDF</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Interactive Tab Switching Logic
+  const tabBtn1 = document.getElementById('tabBtn1');
+  const tabBtn2 = document.getElementById('tabBtn2');
+  const tabContent1 = document.getElementById('tabContent1');
+  const tabContent2 = document.getElementById('tabContent2');
+
+  function activateTab1() {
+    tabBtn1.classList.add('bg-surface-container-highest', 'text-primary');
+    tabBtn1.classList.remove('text-on-surface-variant');
+    tabBtn2.classList.remove('bg-surface-container-highest', 'text-primary');
+    tabBtn2.classList.add('text-on-surface-variant');
+    tabContent1.classList.remove('hidden');
+    tabContent2.classList.add('hidden');
+  }
+
+  function activateTab2() {
+    tabBtn2.classList.add('bg-surface-container-highest', 'text-primary');
+    tabBtn2.classList.remove('text-on-surface-variant');
+    tabBtn1.classList.remove('bg-surface-container-highest', 'text-primary');
+    tabBtn1.classList.add('text-on-surface-variant');
+    tabContent2.classList.remove('hidden');
+    tabContent1.classList.add('hidden');
+  }
+
+  tabBtn1?.addEventListener('click', activateTab1);
+  tabBtn2?.addEventListener('click', activateTab2);
+
+  // Copy Hash Micro-interaction
+  const btnCopyHash = document.getElementById('btnCopyHash');
+  const shaHash = document.getElementById('shaHash');
+  btnCopyHash?.addEventListener('click', () => {
+    if (shaHash) {
+      navigator.clipboard?.writeText(shaHash.innerText).then(() => {
+        btnCopyHash.innerText = 'Copied!';
+        setTimeout(() => { btnCopyHash.innerText = 'Copy Hash'; }, 2000);
+      });
+    }
+  });
+
+  // Execute suite micro-interaction
+  const btnRunSuite = document.getElementById('btnRunSuite');
+  btnRunSuite?.addEventListener('click', () => {
+    btnRunSuite.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Verifying (19/19)...</span>';
+    setTimeout(() => {
+      btnRunSuite.innerHTML = '<span class="material-symbols-outlined text-[16px] text-secondary">check</span><span>19/19 Verified</span>';
+      setTimeout(() => {
+        btnRunSuite.innerHTML = '<span class="material-symbols-outlined text-[16px]">play_arrow</span><span>Execute Full Suite (19)</span>';
+      }, 2500);
+    }, 1200);
+  });
+</script></main><footer class="fixed bottom-0 left-60 right-0 h-7 bg-surface-container-lowest border-t border-outline-variant/40 z-40 px-space-md flex items-center justify-between select-none"><div class="flex items-center gap-space-md font-label-sm text-label-sm"><div class="flex items-center gap-space-xs text-secondary"><span class="w-1.5 h-1.5 bg-secondary rounded-full"></span><span>FRAMEPROVIDER FIREWALL: LOCKED (ZERO LEAKAGE)</span></div><span class="text-outline-variant">|</span><div class="flex items-center gap-space-xs text-on-surface-variant"><span class="text-outline">AST AUDIT:</span><span class="text-secondary font-medium">0 LEAKS</span></div></div><div class="flex items-center gap-space-md font-data-sm text-data-sm text-on-surface-variant"><div><span class="text-outline">LOOP:</span> <span class="text-secondary">62.7 Hz</span> <span class="text-outline-variant">(3.13x SPEC)</span></div><span class="text-outline-variant">|</span><div><span class="text-outline">ACQ:</span> <span class="text-on-surface">0.070 s</span></div><span class="text-outline-variant">|</span><div><span class="text-outline">RMSE:</span> <span class="text-primary">0.028 px</span></div></div><div class="flex items-center gap-space-md font-label-sm text-label-sm text-outline"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[13px] text-secondary">verified_user</span><span>GROUND TRUTH: ISOLATED TO METRICS</span></div><span class="text-outline-variant">|</span><span class="text-secondary">TELEMETRY: VERIFIED</span></div></footer></div></body></html>

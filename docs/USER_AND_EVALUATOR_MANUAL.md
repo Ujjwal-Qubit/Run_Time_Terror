@@ -1,4 +1,4 @@
-# LumiTrack — FSOC Virtual Camera Tracking System
+# SANKET — FSOC Virtual Camera Tracking System
 ## Complete Evaluator and User Manual (SIH '26)
 
 **Problem Statement:** Development of an AI-Based Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space Optical Communication (FSOC) Terminals
@@ -8,14 +8,14 @@
 ## 1. Quick Start & Execution
 
 ### 1.1 Launching the Standalone Executable Application
-LumiTrack is packaged as a standalone Windows executable (`dist/LumiTrack/LumiTrack.exe`) requiring zero Python installation.
+SANKET is packaged as a standalone Windows executable (`dist/SANKET/SANKET.exe`) requiring zero Python installation.
 
 ```powershell
 # Interactive GUI (2D Camera Feed + 3D Geometric Terminal + Telemetry HUD):
-.\dist\LumiTrack\LumiTrack.exe --gui
+.\dist\SANKET\SANKET.exe --gui
 
 # Or simply double-click:
-run_lumitrack.bat
+run_sanket.bat
 ```
 
 *(Alternatively, run from source: `python -m src.main --gui`)*
@@ -24,7 +24,7 @@ run_lumitrack.bat
 To execute automated batch evaluation across all production scenarios:
 ```powershell
 # Standalone binary:
-.\dist\LumiTrack\LumiTrack.exe --eval-scenarios scenarios
+.\dist\SANKET\SANKET.exe --eval-scenarios scenarios
 
 # From source:
 python -m src.main --eval-scenarios scenarios
@@ -37,10 +37,10 @@ Outputs generated in `output/`:
 To evaluate external MP4 video recordings with PTZ bypass and automated comparison against ground-truth/reference coordinates:
 ```powershell
 # Single MP4 evaluation with evaluator reference CSV:
-.\dist\LumiTrack\LumiTrack.exe --mp4 path/to/video.mp4 --reference-csv path/to/reference.csv
+.\dist\SANKET\SANKET.exe --mp4 path/to/video.mp4 --reference-csv path/to/reference.csv
 
 # Batch MP4 directory evaluation:
-.\dist\LumiTrack\LumiTrack.exe --eval-mp4s path/to/mp4_dir/ --reference-csv path/to/reference.csv
+.\dist\SANKET\SANKET.exe --eval-mp4s path/to/mp4_dir/ --reference-csv path/to/reference.csv
 ```
 
 #### Evaluator Reference CSV Format
@@ -60,7 +60,7 @@ Outputs computed:
 ### 1.4 Validating System Foundation & Running Test Suite
 ```powershell
 # Validate architecture foundation contracts:
-.\dist\LumiTrack\LumiTrack.exe --validate
+.\dist\SANKET\SANKET.exe --validate
 
 # Run complete 255-test automated regression suite:
 python -m pytest
@@ -155,7 +155,7 @@ Discriminates compact, high-contrast beacons from irregular clutter streaks with
 ## 4. Verification & Experimental Evidence
 
 ### 4.1 Benchmark 1 (BM1) Closed-Loop Production Batch Results
-Evaluated over all 4 standardized production scenarios (3,600 frames total) via standalone executable `LumiTrack.exe`:
+Evaluated over all 4 standardized production scenarios (3,600 frames total) via standalone executable `SANKET.exe`:
 - **Processing Frame Rate:** Sustained loop rate: 62.7 FPS (PS Requirement: $\ge 20.0$ FPS) -> **PASS** (Standalone algorithm: 758.1 FPS)
 - **Target Acquisition Time:** 0.07 s nominal in-FOV; operational uncertainty zone ($R \le 460\text{ px}$) $\le 1.73\text{ s}$ -> **PASS**; extreme-corner blind search requires $2.27\text{--}5.47\text{ s}$ due to $10^\circ/\text{s}$ PTZ rate limit -> **PARTIAL / BOUNDED COMPLIANCE**
 - **Mean Tracking Alignment Error:** 3.54 px (PS Requirement: $\le 10.0$ px) -> **PASS**

@@ -19,25 +19,26 @@ from src.main import parse_args, main
 
 
 def test_def01_spec_file_contains_plugin_algorithms():
-    """DEF-01: Verify lumitrack.spec bundles src/plugins/algorithms into package datas."""
-    spec_path = "lumitrack.spec"
-    assert os.path.isfile(spec_path), f"lumitrack.spec not found at {spec_path}"
+    """DEF-01: Verify spec bundles src/plugins/algorithms into package datas."""
+    spec_path = "sanket.spec" if os.path.isfile("sanket.spec") else "lumitrack.spec"
+    assert os.path.isfile(spec_path), f"Packaging spec not found at {spec_path}"
 
     with open(spec_path, "r", encoding="utf-8") as f:
         spec_content = f.read()
 
     assert "('src/plugins/algorithms', 'src/plugins/algorithms')" in spec_content, (
-        "lumitrack.spec must include ('src/plugins/algorithms', 'src/plugins/algorithms') in added_files"
+        f"{spec_path} must include ('src/plugins/algorithms', 'src/plugins/algorithms') in added_files"
     )
 
 
 def test_def01_packaged_plugin_directory_structure():
     """DEF-01: Verify packaged dist contains baseline_tracker in expected internal path."""
+    dist_dir = os.path.join("dist", "SANKET") if os.path.isdir(os.path.join("dist", "SANKET")) else os.path.join("dist", "LumiTrack")
     internal_plugin_dir = os.path.join(
-        "dist", "LumiTrack", "_internal", "src", "plugins", "algorithms", "baseline_tracker"
+        dist_dir, "_internal", "src", "plugins", "algorithms", "baseline_tracker"
     )
-    if not os.path.isdir(os.path.join("dist", "LumiTrack")):
-        pytest.skip("Standalone binary 'dist/LumiTrack' not yet built locally.")
+    if not os.path.isdir(dist_dir):
+        pytest.skip(f"Standalone binary '{dist_dir}' not yet built locally.")
     manifest_path = os.path.join(internal_plugin_dir, "manifest.json")
     tracker_py = os.path.join(internal_plugin_dir, "baseline_tracker.py")
 

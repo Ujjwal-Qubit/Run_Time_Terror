@@ -206,6 +206,21 @@ class DisturbanceEngine:
         Stage 4: Atmospheric Degradation (Pixel).
         Applies contrast reduction and brightness shift.
         PS Row 24: Clear, Haze, Fog, Rain, Low light.
+
+        Atmospheric Radiative Transfer Rationale (Beer-Lambert & Koschmieder Law):
+          Light propagating through participating atmospheric media undergoes
+          extinction (scattering + absorption) and path radiance accumulation:
+            I_observed(x, y) = I_source(x, y) * T + I_path * (1 - T)
+          where:
+            T = exp(-gamma * R) is the medium transmittance (contrast factor <= 1.0)
+            I_path * (1 - T) is the diffuse airlight scattering (brightness offset >= 0)
+          
+          Specific Models:
+            - CLEAR:     T = 1.00, Offset = 0 DN (unattenuated vacuum / pristine air)
+            - HAZE:      T = 0.70, Offset = +15 DN (Mie aerosol forward scattering)
+            - FOG:       T = 0.40, Offset = +35 DN (dense hydrometeor droplet scatter)
+            - RAIN:      T = 0.55, Offset = +20 DN (geometric raindrop streak extinction)
+            - LOW_LIGHT: T = 0.30, Offset = -25 DN (sub-threshold nocturnal photon flux)
         """
         cond = self._atmos_cfg.condition.upper()
 

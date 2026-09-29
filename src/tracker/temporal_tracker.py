@@ -323,8 +323,8 @@ class ConstantVelocityKalmanTracker(ITracker):
             S = self._H @ P_prior @ self._H.T + self._R
 
             # Euclidean innovation/residual distance gate check
-            # For young tracks (age <= 2), allow wider gate to lock onto target velocity
-            effective_gate = self._gate_max_dist * 2.0 if self._track_age <= 2 else self._gate_max_dist
+            # For young tracks (age <= 2) or coasting tracks, allow wider gate to lock onto target velocity/reacquire
+            effective_gate = self._gate_max_dist * 2.0 if (self._track_age <= 2 or self._consecutive_coasts > 0) else self._gate_max_dist
 
             if innov_dist <= effective_gate:
                 # Measurement Accepted -> Kalman Update

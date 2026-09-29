@@ -258,6 +258,20 @@ class TargetManager:
                 self._vx = (self._vx / current_norm) * self._speed
                 self._vy = (self._vy / current_norm) * self._speed
 
+    def set_motion_type(self, motion_type: str) -> None:
+        """Dynamically update beacon motion pattern."""
+        self._motion_cfg.motion_type = motion_type
+        self._init_x = self._x
+        self._init_y = self._y
+        self._init_kinematics()
+
+    def set_size(self, size: int) -> None:
+        """Dynamically update beacon size / divergence."""
+        s = int(np.clip(size, defaults.TARGET_MIN_SIZE, defaults.TARGET_MAX_SIZE))
+        self._size = s
+        self._target_cfg.size = s
+        self._patch = self._generate_patch(self._size, self._shape, self._intensity)
+
     def reset(self, seed: Optional[int] = None) -> None:
         """Reset target to initial conditions with optional new seed."""
         if seed is not None:

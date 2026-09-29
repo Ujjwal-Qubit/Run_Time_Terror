@@ -153,6 +153,7 @@ class AppController:
         # Multi-beacon and PTZ actuation controls
         self._multi_beacon_manager: Optional[MultiBeaconManager] = None
         self._ptz_enabled: bool = True
+        self._tracking_enabled: bool = True
         self._had_tracking_lock: bool = False
 
         # Phase 5.10 / F-ARCH-01 decoupled execution and visualization state
@@ -299,7 +300,93 @@ class AppController:
     def set_ptz_enabled(self, enabled: bool) -> None:
         """Enable or disable PTZ camera actuation."""
         self._ptz_enabled = bool(enabled)
-        logger.info(f"[AppController] PTZ tracking actuation: {self._ptz_enabled}")
+        if self._ptz_controller is not None and hasattr(self._ptz_controller, "reset"):
+            try:
+                self._ptz_controller.reset()
+            except Exception as e:
+                logger.warning(f"PTZ controller reset error on ptz toggle: {e}")
+        logger.info(f"[AppController] PTZ enabled: {self._ptz_enabled}")
+
+    @property
+    def tracking_enabled(self) -> bool:
+        return self._tracking_enabled
+
+    def set_tracking_enabled(self, enabled: bool) -> None:
+        """Enable or disable active target tracking pipeline."""
+        self._tracking_enabled = bool(enabled)
+        if not self._tracking_enabled:
+            self._had_tracking_lock = False
+            if hasattr(self._active_algorithm, "reset"):
+                try:
+                    self._active_algorithm.reset()
+                except Exception as e:
+                    logger.warning(f"Algorithm reset error on tracking disable: {e}")
+        logger.info(f"[AppController] Tracking enabled: {self._tracking_enabled}")
+
+    def set_target_motion_type(self, pattern: str) -> None:
+        """Dynamically update target motion pattern."""
+        pat = pattern.upper()
+        if self._config_manager and self._config_manager.config:
+            self._config_manager.config.motion.motion_type = pat
+        if self._target_manager is not None and hasattr(self._target_manager, "set_motion_type"):
+            self._target_manager.set_motion_type(pat)
+
+    def set_target_size(self, size: int) -> None:
+        """Dynamically update target size / divergence."""
+        sz = int(size)
+        if self._config_manager and self._config_manager.config:
+            self._config_manager.config.target.size = sz
+        if self._target_manager is not None and hasattr(self._target_manager, "set_size"):
+            self._target_manager.set_size(sz)
+
+    def set_atmospheric_condition(self, condition: str) -> None:
+        """Dynamically update atmospheric condition in DisturbanceEngine."""
+        cond = condition.upper()
+        if self._config_manager and self._config_manager.config:
+            self._config_manager.config.atmospheric.condition = cond
+        if self._disturbance_engine is not None and hasattr(self._disturbance_engine, "_atmos_cfg"):
+            self._disturbance_engine._atmos_cfg.condition = cond
+
+    def set_noise_enabled(self, noise_type: str, enabled: bool) -> None:
+        """Dynamically update noise toggle (gaussian, poisson, salt_and_pepper)."""
+        nt = noise_type.lower()
+        en = bool(enabled)
+        if self._disturbance_engine is not None and hasattr(self._disturbance_engine, "_noise_cfg"):
+            if nt in ("gaussian", "gnoise"):
+                self._disturbance_engine._noise_cfg.gaussian_enabled = en
+            elif nt in ("poisson", "pnoise"):
+                self._disturbance_engine._noise_cfg.poisson_enabled = en
+            elif nt in ("salt_and_pepper", "sp", "spnoise"):
+                self._disturbance_engine._noise_cfg.sp_enabled = en
+        if self._config_manager and self._config_manager.config:
+            if nt in ("gaussian", "gnoise"):
+                self._config_manager.config.noise.gaussian_enabled = en
+            elif nt in ("poisson", "pnoise"):
+                self._config_manager.config.noise.poisson_enabled = en
+            elif nt in ("salt_and_pepper", "sp", "spnoise"):
+                self._config_manager.config.noise.sp_enabled = en
+
+    def set_ptz_parameters(
+        self,
+        kp: Optional[float] = None,
+        ki: Optional[float] = None,
+        deadband: Optional[float] = None,
+    ) -> None:
+        """Dynamically update PTZ controller gains and deadband."""
+        if self._ptz_controller is not None and hasattr(self._ptz_controller, "_ptz_cfg"):
+            if kp is not None:
+                self._ptz_controller._ptz_cfg.proportional_gain = float(kp)
+            if ki is not None:
+                self._ptz_controller._ptz_cfg.integral_gain = float(ki)
+            if deadband is not None:
+                self._ptz_controller._ptz_cfg.deadband_px = float(deadband)
+        if self._config_manager and self._config_manager.config:
+            if kp is not None:
+                self._config_manager.config.ptz.proportional_gain = float(kp)
+            if ki is not None:
+                self._config_manager.config.ptz.integral_gain = float(ki)
+            if deadband is not None:
+                self._config_manager.config.ptz.deadband_px = float(deadband)
 
     def set_target_speed(self, speed: float) -> None:
         """Dynamically update primary target speed in running simulation."""
@@ -559,6 +646,19 @@ class AppController:
         """
         if self._active_algorithm is None:
             raise RuntimeError("No algorithm plugin selected. Call select_algorithm() or initialize() first.")
+
+        if not self._tracking_enabled:
+            # Tracking OFF: Frame generation continues, but perception/tracking is disabled.
+            # Downstream PTZ receives non-tracking state and does not actuate on stale commands.
+            state_res = TrackingStateResult(state=TrackingState.LOST, confidence_level=0.0)
+            public_res = PublicTrackingResult(
+                algorithm_is_tracking=False,
+                centroid_x=None,
+                centroid_y=None,
+                confidence=0.0,
+                roi=None,
+            )
+            return (public_res, 0.0, None, state_res, None, None)
 
         # 1. Convert to public observable contract (Enforce Ground-Truth Firewall)
         fov = None

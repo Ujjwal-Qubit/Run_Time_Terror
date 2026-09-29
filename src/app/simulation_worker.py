@@ -18,6 +18,7 @@ from src.frame.data_contracts import (
     FrameSource,
     ROI,
     VisualizationState,
+    PTZCommand,
 )
 from src.app.visualization_state import VisualizationStateManager
 
@@ -110,18 +111,30 @@ class SimulationWorkerThread:
             # Control (PTZ) — only active in SIMULATION mode
             ptz_cmd = None
             if app.ptz_controller and packet.source == FrameSource.SIMULATION:
-                dt = 1.0 / app.config_manager.config.camera.update_rate_hz
-                pm = app.camera_model.projection_model if app.camera_model else None
-                ptz_cmd = app.ptz_controller.compute(
-                    track_res,
-                    state_res.state,
-                    packet.width,
-                    packet.height,
-                    dt=dt,
-                    projection_model=pm,
-                )
-                if app._ptz_enabled and app.camera_model and ptz_cmd.valid:
-                    app.camera_model.apply_pan_tilt(ptz_cmd.delta_pan_deg, ptz_cmd.delta_tilt_deg)
+                if app._ptz_enabled:
+                    dt = 1.0 / app.config_manager.config.camera.update_rate_hz
+                    pm = app.camera_model.projection_model if app.camera_model else None
+                    ptz_cmd = app.ptz_controller.compute(
+                        track_res,
+                        state_res.state,
+                        packet.width,
+                        packet.height,
+                        dt=dt,
+                        projection_model=pm,
+                    )
+                    if app.camera_model and ptz_cmd.valid:
+                        app.camera_model.apply_pan_tilt(ptz_cmd.delta_pan_deg, ptz_cmd.delta_tilt_deg)
+                else:
+                    app.ptz_controller.reset()
+                    ptz_cmd = PTZCommand(
+                        delta_pan_deg=0.0,
+                        delta_tilt_deg=0.0,
+                        pan_velocity_deg_s=0.0,
+                        tilt_velocity_deg_s=0.0,
+                        valid=False,
+                        timestamp=packet.timestamp,
+                        frame_number=packet.frame_number,
+                    )
 
             # Telemetry/Metrics update
             gt = None

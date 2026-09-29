@@ -1,0 +1,9 @@
+# Graphify ignore patterns
+.agentic-awesome-skills/
+build/
+dist/
+output/
+scratch/
+graphify-out/
+.pytest_cache/
+node_modules/

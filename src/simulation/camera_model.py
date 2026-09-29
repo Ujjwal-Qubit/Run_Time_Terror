@@ -1,10 +1,32 @@
 """
 Camera Model & Projection Model — Module 6 per Architecture v1.2 §4 and §6.
 
-Maintains camera pointing state (pan/tilt, world position).
-Encapsulates all projection mathematics in ProjectionModel so that
-PTZController and other modules do not duplicate geometric calculations.
-Extracts the clean camera viewport from the scene canvas.
+Responsibility:
+  Maintains camera pointing state (pan/tilt, world position).
+  Encapsulates all projection mathematics in ProjectionModel so that
+  PTZController and other modules do not duplicate geometric calculations.
+  Extracts the clean camera viewport from the scene canvas.
+
+Optical Geometry & Physics Rationale:
+  1. Focal Plane Array (FPA) Geometry:
+     - Sensor array: 640 x 480 pixels (monochrome 8-bit FPA sensor).
+     - Field of View (FOV): 4.0 deg (horizontal) x 3.0 deg (vertical).
+     - Instantaneous Field of View (IFOV):
+       IFOV_h = (4.0 * pi / 180) / 640 = 109.083 urad/pixel (0.00625 deg/px)
+       IFOV_v = (3.0 * pi / 180) / 480 = 109.083 urad/pixel (0.00625 deg/px)
+     - Note the perfectly isotropic pixel aspect ratio (109.083 urad/px along both axes),
+       ensuring zero geometric astigmatism or non-square pixel distortion during tracking.
+  2. Coordinate Systems:
+     - World Coordinate System (WCS): Continuous 2D plane [0, scene_w] x [0, scene_h].
+       Origin (0,0) is top-left of the entire simulated space envelope (>= 2000x2000).
+     - Image Pixel Coordinates (IPC): Discrete 2D pixel array [0, 640) x [0, 480).
+       Origin (0,0) is top-left of the current camera viewport.
+     - Optical Axis: Intersects IPC center at ((width-1)/2, (height-1)/2) = (319.5, 239.5).
+  3. Orthographic Viewport Extraction:
+     - Extracts the sub-region centered at camera pose (cx, cy).
+     - Implements zero-copy slicing when completely inside the world boundary.
+     - Implements boundary clipping and background-intensity padding when camera
+       points near or beyond the world envelope edges, preserving frame stability.
 """
 
 from __future__ import annotations
@@ -34,6 +56,12 @@ class ProjectionModel:
 
     Consumed by CameraModel, GroundTruthProvider, and PTZController
     to avoid duplicated geometric equations across modules.
+
+    Mathematical Invariants:
+      - Linear FOV approximation is exact for narrow-angle optics (< 5 deg total FOV),
+        where tan(theta) ~ theta with < 0.04% distortion.
+      - deg_per_px_h = fov_h / width = 0.00625 deg/px (109.083 urad/px)
+      - deg_per_px_v = fov_v / height = 0.00625 deg/px (109.083 urad/px)
     """
 
     def __init__(

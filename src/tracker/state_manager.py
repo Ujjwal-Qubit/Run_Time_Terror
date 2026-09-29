@@ -146,19 +146,23 @@ class TrackingStateManager(ITrackingStateManager):
         reason = ""
 
         # -------------------------------------------------------------------
-        # State Machine Transitions
+        # State Machine Transitions with Temporal Hysteresis
         # -------------------------------------------------------------------
+        # Hysteresis prevents high-frequency oscillation ("chatter") between locked and
+        # unlocked states under atmospheric turbulence or transient occlusion.
         if self._current_state == TrackingState.SEARCHING:
             if accepted:
                 self._acquisition_frames = 1
                 self._acquisition_timestamp = timestamp
                 if self._acquisition_frames >= self._lock_confirm_frames:
+                    # Immediate lock if confirm threshold is 1
                     self._current_state = TrackingState.TRACKING
                     self._is_locked = True
                     self._lock_timestamp = timestamp
                     self._acquisition_time = 0.0
                     reason = f"Lock confirmed immediately (threshold={self._lock_confirm_frames})"
                 else:
+                    # Require temporal consistency across N frames before engaging closed-loop PTZ
                     self._current_state = TrackingState.ACQUIRING
                     self._is_locked = False
                     reason = "Candidate detected; acquiring lock"
@@ -170,6 +174,7 @@ class TrackingStateManager(ITrackingStateManager):
             if accepted:
                 self._acquisition_frames += 1
                 if self._acquisition_frames >= self._lock_confirm_frames:
+                    # Candidate verified across consecutive frames -> engage fine tracking
                     self._current_state = TrackingState.TRACKING
                     self._is_locked = True
                     self._lock_timestamp = timestamp
@@ -180,7 +185,7 @@ class TrackingStateManager(ITrackingStateManager):
                         self._reacquisition_time = max(0.0, timestamp - self._loss_timestamp)
                     reason = f"Lock confirmed after {self._acquisition_frames} frames"
             else:
-                # Measurement dropped during acquisition -> abort back to SEARCHING
+                # Transient false alarm: measurement vanished before confirmation -> reset search
                 self._current_state = TrackingState.SEARCHING
                 self._acquisition_frames = 0
                 self._is_locked = False
@@ -191,7 +196,8 @@ class TrackingStateManager(ITrackingStateManager):
                 self._loss_frames = 0
                 self._is_locked = True
             else:
-                # Measurement missing -> transition to REACQUIRING (loss episode start)
+                # Single-frame measurement dropout: do not immediately declare loss.
+                # Transition to REACQUIRING to allow Kalman dead-reckoning / coasting.
                 self._current_state = TrackingState.REACQUIRING
                 self._loss_frames = 1
                 self._reacquisition_frames = 0
@@ -203,10 +209,12 @@ class TrackingStateManager(ITrackingStateManager):
             if accepted:
                 self._reacquisition_frames += 1
                 if self._reacquisition_frames >= self._reacquire_confirm_frames:
+                    # Target recovered before coasting buffer expired -> restore nominal tracking
                     self._current_state = TrackingState.TRACKING
                     self._is_locked = True
                     self._reacquisition_timestamp = timestamp
                     if self._loss_timestamp is not None:
+                        # SIH PS Row 19: Time from initial loss event to confirmed lock recovery
                         self._reacquisition_time = max(0.0, self._reacquisition_timestamp - self._loss_timestamp)
                     self._loss_frames = 0
                     reason = f"Reacquisition confirmed after {self._reacquisition_frames} frames"

@@ -1,6 +1,6 @@
 # SIH 26169 — Final Validated System Specification
 
-**System Name**: LumiTrack — Autonomous AI-Based Virtual Camera Tracking & FSOC Terminal Evaluation Platform  
+**System Name**: SANKET — Autonomous AI-Based Virtual Camera Tracking & FSOC Terminal Evaluation Platform  
 **Target Organization**: Department of Space / Indian Space Research Organisation (ISRO)  
 **Problem Statement**: SIH 2026 Problem Statement 26169 (PS 4)  
 **Document Status**: APPROVED DESIGN BASELINE FOR IMPLEMENTATION  
@@ -150,7 +150,7 @@ Given only camera imagery (without knowledge of simulator ground truth), the sys
 2. **Predictive Coasting State Logic**: Kalman filter velocity extrapolation enabled for up to $N=8$ frames during `REACQUIRING` to preserve line-of-sight tracking across brief occlusions.
 3. **Offline Crop Dataset Harvesting & Training Script (`src/training/train_beacon_classifier.py`)**: Script that sweeps simulation conditions, extracts candidate patches, computes feature vectors, trains a scikit-learn classifier, and exports production weights.
 4. **Parallel Rigorous Behavioral Test Suite (`src/tests/test_sih_behavioral_rigorous.py`)**: Standalone test suite executing closed-loop dynamic convergence, rate clamping, frame format integrity, and out-of-FOV acquisition assertions.
-5. **Automated Standalone Packaging Pipeline (`package_executable.py` & `lumitrack.spec`)**: Build configuration creating a standalone Windows `.exe` containing all assets and pre-trained weights.
+5. **Automated Standalone Packaging Pipeline (`package_executable.py` & `sanket.spec`)**: Build configuration creating a standalone Windows `.exe` containing all assets and pre-trained weights.
 
 ---
 
@@ -358,4 +358,4 @@ flowchart TD
   1. Move `frontend/` and `src/api/server.py` into `archive/` or add deprecation documentation; update repository README.
   2. Verify that `src/main.py` launches the PySide6 Qt desktop GUI cleanly without any web or Node.js dependencies.
   3. Author `package_executable.py` and PyInstaller spec file to bundle Python, PySide6, OpenCV, and pre-trained weights into a single standalone `.exe`.
-* **Exit Gate**: Standalone `LumiTrack.exe` builds and launches cleanly on a clean Windows machine without requiring Python or npm installed.
+* **Exit Gate**: Standalone `SANKET.exe` builds and launches cleanly on a clean Windows machine without requiring Python or npm installed.

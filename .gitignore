@@ -46,6 +46,12 @@ output/
 scratch/
 graphify-out/
 verification_results_raw.json
+.agentic-awesome-skills/
+
+# Large generated binary deliverables (exceeds GitHub 100MB limit)
+deliverables/01_Software_Application/SANKET/
+deliverables/01_Software_Application/installer/*.exe
+deliverables/01_Software_Application/portable/*.zip
 
 # Node
 node_modules/
