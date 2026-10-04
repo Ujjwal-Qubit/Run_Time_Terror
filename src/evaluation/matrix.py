@@ -23,7 +23,7 @@ import os
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:
     from src.evaluation.harness import EvaluationHarness, EvaluationRunResult
@@ -559,6 +559,10 @@ class BenchmarkMatrixRunner:
         max_frames_override: Optional[int] = None,
         output_dir: Optional[str] = None,
         plugins_dir: Optional[str] = None,
+        aiml: bool = False,
+        progress_callback: Optional[Callable[[int, int, str, str, Any], None]] = None,
+        cancel_check: Optional[Callable[[], bool]] = None,
+        scenario_ids: Optional[List[str]] = None,
     ) -> BenchmarkMatrixResults:
         """
         Executes the specified benchmark matrix subset across all target algorithms.
@@ -570,6 +574,10 @@ class BenchmarkMatrixRunner:
             max_frames_override: Optional override for frame count per scenario.
             output_dir: Output directory for reports and telemetry.
             plugins_dir: Optional custom plugins directory override.
+            aiml: Whether to enable learned AIML models (candidate classifier & temporal predictor).
+            progress_callback: Optional callback(index, total, scenario_id, status, run_result).
+            cancel_check: Optional callback() -> bool to check if execution was aborted by operator.
+            scenario_ids: Optional list of explicit scenario IDs to filter by.
 
         Returns:
             BenchmarkMatrixResults with comprehensive outcomes.
@@ -590,13 +598,26 @@ class BenchmarkMatrixRunner:
             else:
                 algorithms = ["baseline_tracker"]
 
-        scenarios = StandardBenchmarkMatrix.get_scenarios(subset)
+        all_candidate_scenarios = StandardBenchmarkMatrix.get_all_scenarios()
+        if scenario_ids:
+            normalized_ids = [s.strip().lower() for s in scenario_ids if s.strip()]
+            scenarios = []
+            for idx_s, s in enumerate(all_candidate_scenarios, start=1):
+                scn_code = f"scn_{idx_s:02d}"
+                s_id = s.scenario_id.lower()
+                if any(nid == scn_code or nid in s_id or s_id in nid for nid in normalized_ids):
+                    scenarios.append(s)
+            if not scenarios:
+                scenarios = StandardBenchmarkMatrix.get_scenarios(subset)
+        else:
+            scenarios = StandardBenchmarkMatrix.get_scenarios(subset)
+
         suite_id = f"matrix_{subset.value.lower()}_{int(time.time())}"
 
         logger.info(
             f"Starting Benchmark Matrix execution: Suite='{suite_id}', "
             f"Subset='{subset.value}', Scenarios={len(scenarios)}, "
-            f"Algorithms={algorithms}, Seed={random_seed}"
+            f"Algorithms={algorithms}, Seed={random_seed}, AIML={aiml}"
         )
 
         all_results: List[EvaluationRunResult] = []
@@ -606,7 +627,21 @@ class BenchmarkMatrixRunner:
         temp_scenario_dir = os.path.join(target_out_dir, "scenarios")
         os.makedirs(temp_scenario_dir, exist_ok=True)
 
-        for s_def in scenarios:
+        aiml_overrides = {
+            "aiml": {
+                "candidate_classifier_enabled": True,
+                "temporal_predictor_enabled": True,
+            }
+        } if aiml else None
+
+        for idx, s_def in enumerate(scenarios, start=1):
+            if cancel_check and cancel_check():
+                logger.info("Benchmark Matrix cancelled by operator before scenario '%s'.", s_def.scenario_id)
+                break
+
+            if progress_callback:
+                progress_callback(idx, len(scenarios), s_def.scenario_id, "RUNNING", None)
+
             # Materialize deterministic scenario JSON
             scenario_json_path = os.path.join(temp_scenario_dir, f"{s_def.scenario_id}.json")
             with open(scenario_json_path, "w", encoding="utf-8") as f:
@@ -615,6 +650,10 @@ class BenchmarkMatrixRunner:
             frames_to_run = max_frames_override or s_def.default_frames
 
             for algo_id in algorithms:
+                if cancel_check and cancel_check():
+                    logger.info("Benchmark Matrix cancelled by operator before algo '%s'.", algo_id)
+                    break
+
                 exp_id = f"{suite_id}_{s_def.scenario_id}_{algo_id}"
                 experiment = EvaluationExperiment(
                     experiment_id=exp_id,
@@ -627,11 +666,15 @@ class BenchmarkMatrixRunner:
                     max_frames=frames_to_run,
                     output_dir=os.path.join(target_out_dir, s_def.scenario_id),
                     plugins_dir=plugins_dir,
+                    config_overrides=aiml_overrides,
                 )
 
                 logger.info(f"Running scenario '{s_def.scenario_id}' with algorithm '{algo_id}'...")
                 res = self.harness.run_experiment(experiment)
                 all_results.append(res)
+
+                if progress_callback:
+                    progress_callback(idx, len(scenarios), s_def.scenario_id, "COMPLETED", res)
 
 
         overall_duration = time.perf_counter() - t0

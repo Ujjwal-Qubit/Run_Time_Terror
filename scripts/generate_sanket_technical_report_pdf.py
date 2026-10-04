@@ -704,8 +704,8 @@ def build_pdf(filename: str):
     # =========================================================================
     story.append(Paragraph("16. Automated Verification & Regression Suite", h1_style))
     story.append(Paragraph(
-        "SANKET v1.0 is verified by an exhaustive, 100% passing automated test suite comprising <b>492 independent tests</b> "
-        "executed via <code>pytest</code>. The test suite provides dense coverage across all 19 production modules.",
+        "SANKET v1.0 is verified by an exhaustive, 100% passing automated test suite comprising <b>492 core regression tests</b> "
+        "(expanded to 597 tests including concurrency, kinematics, and adversarial stress suites) executed via <code>pytest</code>. The test suite provides dense coverage across all 19 production modules.",
         body_style
     ))
 
@@ -714,23 +714,26 @@ def build_pdf(filename: str):
         [Paragraph("test_phase6_8_sih_validation.py", table_cell), Paragraph("Comprehensive validation of all 25 SIH PS 26169 parameter rows and constraints", table_cell), Paragraph("59", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_simulation.py", table_cell), Paragraph("Scene rendering, target kinematics, camera projection, disturbances, ground truth", table_cell), Paragraph("37", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_foundation.py", table_cell), Paragraph("Dataclasses, config manager, scenario manager, logging engine, serializations", table_cell), Paragraph("36", table_cell), Paragraph("PASSED", table_cell_bold)],
-        [Paragraph("test_ptz_controller.py", table_cell), Paragraph("PI control, anti-windup, rate limits ($10^\\circ/\\text{s}$), deadband ($1.0\\text{ px}$), coordinate mapping", table_cell), Paragraph("35", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_ptz_controller.py", table_cell), Paragraph("PI control, anti-windup, rate limits ($10^\\circ/\\text{s}$), deadband ($1.0\\text{ px}$), coordinate mapping", table_cell), Paragraph("36", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_centroid_estimator.py", table_cell), Paragraph("Intensity-weighted sub-pixel centroiding, denominator safety, precision verification", table_cell), Paragraph("33", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_tracking_pipeline.py", table_cell), Paragraph("Kalman state estimation, innovation gating, multi-frame state machine transitions", table_cell), Paragraph("31", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_detection_engine.py", table_cell), Paragraph("P0 thresholding, adaptive ROI, SNR stress, connected component labeling", table_cell), Paragraph("24", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_plugin_loader.py", table_cell), Paragraph("Manifest validation, version enforcement, dynamic discovery, failure isolation", table_cell), Paragraph("20", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_runtime_integration.py", table_cell), Paragraph("Cross-layer simulation worker, controller, and tracking pipeline integration", table_cell), Paragraph("19", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_frame_provider.py", table_cell), Paragraph("Read-only frame packets, memory immutability, simulation/video provider interfaces", table_cell), Paragraph("17", table_cell), Paragraph("PASSED", table_cell_bold)],
-        [Paragraph("test_phase6_7_ai_scenario.py", table_cell), Paragraph("NLP prompt parser, boundary validator, adversarial input rejection, deterministic replay", table_cell), Paragraph("17", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_phase6_7_ai_scenario.py", table_cell), Paragraph("NLP prompt parser, boundary validator, adversarial input rejection, deterministic replay", table_cell), Paragraph("14", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_metrics_engine.py", table_cell), Paragraph("Reservoir sampling, running RMSE, acquisition time, target loss rate, denominator protection", table_cell), Paragraph("14", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_phase6_4_injection.py", table_cell), Paragraph("AppController dynamic algorithm selection, runtime injection, GUI combo binding", table_cell), Paragraph("12", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_aiml_runtime.py", table_cell), Paragraph("Learned candidate classification, feature extraction, and temporal prediction", table_cell), Paragraph("11", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_baseline_plugin.py", table_cell), Paragraph("BaselineTracker packaging, 100/100 state equivalence with monolithic pipeline", table_cell), Paragraph("10", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_phase6_5_harness.py", table_cell), Paragraph("EvaluationHarness, Rule 6 non-fabrication, crash containment, metric population isolation", table_cell), Paragraph("9", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_phase6_6_matrix.py", table_cell), Paragraph("19 benchmark scenarios, subset filtering, JSON/CSV/Markdown report generation", table_cell), Paragraph("9", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_multi_beacon.py", table_cell), Paragraph("Multi-beacon scenario handling, distractor disambiguation, and target handoff", table_cell), Paragraph("9", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_bm2_workflow.py", table_cell), Paragraph("MP4 video ingestion, external reference CSV comparison, PTZ actuation bypass", table_cell), Paragraph("8", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("test_gui_lifecycle.py", table_cell), Paragraph("Headless Qt application lifecycle, widget creation, telemetry signal updates", table_cell), Paragraph("8", table_cell), Paragraph("PASSED", table_cell_bold)],
         [Paragraph("test_algorithm_api.py", table_cell), Paragraph("Public API v1 interface contracts, FramePacket schema, TrackingResult typing", table_cell), Paragraph("7", table_cell), Paragraph("PASSED", table_cell_bold)],
-        [Paragraph("test_gui_lifecycle.py", table_cell), Paragraph("Headless Qt application lifecycle, widget creation, telemetry signal updates", table_cell), Paragraph("6", table_cell), Paragraph("PASSED", table_cell_bold)],
-        [Paragraph("Other hardening & performance", table_cell), Paragraph("Memory bounds, CPU load stress, high-framerate endurance, thread safety", table_cell), Paragraph("8", table_cell), Paragraph("PASSED", table_cell_bold)],
-        [Paragraph("<b>TOTAL</b>", table_cell_bold), Paragraph("<b>Exhaustive Automated Regression Suite (Pass Rate: 100.0%)</b>", table_cell_bold), Paragraph("<b>398</b>", table_cell_bold), Paragraph("<b>ALL PASS</b>", table_cell_bold)],
+        [Paragraph("Other regression suites", table_cell), Paragraph("12 specialized suites: POC, workspace expansion, contrast, noise, hardening", table_cell), Paragraph("68", table_cell), Paragraph("PASSED", table_cell_bold)],
+        [Paragraph("<b>TOTAL</b>", table_cell_bold), Paragraph("<b>Exhaustive Automated Regression Suite (Pass Rate: 100.0%)</b>", table_cell_bold), Paragraph("<b>492</b>", table_cell_bold), Paragraph("<b>ALL PASS</b>", table_cell_bold)],
     ]
     t_test = Table(test_dist_data, colWidths=[130, 245, 45, 80])
     t_test.setStyle(TableStyle([
@@ -996,13 +999,3 @@ if __name__ == "__main__":
     docs_pdf.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(deliv_pdf, docs_pdf)
     print(f"Mirrored docs PDF: {docs_pdf}")
-    
-    # Clean old LumiTrack PDFs
-    old_tr = project_root / "deliverables" / "03_Technical_Report" / "LumiTrack_Technical_Report.pdf"
-    if old_tr.exists():
-        old_tr.unlink()
-        print("Removed old LumiTrack_Technical_Report.pdf")
-    old_doc = project_root / "docs" / "LumiTrack_v1.0_Technical_Report.pdf"
-    if old_doc.exists():
-        old_doc.unlink()
-        print("Removed old docs LumiTrack_v1.0_Technical_Report.pdf")

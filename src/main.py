@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
 import os
 import sys
@@ -22,6 +23,139 @@ _T0_PROCESS: float = time.perf_counter()
 from src.app.app_controller import AppController
 from src.config.config_manager import ConfigManager
 from src.evaluation.benchmark_manager import BenchmarkManager
+
+
+def is_cli_invocation(argv: list[str] | None = None) -> bool:
+    """
+    Determine whether the current invocation is intended for CLI/evaluation/headless
+    execution rather than default interactive GUI execution.
+    """
+    effective_args = sys.argv[1:] if argv is None else list(argv)
+    if not effective_args:
+        return False
+
+    gui_flags = {"--gui", "--legacy-gui"}
+    cli_indicators = {
+        "-h", "--help",
+        "--validate",
+        "--matrix",
+        "--headless",
+        "--eval-scenarios",
+        "--eval-mp4s",
+        "--scenario",
+        "--mp4",
+        "--ai-scenario",
+        "--benchmark-cold-start",
+    }
+
+    for arg in effective_args:
+        for indicator in cli_indicators:
+            if arg == indicator or arg.startswith(indicator + "="):
+                return True
+
+    if all(arg in gui_flags for arg in effective_args):
+        return False
+
+    if not any(arg in gui_flags for arg in effective_args):
+        return True
+
+    if "--headless" in effective_args:
+        return True
+
+    return False
+
+
+def setup_console_io(argv: list[str] | None = None) -> None:
+    """
+    Configure standard I/O streams for Windows PyInstaller windowed executable (console=False).
+
+    In windowed mode:
+      - sys.stdout and sys.stderr are initialized as None by Python runtime.
+      - In GUI mode, routes them to os.devnull to avoid NoneType write crashes.
+      - In CLI/evaluation/headless mode, dynamically attaches to parent console or binds inherited pipes/files.
+    """
+    if sys.platform != "win32":
+        return
+
+    # If running in regular Python interpreter (not frozen) and streams are active, do nothing
+    if not getattr(sys, "frozen", False) and sys.stdout is not None:
+        return
+
+    is_cli = is_cli_invocation(argv)
+
+    if not is_cli:
+        if sys.stdout is None:
+            sys.stdout = open(os.devnull, "w", encoding="utf-8")
+        if sys.stderr is None:
+            sys.stderr = open(os.devnull, "w", encoding="utf-8")
+        return
+
+    import ctypes
+    import msvcrt
+
+    kernel32 = ctypes.windll.kernel32
+    STD_OUTPUT_HANDLE = -11
+    STD_ERROR_HANDLE = -12
+    ATTACH_PARENT_PROCESS = -1
+    FILE_TYPE_DISK = 1
+    FILE_TYPE_PIPE = 3
+
+    # 1. Check if stdout / stderr were redirected to pipe or disk file by caller
+    try:
+        h_out = kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
+        out_type = kernel32.GetFileType(h_out) if h_out else 0
+        if out_type in (FILE_TYPE_DISK, FILE_TYPE_PIPE):
+            fd_out = msvcrt.open_osfhandle(h_out, os.O_TEXT)
+            sys.stdout = open(fd_out, "w", encoding="utf-8", buffering=1)
+    except Exception:
+        pass
+
+    try:
+        h_err = kernel32.GetStdHandle(STD_ERROR_HANDLE)
+        err_type = kernel32.GetFileType(h_err) if h_err else 0
+        if err_type in (FILE_TYPE_DISK, FILE_TYPE_PIPE):
+            fd_err = msvcrt.open_osfhandle(h_err, os.O_TEXT)
+            sys.stderr = open(fd_err, "w", encoding="utf-8", buffering=1)
+    except Exception:
+        pass
+
+    # 2. If sys.stdout or sys.stderr are still not bound, attach to parent console
+    if sys.stdout is None or sys.stderr is None:
+        attached = False
+        try:
+            attached = bool(kernel32.AttachConsole(ATTACH_PARENT_PROCESS))
+        except Exception:
+            attached = False
+
+        if attached:
+            if sys.stdout is None:
+                try:
+                    sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+                except Exception:
+                    pass
+            if sys.stderr is None:
+                try:
+                    sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+                except Exception:
+                    pass
+
+    # 3. Fallback: if any stream remains None, route safely to devnull
+    if sys.stdout is None:
+        sys.stdout = open(os.devnull, "w", encoding="utf-8")
+    if sys.stderr is None:
+        sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
+
+def _flush_io() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            if stream and hasattr(stream, "flush"):
+                stream.flush()
+        except Exception:
+            pass
+
+
+atexit.register(_flush_io)
 
 
 def parse_args(args=None) -> argparse.Namespace:
@@ -96,6 +230,10 @@ def parse_args(args=None) -> argparse.Namespace:
     parser.add_argument(
         "--max-frames", type=int, default=None,
         help="Maximum frames to process per scenario",
+    )
+    parser.add_argument(
+        "--aiml", action="store_true",
+        help="Enable learned AIML candidate classification and temporal prediction models (DEF-54/55)",
     )
     parser.add_argument(
         "--benchmark-cold-start", type=float, default=None, nargs='?', const=0.0,
@@ -363,13 +501,14 @@ def validate_foundation() -> bool:
 
 
 def main(argv=None) -> None:
+    setup_console_io(argv=argv)
     args = parse_args(args=argv)
 
     if args.benchmark_cold_start is not None:
         t_spawn = args.benchmark_cold_start if args.benchmark_cold_start > 0 else _T0_PROCESS
         t1 = time.perf_counter()
         from PySide6.QtWidgets import QApplication
-        from src.app.gui.web_window import LumiTrackWebWindow
+        from src.app.gui.web_window import SanketWebWindow
         t2 = time.perf_counter()
         qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
         app = AppController()
@@ -377,7 +516,7 @@ def main(argv=None) -> None:
             app.config_manager.config.simulation.duration_s = None
         app.initialize()
         t3 = time.perf_counter()
-        window = LumiTrackWebWindow(app)
+        window = SanketWebWindow(app)
         t4 = time.perf_counter()
         app.get_next_frame()
         window.bridge._on_poll_tick()
@@ -455,6 +594,7 @@ def main(argv=None) -> None:
                 random_seed=args.seed,
                 max_frames=args.max_frames,
                 output_dir=args.output_dir,
+                aiml=args.aiml,
             )
 
             # Generate comprehensive reports (JSON, CSV, Markdown)
@@ -540,6 +680,13 @@ def main(argv=None) -> None:
     if args.mp4:
         app.config_manager.update_section(
             "simulation", mode="MP4", mp4_path=args.mp4
+        )
+
+    if args.aiml:
+        app.config_manager.update_section(
+            "aiml",
+            candidate_classifier_enabled=True,
+            temporal_predictor_enabled=True,
         )
 
     app.initialize()

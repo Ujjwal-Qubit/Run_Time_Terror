@@ -13,7 +13,7 @@ import os
 import sys
 import time
 import traceback
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:
     from src.app.app_controller import AppController
@@ -61,6 +61,10 @@ class BenchmarkManager:
         random_seed: int = 42,
         max_frames: Optional[int] = None,
         output_dir: Optional[str] = None,
+        aiml: bool = False,
+        progress_callback: Optional[Callable[[int, int, str, str, Any], None]] = None,
+        cancel_check: Optional[Callable[[], bool]] = None,
+        scenario_ids: Optional[List[str]] = None,
     ):
         """
         Executes a standard benchmark matrix subset across specified algorithms.
@@ -73,6 +77,10 @@ class BenchmarkManager:
             random_seed=random_seed,
             max_frames_override=max_frames,
             output_dir=output_dir,
+            aiml=aiml,
+            progress_callback=progress_callback,
+            cancel_check=cancel_check,
+            scenario_ids=scenario_ids,
         )
 
     def generate_comprehensive_report(
@@ -692,21 +700,32 @@ class BenchmarkManager:
         passed_fps = bool(mean_fps >= 20.0 and successful_runs > 0)
         passed_acq = bool((mean_acq is None or mean_acq <= 2.0) and successful_runs > 0)
         if batch_type == "MP4":
-            # In MP4 mode, PTZ is bypassed (passive video playback); centroid localization accuracy applies
-            passed_te = bool((mean_rmse_ce == 0.0 or mean_rmse_ce <= 5.0) and successful_runs > 0)
+            # In MP4 mode, check if any run actually had reference ground truth
+            has_any_ref = any(
+                it.summary is not None and (it.summary.reference_frames_matched > 0 or (it.summary.rmse_centroid_ideal is not None and it.summary.rmse_centroid_ideal > 0))
+                for it in successful
+            )
+            if not has_any_ref:
+                mean_rmse_ce = None
+                passed_te = None  # Unverified - no reference ground truth CSV provided
+            else:
+                valid_rmses = [it.summary.rmse_centroid for it in successful if it.summary and it.summary.reference_frames_matched > 0]
+                mean_rmse_ce = (sum(valid_rmses) / len(valid_rmses)) if valid_rmses else None
+                passed_te = bool(mean_rmse_ce is not None and mean_rmse_ce <= 5.0 and successful_runs > 0)
             passed_loss = bool(failed_runs == 0 and successful_runs > 0)
         else:
             # In SIMULATION mode, active closed-loop PTZ optical axis alignment applies
             passed_te = bool(mean_te <= 10.0 and successful_runs > 0)
             passed_loss = bool(mean_loss < 5.0 and successful_runs > 0)
-        overall = bool(
+
+        overall = (
             passed_fps
             and passed_acq
-            and passed_te
+            and (passed_te if passed_te is not None else False)
             and passed_loss
             and failed_runs == 0
             and successful_runs > 0
-        )
+        ) if passed_te is not None else None
 
         return GrandEvaluationSummary(
             batch_id=batch_id,
@@ -753,12 +772,23 @@ class BenchmarkManager:
         print(f"  Mean Processing Speed:   {summary.mean_fps:.1f} FPS (PS min: 20.0 FPS) -> {'PASS' if summary.passed_fps_spec else 'FAIL'}")
         acq_str = f"{summary.mean_acquisition_time_s:.2f} s" if summary.mean_acquisition_time_s is not None else "N/A"
         print(f"  Mean Acquisition Time:   {acq_str} (PS max: 2.00 s) -> {'PASS' if summary.passed_acquisition_spec else 'FAIL'}")
-        print(f"  Mean Tracking Error:     {summary.mean_tracking_error:.2f} px (PS max: 10.0 px) -> {'PASS' if summary.passed_tracking_error_spec else 'FAIL'}")
+        te_str = (
+            f"{summary.mean_tracking_error:.2f} px (PS max: 10.0 px) -> {'PASS' if summary.passed_tracking_error_spec else 'FAIL'}"
+            if summary.passed_tracking_error_spec is not None
+            else "N/A (No Reference Ground Truth CSV) -> UNVERIFIED"
+        )
+        print(f"  Mean Tracking Error:     {te_str}")
         print(f"  Mean Target Loss Rate:   {summary.mean_target_loss_rate_pct:.2f}% (PS max: <5.0%) -> {'PASS' if summary.passed_loss_rate_spec else 'FAIL'}")
-        print(f"  Mean Centroid RMSE (GT): {summary.mean_rmse_centroid_rendered:.3f} px")
+        rmse_str = f"{summary.mean_rmse_centroid:.3f} px" if summary.mean_rmse_centroid is not None else "N/A (No Ground Truth CSV)"
+        print(f"  Mean Centroid RMSE (GT): {rmse_str}")
         print(f"  Mean End-to-End Latency: {summary.mean_latency_ms:.2f} ms (P95: {summary.p95_latency_ms:.2f} ms)")
         print("-" * 80)
-        status_str = "PASSED ALL CRITERIA" if summary.overall_compliance else "FAILED CRITERIA"
+        if summary.overall_compliance is None:
+            status_str = "UNVERIFIED (Missing Ground Truth Reference)"
+        elif summary.overall_compliance:
+            status_str = "PASSED ALL CRITERIA"
+        else:
+            status_str = "FAILED CRITERIA"
         print(f"  OVERALL PS COMPLIANCE:   {status_str}")
         print(f"  Grand JSON Report:       {json_path}")
         print(f"  Grand Markdown Report:   {md_path}")

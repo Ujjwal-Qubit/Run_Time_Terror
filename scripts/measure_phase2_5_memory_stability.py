@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2.5 Memory Stability & Lifecycle Leak Benchmark
+SANKET — Phase 2.5 Memory Stability & Lifecycle Leak Benchmark
 Executes the mandatory 10-step stress test sequence:
   1. Startup
   2. Developer Workspace
@@ -36,8 +36,8 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from PySide6.QtWidgets import QApplication
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow
 
 
 class PROCESS_MEMORY_COUNTERS(ctypes.Structure):
@@ -75,7 +75,7 @@ def get_process_memory_mb() -> float:
 
 def run_memory_stability_benchmark():
     print("=" * 80)
-    print("LUMITRACK — PHASE 2.5 MEMORY STABILITY & LIFECYCLE LEAK BENCHMARK")
+    print("SANKET — PHASE 2.5 MEMORY STABILITY & LIFECYCLE LEAK BENCHMARK")
     print("=" * 80)
 
     timeline: List[Dict[str, Any]] = []
@@ -100,7 +100,7 @@ def run_memory_stability_benchmark():
     record_stage(1, "1. Initial Process Startup")
 
     # Step 2: Developer Workspace
-    window = LumiTrackWebWindow(ctrl)
+    window = SanketWebWindow(ctrl)
     bridge = window.bridge
     # Process initial events
     for _ in range(20):

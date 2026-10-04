@@ -1,15 +1,16 @@
 /**
- * LumiTrack — Phase 2 Frontend Typed Data Contracts
+ * SANKET — Phase 2 Frontend Typed Data Contracts
  * Enforces strict typing between Python QtWebChannel bridge and React.
  */
 
 export type TrackingState =
   | 'SEARCHING'
-  | 'COASTING'
-  | 'CONVERGING'
+  | 'ACQUIRING'
   | 'TRACKING'
   | 'REACQUIRING'
   | 'LOST'
+  | 'COASTING'
+  | 'CONVERGING'
   | 'STANDBY'
 
 export interface CentroidCoords {
@@ -24,6 +25,18 @@ export interface RegionOfInterest {
   height: number
 }
 
+export interface ActiveScenarioConfig {
+  pattern?: string
+  speed?: number
+  condition?: string
+  gaussian?: boolean
+  poisson?: boolean
+  saltPepper?: boolean
+  kp?: number
+  ki?: number
+  deadband?: number
+}
+
 export interface SystemStatus {
   mode: 'SIMULATION' | 'MP4'
   isRunning: boolean
@@ -34,11 +47,13 @@ export interface SystemStatus {
   simTime: number
   availableAlgorithms: string[]
   availableScenarios: string[]
+  availableBenchmarkVideos?: string[]
   ptzEnabled: boolean
   trackingEnabled?: boolean
   backendFps: number
   targetSpeedPxS: number | null
   validationMode: boolean
+  activeScenarioConfig?: ActiveScenarioConfig
 }
 
 export interface TrackingTelemetry {

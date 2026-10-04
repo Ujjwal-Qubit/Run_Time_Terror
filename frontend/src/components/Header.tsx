@@ -1,62 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Layers,
-  Play,
-  Pause,
-  Square,
-  Redo,
-  User,
-} from 'lucide-react'
-import { useLumiTrackStore } from '../store/useLumiTrackStore'
-import { bridgeService } from '../services/bridgeService'
+import { User } from 'lucide-react'
+import { useSanketStore } from '../store/useSanketStore'
 
 export const Header: React.FC = () => {
-  const status = useLumiTrackStore((state) => state.status)
-  const telemetry = useLumiTrackStore((state) => state.telemetry)
+  const status = useSanketStore((state) => state.status)
+  const telemetry = useSanketStore((state) => state.telemetry)
 
-  const [utcTime, setUtcTime] = useState('')
+  const [istTime, setIstTime] = useState('14:28:09.412')
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date()
-      const hours = String(now.getUTCHours()).padStart(2, '0')
-      const minutes = String(now.getUTCMinutes()).padStart(2, '0')
-      const seconds = String(now.getUTCSeconds()).padStart(2, '0')
-      const millis = String(now.getUTCMilliseconds()).padStart(3, '0')
-      setUtcTime(`${hours}:${minutes}:${seconds}.${millis}`)
+      // IST is UTC + 5 hours 30 minutes
+      const istDate = new Date(now.getTime() + (5.5 * 60 * 60 * 1000))
+      const hours = String(istDate.getUTCHours()).padStart(2, '0')
+      const minutes = String(istDate.getUTCMinutes()).padStart(2, '0')
+      const seconds = String(istDate.getUTCSeconds()).padStart(2, '0')
+      const millis = String(istDate.getUTCMilliseconds()).padStart(3, '0')
+      setIstTime(`${hours}:${minutes}:${seconds}.${millis}`)
     }
     updateTime()
     const timer = setInterval(updateTime, 100)
     return () => clearInterval(timer)
   }, [])
-
-  const handleStart = () => {
-    bridgeService.run()
-  }
-
-  const handlePauseResume = () => {
-    if (status.isPaused) {
-      bridgeService.resume()
-    } else {
-      bridgeService.pause()
-    }
-  }
-
-  const handleStop = () => {
-    bridgeService.stop()
-  }
-
-  const handleStep = () => {
-    bridgeService.step()
-  }
-
-  const handleAlgoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    bridgeService.selectAlgorithm(e.target.value)
-  }
-
-  const handleScenarioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    bridgeService.selectScenario(e.target.value)
-  }
 
   // Format SIM MET: +HH:MM:SS
   const formatSimMet = (sec: number) => {
@@ -64,190 +30,98 @@ export const Header: React.FC = () => {
     const hrs = String(Math.floor(s / 3600)).padStart(2, '0')
     const mins = String(Math.floor((s % 3600) / 60)).padStart(2, '0')
     const secs = String(s % 60).padStart(2, '0')
-    return `+${hrs}:${mins}:${secs}`
+    return `+${hrs}:${mins}:${secs}.05`
   }
 
   const isTrackingLocked =
-    telemetry.trackingState === 'TRACKING' ||
-    telemetry.trackingState === 'CONVERGING' ||
-    (telemetry.trackingErrorPx !== null && telemetry.trackingErrorPx <= 10.0)
+    status.isRunning &&
+    status.trackingEnabled !== false &&
+    (telemetry.trackingState === 'TRACKING' ||
+      telemetry.trackingState === 'ACQUIRING' ||
+      (telemetry.boresightOffsetPx !== null && telemetry.boresightOffsetPx <= 10.0))
+
+  const trackingErrorDisplay =
+    status.isRunning
+      ? telemetry.trackingErrorPx !== null && telemetry.trackingErrorPx !== undefined
+        ? `${telemetry.trackingErrorPx.toFixed(3)} px`
+        : telemetry.boresightOffsetPx !== null && telemetry.boresightOffsetPx !== undefined
+        ? `${telemetry.boresightOffsetPx.toFixed(3)} px`
+        : '--'
+      : '--'
+
+  const currentRate =
+    status.backendFps > 0
+      ? status.backendFps.toFixed(1)
+      : telemetry.algorithmFps > 0
+      ? telemetry.algorithmFps.toFixed(1)
+      : '--'
 
   return (
-    <header className="fixed top-0 left-60 right-0 h-10 bg-surface-container-low border-b border-outline-variant/40 z-40 px-space-md flex items-center justify-between select-none">
-      {/* Left: Active Scenario & Algorithm Selection */}
-      <div className="flex items-center gap-space-md">
-        {/* Scenario Pill */}
-        <div className="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container rounded border border-outline-variant/30">
-          <Layers className="text-primary w-3.5 h-3.5" />
-          <span className="font-label-sm text-label-sm text-outline uppercase mr-0.5">SCN:</span>
-          <select
-            value={status.activeScenario}
-            onChange={handleScenarioChange}
-            disabled={status.isRunning}
-            className="bg-transparent font-data-sm text-data-sm text-primary focus:outline-none cursor-pointer disabled:opacity-75 max-w-[210px] truncate"
-          >
-            {status.availableScenarios.length > 0 ? (
-              status.availableScenarios.map((scn) => (
-                <option key={scn} value={scn} className="bg-surface-container-low text-on-surface">
-                  {scn}
-                </option>
-              ))
-            ) : (
-              <option value="04_combined_stress_high.json" className="bg-surface-container-low text-on-surface">
-                04_combined_stress_high.json
-              </option>
-            )}
-          </select>
-          <span className="font-data-sm text-data-sm text-outline hidden sm:inline">[LEO Dynamic]</span>
-        </div>
-
-        {/* Algorithm Pill */}
-        <div className="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-highest rounded border border-outline-variant/30">
-          <select
-            value={status.activeAlgorithm}
-            onChange={handleAlgoChange}
-            disabled={status.isRunning}
-            className="bg-transparent font-data-sm text-data-sm text-on-surface-variant focus:outline-none cursor-pointer disabled:opacity-75 max-w-[240px] truncate"
-          >
-            {status.availableAlgorithms.length > 0 ? (
-              status.availableAlgorithms.map((algo) => (
-                <option key={algo} value={algo} className="bg-surface-container-low text-on-surface">
-                  {algo}
-                </option>
-              ))
-            ) : (
-              <option value="Subpixel_CoG + Anti-Windup PI v2.4.8" className="bg-surface-container-low text-on-surface">
-                Subpixel_CoG + Anti-Windup PI v2.4.8
-              </option>
-            )}
-          </select>
-        </div>
-      </div>
-
-      {/* Center: Playback Transport & Loop Rate */}
-      <div className="flex items-center gap-space-xs">
-        <div className="flex items-center bg-surface-container rounded border border-outline-variant/40 p-space-xs">
-          <button
-            type="button"
-            onClick={handleStart}
-            disabled={status.isRunning && !status.isPaused}
-            className="flex items-center gap-space-xs px-space-sm py-space-xs bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary disabled:opacity-40 rounded font-label-md text-label-md font-medium transition-colors"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>RUN</span>
-          </button>
-          <button
-            type="button"
-            onClick={handlePauseResume}
-            disabled={!status.isRunning}
-            className="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface disabled:opacity-40 rounded font-label-md text-label-md transition-colors"
-          >
-            <Pause className="w-3.5 h-3.5 fill-current" />
-            <span>{status.isPaused ? 'RESUME' : 'PAUSE'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleStop}
-            disabled={!status.isRunning}
-            className="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface disabled:opacity-40 rounded font-label-md text-label-md transition-colors"
-          >
-            <Square className="w-3.5 h-3.5 fill-current" />
-            <span>STOP</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleStep}
-            className="flex items-center gap-space-xs px-space-sm py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded font-label-md text-label-md transition-colors"
-          >
-            <Redo className="w-3.5 h-3.5" />
-            <span>+1 FR STEP</span>
-          </button>
-        </div>
-
-        {/* Live Loop Rate Badge */}
-        <div className="px-space-sm py-space-xs bg-surface-container rounded border border-outline-variant/30 flex items-center gap-space-xs">
-          <span className="font-label-sm text-label-sm text-outline">RATE:</span>
-          <span className="font-data-sm text-data-sm text-secondary font-medium">
-            {(status.backendFps > 0 ? status.backendFps : telemetry.algorithmFps > 0 ? telemetry.algorithmFps : 0.0).toFixed(1)} Hz
+    <header className="fixed top-0 left-60 right-0 h-10 md:h-14 bg-surface-container-low border-b border-outline-variant z-40 px-space-md flex items-center justify-between select-none">
+      {/* Left Station & Target Telemetry Strip */}
+      <div className="flex items-center gap-space-md shrink-0">
+        <div className="flex items-center gap-1.5">
+          <span className="font-label-sm text-label-sm font-bold text-on-surface tracking-wider font-mono">
+            OGS-BLR-0482
+          </span>
+          <span className="text-[10px] font-label-sm bg-surface-container-high text-tertiary px-1.5 py-0.5 rounded border border-outline-variant flex items-center gap-1 font-mono font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse" />
+            AIR-GAP
           </span>
         </div>
 
-        {/* Tracking ON/OFF Toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            const next = !(status.trackingEnabled ?? true)
-            useLumiTrackStore.getState().setStatus({ ...status, trackingEnabled: next })
-            bridgeService.setTrackingEnabled(next)
-          }}
-          className={`flex items-center gap-space-xs px-space-sm py-space-xs rounded border font-label-md text-label-md transition-colors ${
-            status.trackingEnabled !== false
-              ? 'bg-secondary/15 text-secondary border-secondary/40 hover:bg-secondary/25'
-              : 'bg-surface-container-high text-outline border-outline-variant/40 hover:text-on-surface'
-          }`}
-          title="Toggle Target Tracking Pipeline"
-        >
-          <span className={`w-2 h-2 rounded-full ${status.trackingEnabled !== false ? 'bg-secondary animate-pulse' : 'bg-outline'}`} />
-          <span>TRACK: {status.trackingEnabled !== false ? 'ON' : 'OFF'}</span>
-        </button>
+        <span className="text-outline-variant">|</span>
 
-        {/* PTZ ON/OFF Toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            const next = !(status.ptzEnabled ?? true)
-            useLumiTrackStore.getState().setStatus({ ...status, ptzEnabled: next })
-            bridgeService.setPtzEnabled(next)
-          }}
-          className={`flex items-center gap-space-xs px-space-sm py-space-xs rounded border font-label-md text-label-md transition-colors ${
-            status.ptzEnabled !== false
-              ? 'bg-primary/15 text-primary border-primary/40 hover:bg-primary/25'
-              : 'bg-surface-container-high text-outline border-outline-variant/40 hover:text-on-surface'
-          }`}
-          title="Toggle Pan-Tilt-Zoom Pedestal Actuation"
-        >
-          <span className={`w-2 h-2 rounded-full ${status.ptzEnabled !== false ? 'bg-primary animate-pulse' : 'bg-outline'}`} />
-          <span>PTZ: {status.ptzEnabled !== false ? 'ON' : 'OFF'}</span>
-        </button>
-      </div>
-
-      {/* Right: Telemetry Time, MET, Spec Status Badge, Avatar */}
-      <div className="flex items-center gap-space-md">
-        <div className="flex items-center gap-space-sm font-data-sm text-data-sm">
-          <div className="flex items-center gap-space-xs">
-            <span className="text-outline">UTC</span>
-            <span className="text-on-surface">{utcTime || '—'}</span>
-          </div>
-          <span className="text-outline-variant">|</span>
-          <div className="flex items-center gap-space-xs">
-            <span className="text-outline">SIM MET</span>
-            <span className="text-primary">{formatSimMet(status.simTime)}</span>
-          </div>
-        </div>
-
-        {/* Lock Spec Status Badge */}
-        <div
-          className={`flex items-center gap-space-xs px-space-sm py-space-xs rounded border ${
-            isTrackingLocked
-              ? 'bg-secondary/15 text-secondary border-secondary/40'
-              : 'bg-tertiary/15 text-tertiary border-tertiary/40'
-          }`}
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              isTrackingLocked ? 'bg-secondary animate-pulse' : 'bg-tertiary'
-            }`}
-          />
-          <span className="font-label-sm text-label-sm font-medium tracking-wide">
-            {isTrackingLocked ? 'LOCKED (100% SPEC)' : 'ACQUIRING / SCAN'}
+        <div className="flex items-center gap-1.5 font-label-sm text-label-sm">
+          <span className="text-outline font-mono text-[10px]">TARGET:</span>
+          <span className="text-primary font-semibold font-mono text-[11px]">
+            LEO-SAT-921A [850nm NIR]
           </span>
         </div>
 
-        {/* Profile Avatar */}
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-          <User className="text-on-primary w-4 h-4" />
+        <span className="text-outline-variant hidden md:inline">|</span>
+
+        <div className="hidden md:flex items-center gap-1 font-label-sm text-label-sm">
+          <span className="text-outline font-mono text-[10px]">ARENA:</span>
+          <span className="text-secondary font-mono text-[11px]">2000×2000 px</span>
+        </div>
+      </div>
+
+      {/* Right Telemetry, Time, Lock Status & Profile */}
+      <div className="flex items-center gap-space-md shrink-0">
+        <div className="flex flex-col items-end font-mono">
+          <div className="font-label-sm text-[11px] text-on-surface flex items-center gap-1">
+            <span className="text-secondary font-bold text-[9px] bg-secondary/15 px-1 rounded">IST</span>
+            <span className="font-bold">{istTime}</span>
+          </div>
+          <div className="font-label-sm text-[10px] text-outline flex items-center gap-1">
+            <span className="text-[9px]">SIM MET</span>
+            <span className="text-primary font-semibold">{formatSimMet(status.simTime)}</span>
+          </div>
+        </div>
+
+        <div className="h-7 w-px bg-outline-variant" />
+
+        <div className="flex flex-col items-start font-mono">
+          <div className="font-label-sm text-[11px] text-tertiary flex items-center gap-1 font-semibold">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isTrackingLocked ? 'bg-tertiary' : 'bg-outline'
+              }`}
+            />
+            <span>{isTrackingLocked ? `LOCKED ${trackingErrorDisplay}` : 'SCAN / ACQ'}</span>
+          </div>
+          <div className="font-label-sm text-[10px] text-outline-variant">
+            LOOP: <span className="text-secondary font-bold">{currentRate} Hz</span>
+          </div>
+        </div>
+
+        <div className="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary cursor-pointer hover:bg-surface-bright transition-colors">
+          <User className="w-4 h-4 text-primary" />
         </div>
       </div>
     </header>
   )
 }
+
+export default Header

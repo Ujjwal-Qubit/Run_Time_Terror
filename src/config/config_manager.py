@@ -116,6 +116,15 @@ class NoiseConfig:
     # drawing Poisson samples. 1.0 = standard. Lower = noisier (underexposure).
     poisson_scale: float = defaults.NOISE_POISSON_SCALE
 
+    @property
+    def gaussian_std(self) -> float:
+        """Backward-compatible alias for gaussian_sigma (DEF-27/31)."""
+        return self.gaussian_sigma
+
+    @gaussian_std.setter
+    def gaussian_std(self, value: float) -> None:
+        self.gaussian_sigma = float(value)
+
 
 @dataclass
 class AtmosphericConfig:
@@ -459,12 +468,31 @@ class ConfigManager:
             )
 
         # Motion type must be mandatory (PS_REQUIRED)
+        raw_motion = cfg.motion.motion_type
+        if hasattr(raw_motion, "value"):
+            norm_motion = raw_motion.value
+        elif hasattr(raw_motion, "name"):
+            norm_motion = raw_motion.name
+        else:
+            norm_motion = str(raw_motion).strip().upper().replace("-", "_").replace(" ", "_")
+        if "." in norm_motion:
+            norm_motion = norm_motion.split(".")[-1]
+        if norm_motion in ("STRAIGHT_LINE", "LINEAR", "STRAIGHT"):
+            norm_motion = "STRAIGHT_LINE"
+        elif norm_motion in ("CIRCULAR", "CIRCLE"):
+            norm_motion = "CIRCULAR"
+        elif norm_motion in ("FIGURE_8", "FIGURE8", "FIG8"):
+            norm_motion = "FIGURE_8"
+        elif norm_motion in ("RANDOM", "BROWNIAN"):
+            norm_motion = "RANDOM"
+        cfg.motion.motion_type = norm_motion
+
         if cfg.motion.motion_type not in (
             defaults.MOTION_MANDATORY_TYPES
             + defaults.MOTION_OPTIONAL_TYPES
         ):
             errors.append(
-                f"Unknown motion type '{cfg.motion.motion_type}'"
+                f"Unknown motion type '{raw_motion}'"
             )
 
         # Camera parameters validation

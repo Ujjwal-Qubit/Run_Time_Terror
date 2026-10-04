@@ -4,7 +4,7 @@ import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { bridgeService } from './services/bridgeService'
 import { perfService } from './services/perfService'
-import { useLumiTrackStore } from './store/useLumiTrackStore'
+import { useSanketStore } from './store/useSanketStore'
 
 import { DeveloperWorkspace } from './workspaces/DeveloperWorkspace/DeveloperWorkspace'
 import { EvaluatorWorkspace } from './workspaces/EvaluatorWorkspace/EvaluatorWorkspace'
@@ -12,20 +12,19 @@ import { DiagnosticsWorkspace } from './workspaces/DiagnosticsWorkspace/Diagnost
 import { HistoryWorkspace } from './workspaces/HistoryWorkspace/HistoryWorkspace'
 import { ResultsWorkspace } from './workspaces/ResultsWorkspace/ResultsWorkspace'
 
-
 export const App: React.FC = () => {
-  const activeWorkspace = useLumiTrackStore((state) => state.activeWorkspace)
-  const setConnected = useLumiTrackStore((state) => state.setConnected)
-  const setStatus = useLumiTrackStore((state) => state.setStatus)
-  const setTelemetry = useLumiTrackStore((state) => state.setTelemetry)
-  const setLatestFrame = useLumiTrackStore((state) => state.setLatestFrame)
-  const setSubsystems = useLumiTrackStore((state) => state.setSubsystems)
-  const setRunHistory = useLumiTrackStore((state) => state.setRunHistory)
-  const setSelectedArtifact = useLumiTrackStore((state) => state.setSelectedArtifact)
-  const setBenchmarkProgress = useLumiTrackStore((state) => state.setBenchmarkProgress)
-  const setLatestBenchmarkResult = useLumiTrackStore((state) => state.setLatestBenchmarkResult)
-  const setResultsData = useLumiTrackStore((state) => state.setResultsData)
-  const updateBrowserPerf = useLumiTrackStore((state) => state.updateBrowserPerf)
+  const activeWorkspace = useSanketStore((state) => state.activeWorkspace)
+  const setConnected = useSanketStore((state) => state.setConnected)
+  const setStatus = useSanketStore((state) => state.setStatus)
+  const setTelemetry = useSanketStore((state) => state.setTelemetry)
+  const setLatestFrame = useSanketStore((state) => state.setLatestFrame)
+  const setSubsystems = useSanketStore((state) => state.setSubsystems)
+  const setRunHistory = useSanketStore((state) => state.setRunHistory)
+  const setSelectedArtifact = useSanketStore((state) => state.setSelectedArtifact)
+  const setBenchmarkProgress = useSanketStore((state) => state.setBenchmarkProgress)
+  const setLatestBenchmarkResult = useSanketStore((state) => state.setLatestBenchmarkResult)
+  const setResultsData = useSanketStore((state) => state.setResultsData)
+  const updateBrowserPerf = useSanketStore((state) => state.updateBrowserPerf)
 
   useEffect(() => {
     // 1. Subscribe to all QtWebChannel IPC bridge events
@@ -126,24 +125,24 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container h-screen w-screen overflow-hidden flex">
-      {/* Fixed Left Navigation Sidebar (width w-60) */}
+    <div className="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen w-screen overflow-x-hidden flex">
+      {/* Fixed Left Navigation Sidebar (w-60) */}
       <Sidebar />
 
-      {/* Main Content Area offset by pl-60, taking exact viewport height */}
-      <div className="pl-60 w-full h-screen flex flex-col overflow-hidden">
-        {/* Fixed Top Header (height h-10) */}
+      {/* Main Content Area offset by pl-60 */}
+      <div className="pl-60 w-full min-h-screen flex flex-col bg-background">
+        {/* Fixed Top Header (h-14) */}
         <Header />
 
-        {/* Workspace Body: single primary scroll container between fixed Header and Footer */}
+        {/* Workspace Body */}
         <main
-          id="lumitrack-main-scroll-container"
-          className="w-full mt-10 mb-7 h-[calc(100vh-68px)] max-h-[calc(100vh-68px)] overflow-y-auto overflow-x-hidden bg-surface"
+          id="sanket-main-scroll-container"
+          className="flex-1 pt-10 md:pt-14 pb-7 md:pb-8 w-full bg-surface relative min-h-[calc(100vh-68px)] overflow-y-auto overflow-x-hidden"
         >
           {renderWorkspace()}
         </main>
 
-        {/* Fixed Bottom Footer (height h-7) */}
+        {/* Fixed Bottom Footer (h-8) */}
         <Footer />
       </div>
     </div>

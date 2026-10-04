@@ -1,6 +1,6 @@
 """
-LumiTrack — Clean Installed Application Verification Suite (Task 3, 4, 8)
-Tests the installed application from C:\\Users\\sanje\\AppData\\Local\\Programs\\LumiTrack_Installed\\
+SANKET — Clean Installed Application Verification Suite (Task 3, 4, 8)
+Tests the installed application from C:\\Users\\sanje\\AppData\\Local\\Programs\\SANKET\\ (or SANKET_Installed)
 completely isolated from the source repository.
 """
 
@@ -14,8 +14,10 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Any, List
 
-INSTALLED_DIR = Path(r"C:\Users\sanje\AppData\Local\Programs\LumiTrack_Installed")
-INSTALLED_EXE = INSTALLED_DIR / "LumiTrack.exe"
+INSTALLED_DIR_SANKET = Path(r"C:\Users\sanje\AppData\Local\Programs\SANKET")
+INSTALLED_DIR_LUMI = Path(r"C:\Users\sanje\AppData\Local\Programs\SANKET_Installed")
+INSTALLED_DIR = INSTALLED_DIR_SANKET if INSTALLED_DIR_SANKET.exists() else INSTALLED_DIR_LUMI
+INSTALLED_EXE = INSTALLED_DIR / ("SANKET.exe" if (INSTALLED_DIR / "SANKET.exe").exists() else "SANKET.exe")
 INTERNAL_DIR = INSTALLED_DIR / "_internal"
 FRONTEND_DIST = INTERNAL_DIR / "frontend" / "dist"
 
@@ -28,8 +30,8 @@ def verify_installed_files() -> Dict[str, Any]:
 
     checks["installed_exe_exists"] = INSTALLED_EXE.is_file()
     checks["installed_exe_size"] = INSTALLED_EXE.stat().st_size if checks["installed_exe_exists"] else 0
-    print(f"  - Installed LumiTrack.exe: {'EXISTS' if checks['installed_exe_exists'] else 'MISSING'} ({checks['installed_exe_size']:,} bytes)")
-    assert checks["installed_exe_exists"], "Installed LumiTrack.exe does not exist"
+    print(f"  - Installed {INSTALLED_EXE.name}: {'EXISTS' if checks['installed_exe_exists'] else 'MISSING'} ({checks['installed_exe_size']:,} bytes)")
+    assert checks["installed_exe_exists"], f"Installed executable does not exist at {INSTALLED_EXE}"
 
     checks["internal_dir_exists"] = INTERNAL_DIR.is_dir()
     print(f"  - Installed _internal/: {'EXISTS' if checks['internal_dir_exists'] else 'MISSING'}")
@@ -105,7 +107,7 @@ def verify_installed_interactive_workstation() -> Dict[str, Any]:
     from PySide6.QtWidgets import QApplication
     from PySide6.QtCore import QEventLoop, QTimer, Qt, QUrl
     from src.app.app_controller import AppController
-    from src.app.gui.web_window import LumiTrackWebWindow
+    from src.app.gui.web_window import SanketWebWindow
 
     results = {}
 
@@ -114,7 +116,7 @@ def verify_installed_interactive_workstation() -> Dict[str, Any]:
         QTimer.singleShot(ms, loop.quit)
         loop.exec()
 
-    def eval_sync(win: LumiTrackWebWindow, js: str) -> Any:
+    def eval_sync(win: SanketWebWindow, js: str) -> Any:
         res = []
         loop = QEventLoop()
         def cb(v):
@@ -130,7 +132,7 @@ def verify_installed_interactive_workstation() -> Dict[str, Any]:
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    win = LumiTrackWebWindow(ctrl)
+    win = SanketWebWindow(ctrl)
     win.setWindowFlags(Qt.WindowType.FramelessWindowHint)
     win.resize(1920, 1080)
 
@@ -278,7 +280,7 @@ def verify_installed_interactive_workstation() -> Dict[str, Any]:
 
 def main():
     print("=" * 70)
-    print("LumiTrack Installed Application Verification (Tasks 3, 4, 8)")
+    print("SANKET Installed Application Verification (Tasks 3, 4, 8)")
     print(f"Installed Path: {INSTALLED_DIR}")
     print("=" * 70)
 

@@ -1,7 +1,7 @@
 """
 Regression tests for DEF-01 (Packaged Plugin Discovery) and DEF-02 (CLI Matrix/AI Dispatch).
 Verifies:
-  1. DEF-01: lumitrack.spec contains the plugin algorithms directory in added_files datas.
+  1. DEF-01: sanket.spec contains the plugin algorithms directory in added_files datas.
   2. DEF-01: Packaged plugin directory exists and contains baseline_tracker manifest.
   3. DEF-02: CLI argparser accepts valid --matrix choices and --ai-scenario strings.
   4. DEF-02: CLI argparser rejects invalid matrix choices.
@@ -20,7 +20,7 @@ from src.main import parse_args, main
 
 def test_def01_spec_file_contains_plugin_algorithms():
     """DEF-01: Verify spec bundles src/plugins/algorithms into package datas."""
-    spec_path = "sanket.spec" if os.path.isfile("sanket.spec") else "lumitrack.spec"
+    spec_path = "sanket.spec"
     assert os.path.isfile(spec_path), f"Packaging spec not found at {spec_path}"
 
     with open(spec_path, "r", encoding="utf-8") as f:
@@ -33,7 +33,7 @@ def test_def01_spec_file_contains_plugin_algorithms():
 
 def test_def01_packaged_plugin_directory_structure():
     """DEF-01: Verify packaged dist contains baseline_tracker in expected internal path."""
-    dist_dir = os.path.join("dist", "SANKET") if os.path.isdir(os.path.join("dist", "SANKET")) else os.path.join("dist", "LumiTrack")
+    dist_dir = os.path.join("dist", "SANKET")
     internal_plugin_dir = os.path.join(
         dist_dir, "_internal", "src", "plugins", "algorithms", "baseline_tracker"
     )

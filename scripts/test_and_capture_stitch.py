@@ -1,5 +1,5 @@
 """
-LumiTrack — Comprehensive Stitch 3D Frustum & World Canvas Integration Test & Capture
+SANKET — Comprehensive Stitch 3D Frustum & World Canvas Integration Test & Capture
 Validates:
   1. All 5 Target Viewports:
      - 1920×1080 (FHD / Primary Workstation)
@@ -16,7 +16,7 @@ Validates:
      - Sidebar Quick-Jump navigation
      - Minimap [EXPAND] triggers in 3D and World views
   4. Responsive Scroll Containment:
-     - #lumitrack-main-scroll-container horizontal overflow = 0
+     - #sanket-main-scroll-container horizontal overflow = 0
      - Vertical scrolling accessibility
      - Absence of clipped/obscured controls
   5. Live Telemetry & Simulation Reactivity:
@@ -43,7 +43,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QEventLoop, QTimer, Qt
 from PySide6.QtWebEngineCore import QWebEnginePage
 from src.app.app_controller import AppController
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_window import SanketWebWindow
 
 VIEWPORTS = [
     (1920, 1080, "1920x1080"),
@@ -105,7 +105,7 @@ def wait_ms(ms: int) -> None:
     loop.exec()
 
 
-def eval_sync(win: LumiTrackWebWindow, js_body: str) -> Any:
+def eval_sync(win: SanketWebWindow, js_body: str) -> Any:
     res = []
     loop = QEventLoop()
     def cb(v):
@@ -150,7 +150,7 @@ def main():
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    win = LumiTrackWebWindow(ctrl)
+    win = SanketWebWindow(ctrl)
     win.setWindowFlags(Qt.WindowType.FramelessWindowHint)
     win.resize(1920, 1080)
     win.show()
@@ -354,7 +354,7 @@ def main():
 
             # Audit Scroll Container at this viewport
             scroll_audit_raw = eval_sync(win, """
-                const sc = document.getElementById('lumitrack-main-scroll-container');
+                const sc = document.getElementById('sanket-main-scroll-container');
                 if (!sc) return JSON.stringify({ error: 'scroll_container_not_found' });
                 const cs = window.getComputedStyle(sc);
                 return JSON.stringify({
@@ -432,6 +432,13 @@ def main():
 
     win.close()
     qapp.quit()
+
+    failed_nav = [r for r in nav_test_results if not r.get("success", False)]
+    if failed_nav or len(js_errors) > 0:
+        print(f"[FAIL] Stitch verification failed: {len(failed_nav)} nav failures, {len(js_errors)} JS errors")
+        sys.exit(1)
+    print("[SUCCESS] All Stitch verification tests passed.")
+    sys.exit(0)
 
 
 if __name__ == "__main__":

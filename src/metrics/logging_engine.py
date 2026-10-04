@@ -58,6 +58,10 @@ class LoggingEngine:
 
     def initialize(self) -> None:
         """Create output directory and open CSV files."""
+        # Finalize and flush existing file handles if already initialized
+        if self._initialized or self._csv_file is not None or self._centroid_file is not None:
+            self.finalize()
+
         os.makedirs(self._output_dir, exist_ok=True)
 
         if self._csv_enabled:
@@ -65,7 +69,7 @@ class LoggingEngine:
             csv_path = os.path.join(
                 self._output_dir, f"{self._run_id}_telemetry.csv"
             )
-            self._csv_file = open(csv_path, "w", newline="")
+            self._csv_file = open(csv_path, "w", newline="", encoding="utf-8")
             field_names = [f.name for f in fields(TelemetryRecord)]
             self._csv_writer = csv.DictWriter(self._csv_file, fieldnames=field_names)
             self._csv_writer.writeheader()
@@ -74,7 +78,7 @@ class LoggingEngine:
             centroid_path = os.path.join(
                 self._output_dir, f"{self._run_id}_centroids.csv"
             )
-            self._centroid_file = open(centroid_path, "w", newline="")
+            self._centroid_file = open(centroid_path, "w", newline="", encoding="utf-8")
             self._centroid_writer = csv.writer(self._centroid_file)
             self._centroid_writer.writerow([
                 "frame_number", "centroid_x", "centroid_y", "is_valid", "confidence"
@@ -124,8 +128,8 @@ class LoggingEngine:
         summary_path = os.path.join(
             self._output_dir, f"{self._run_id}_summary.json"
         )
-        with open(summary_path, "w") as f:
-            json.dump(asdict(summary), f, indent=2)
+        with open(summary_path, "w", encoding="utf-8") as f:
+            json.dump(asdict(summary), f, indent=2, ensure_ascii=False)
         return summary_path
 
     def write_config_snapshot(self, config_dict: dict) -> Optional[str]:
@@ -135,8 +139,8 @@ class LoggingEngine:
         config_path = os.path.join(
             self._output_dir, f"{self._run_id}_config.json"
         )
-        with open(config_path, "w") as f:
-            json.dump(config_dict, f, indent=2)
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config_dict, f, indent=2, ensure_ascii=False)
         return config_path
 
     def write_performance_report(self, summary: MetricsSummary) -> Optional[str]:
@@ -216,21 +220,43 @@ class LoggingEngine:
             f"- **Frames in Deadband:** `{summary.frames_in_deadband_pct:.1f}\\%`",
         ]
 
-        with open(report_path, "w") as f:
+        with open(report_path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
         return report_path
 
     def finalize(self) -> None:
         """Flush remaining records and close all active file handles."""
-        self.flush()
-        if self._csv_file:
-            self._csv_file.close()
-            self._csv_file = None
-        if self._centroid_file:
-            self._centroid_file.close()
-            self._centroid_file = None
-        self._initialized = False
+        try:
+            self.flush()
+        except Exception:
+            pass
+        finally:
+            if self._csv_file is not None:
+                try:
+                    self._csv_file.close()
+                finally:
+                    self._csv_file = None
+            if self._centroid_file is not None:
+                try:
+                    self._centroid_file.close()
+                finally:
+                    self._centroid_file = None
+            self._csv_writer = None
+            self._centroid_writer = None
+            self._initialized = False
+
+    def __enter__(self) -> LoggingEngine:
+        return self
+
+    def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        self.finalize()
+
+    def __del__(self) -> None:
+        try:
+            self.finalize()
+        except Exception:
+            pass
 
     def get_buffer_size(self) -> int:
         """Return current buffer size (for monitoring)."""
@@ -250,17 +276,23 @@ class LoggingEngine:
 
         # 1. Export JSON Summary
         json_path = os.path.join(output_dir, f"{batch_id}_grand_summary.json")
-        with open(json_path, "w") as f:
-            json.dump(asdict(grand_summary), f, indent=2)
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(asdict(grand_summary), f, indent=2, ensure_ascii=False)
 
         # 2. Export Markdown Scorecard
         md_path = os.path.join(output_dir, f"{batch_id}_grand_evaluator_report.md")
 
         fps_status = "PASS" if grand_summary.passed_fps_spec else "FAIL"
         acq_status = "PASS" if grand_summary.passed_acquisition_spec else "FAIL"
-        err_status = "PASS" if grand_summary.passed_tracking_error_spec else "FAIL"
+        err_status = (
+            "PASS" if grand_summary.passed_tracking_error_spec is True
+            else ("FAIL" if grand_summary.passed_tracking_error_spec is False else "UNVERIFIED")
+        )
         loss_status = "PASS" if grand_summary.passed_loss_rate_spec else "FAIL"
-        overall_status = "PASSED" if grand_summary.overall_compliance else "FAILED"
+        overall_status = (
+            "PASSED" if grand_summary.overall_compliance is True
+            else ("FAILED" if grand_summary.overall_compliance is False else "UNVERIFIED (Missing Reference Ground Truth)")
+        )
 
         acq_str = f"{grand_summary.mean_acquisition_time_s:.2f}" if grand_summary.mean_acquisition_time_s is not None else "N/A"
 
@@ -293,11 +325,14 @@ class LoggingEngine:
             if item.success and item.summary:
                 s = item.summary
                 acq_val = f"{s.acquisition_time_s:.2f}" if s.acquisition_time_s is not None else "N/A"
-                rmse_val = s.rmse_centroid if s.rmse_centroid > 0.0 else s.rmse_centroid_rendered
+                rmse_val = s.rmse_centroid if (s.rmse_centroid is not None and s.rmse_centroid > 0.0) else s.rmse_centroid_rendered
+                rmse_item_str = f"{rmse_val:.3f}" if rmse_val is not None else "N/A"
+                te_item_str = f"{s.mean_tracking_error:.2f}" if s.mean_tracking_error is not None else "N/A"
+                lock_str = f"{s.lock_retention_post_acq_pct:.1f}%" if s.lock_retention_post_acq_pct is not None else "N/A"
                 lines.append(
                     f"| `{item.item_id}` | SUCCESS | `{s.total_frames}` | `{s.mean_fps:.1f}` | "
-                    f"`{acq_val}` | `{rmse_val:.3f}` | `{s.mean_tracking_error:.2f}` | "
-                    f"`{s.lock_retention_post_acq_pct:.1f}%` |"
+                    f"`{acq_val}` | `{rmse_item_str}` | `{te_item_str}` | "
+                    f"`{lock_str}` |"
                 )
             else:
                 err_msg = item.error_message or "Execution failed"
@@ -305,14 +340,19 @@ class LoggingEngine:
                     f"| `{item.item_id}` | **FAILED** (`{err_msg}`) | - | - | - | - | - | - |"
                 )
 
+        rmse_rend_str = f"`{grand_summary.mean_rmse_centroid_rendered:.3f}` px" if grand_summary.mean_rmse_centroid_rendered is not None else "N/A"
+        rmse_str = f"`{grand_summary.mean_rmse_centroid:.3f}` px" if grand_summary.mean_rmse_centroid is not None else "N/A (No Reference Ground Truth)"
+        te_str = f"`{grand_summary.mean_tracking_error:.2f}` px" if grand_summary.mean_tracking_error is not None else "N/A"
+        lock_rate_str = f"`{grand_summary.mean_lock_retention_pct:.2f}%`" if grand_summary.mean_lock_retention_pct is not None else "N/A"
+
         lines.extend([
             f"",
             f"## 3. Macro Performance & Sub-Pixel Localization",
             f"",
-            f"- **Mean Centroiding RMSE (Rendered):** `{grand_summary.mean_rmse_centroid_rendered:.3f}` px",
-            f"- **Mean Centroiding RMSE:** `{grand_summary.mean_rmse_centroid:.3f}` px",
-            f"- **Mean Tracking Error:** `{grand_summary.mean_tracking_error:.2f}` px",
-            f"- **Mean Lock Retention Rate:** `{grand_summary.mean_lock_retention_pct:.2f}%`",
+            f"- **Mean Centroiding RMSE (Rendered):** {rmse_rend_str}",
+            f"- **Mean Centroiding RMSE:** {rmse_str}",
+            f"- **Mean Tracking Error:** {te_str}",
+            f"- **Mean Lock Retention Rate:** {lock_rate_str}",
             f"- **Mean Target Loss Rate:** `{grand_summary.mean_target_loss_rate_pct:.2f}%`",
             f"- **Mean Pipeline Latency:** `{grand_summary.mean_latency_ms:.2f}` ms",
             f"- **95th Percentile Latency (P95):** `{grand_summary.p95_latency_ms:.2f}` ms",
@@ -328,7 +368,7 @@ class LoggingEngine:
                 if not item.success:
                     lines.append(f"- **`{item.item_id}`**: `{item.error_message}` (Source: `{item.source_path}`)")
 
-        with open(md_path, "w") as f:
+        with open(md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
 
         return (json_path, md_path)

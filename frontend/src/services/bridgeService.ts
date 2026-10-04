@@ -1,5 +1,5 @@
 /**
- * LumiTrack — QtWebChannel Bridge Client Service (Phase 2 Expanded)
+ * SANKET — QtWebChannel Bridge Client Service (Phase 2 Expanded)
  * Bridges React to the native Python PySide6 QWebEngine host.
  */
 
@@ -7,7 +7,7 @@ import { QWebChannel } from './qwebchannel'
 import type { SystemStatus, TrackingTelemetry, SensorFramePayload } from '../types/telemetry'
 import type { SubsystemState } from '../types/diagnostics'
 import type { RunCatalogItem, RunArtifactPayload } from '../types/history'
-import type { BenchmarkProgress, BenchmarkResult } from '../types/benchmark'
+import type { BenchmarkProgress, BenchmarkResult, BenchmarkVideoMeta } from '../types/benchmark'
 import type { ResultsTimeSeriesData } from '../types/scene3d'
 
 type SystemStatusCallback = (status: SystemStatus) => void
@@ -20,6 +20,8 @@ type ArtifactCallback = (artifact: RunArtifactPayload) => void
 type BenchmarkProgressCallback = (progress: BenchmarkProgress) => void
 type BenchmarkResultCallback = (result: BenchmarkResult) => void
 type ResultsDataCallback = (data: ResultsTimeSeriesData) => void
+type BenchmarkVideoCallback = (meta: BenchmarkVideoMeta) => void
+type FileSavedCallback = (path: string) => void
 
 interface PyBridgeObject {
   // Signals
@@ -32,6 +34,8 @@ interface PyBridgeObject {
   benchmarkProgress: { connect: (cb: (jsonStr: string) => void) => void }
   benchmarkCompleted: { connect: (cb: (jsonStr: string) => void) => void }
   resultsAnalysisLoaded: { connect: (cb: (jsonStr: string) => void) => void }
+  benchmarkVideoLoaded?: { connect: (cb: (jsonStr: string) => void) => void }
+  fileSaved?: { connect: (cb: (path: string) => void) => void }
 
   // Slots
   clientReady: () => void
@@ -49,6 +53,8 @@ interface PyBridgeObject {
   getRunHistory: () => void
   getRunArtifact: (path: string) => void
   runBenchmarkMatrix: (subset: string) => void
+  stopBenchmarkMatrix?: () => void
+  saveTextFile?: (filename: string, content: string) => void
   getResultsAnalysisData: (runId: string) => void
   setTrackingEnabled: (enabled: boolean) => void
   setMotionPattern: (pattern: string) => void
@@ -56,7 +62,15 @@ interface PyBridgeObject {
   setTargetSize: (size: number) => void
   setAtmosphericCondition: (condition: string) => void
   setNoiseEnabled: (noiseType: string, enabled: boolean) => void
-  setPtzGains: (kp: number, ki: number, kd: number) => void
+  saveScenario: (name: string, jsonStr: string) => void
+  generateAiScenario: (prompt: string) => void
+  setPtzGains: (kp: number, ki: number, deadband: number) => void
+  loadBenchmarkVideo?: (filePath?: string) => void
+  loadBenchmarkVideoByName?: (name: string) => void
+  uploadBenchmarkVideoData?: (fileName: string, base64Data: string) => void
+  playBenchmarkVideo?: () => void
+  pauseBenchmarkVideo?: () => void
+  resetBenchmarkVideo?: () => void
   reportBrowserMetrics: (
     renderFps: number,
     minFps: number,
@@ -80,6 +94,8 @@ class BridgeService {
   private progressListeners: BenchmarkProgressCallback[] = []
   private benchmarkResultListeners: BenchmarkResultCallback[] = []
   private resultsDataListeners: ResultsDataCallback[] = []
+  private videoMetaListeners: BenchmarkVideoCallback[] = []
+  private fileSavedListeners: FileSavedCallback[] = []
 
   public init(): Promise<boolean> {
     return new Promise((resolve) => {
@@ -255,9 +271,42 @@ class BridgeService {
         }
       })
     }
+
+    // Benchmark 2 Video Loaded signal
+    if (this.pyBridge.benchmarkVideoLoaded) {
+      this.pyBridge.benchmarkVideoLoaded.connect((jsonStr: string) => {
+        try {
+          const meta = JSON.parse(jsonStr) as BenchmarkVideoMeta
+          this.videoMetaListeners.forEach((cb) => cb(meta))
+        } catch (e) {
+          console.error('[BridgeService] Failed to parse BenchmarkVideoMeta JSON:', e)
+        }
+      })
+    }
+
+    // File Saved notification signal
+    if (this.pyBridge.fileSaved) {
+      this.pyBridge.fileSaved.connect((path: string) => {
+        this.fileSavedListeners.forEach((cb) => cb(path))
+      })
+    }
   }
 
   // Subscriptions
+  public onFileSaved(cb: FileSavedCallback): () => void {
+    this.fileSavedListeners.push(cb)
+    return () => {
+      this.fileSavedListeners = this.fileSavedListeners.filter((l) => l !== cb)
+    }
+  }
+
+  public onBenchmarkVideoLoaded(cb: BenchmarkVideoCallback): () => void {
+    this.videoMetaListeners.push(cb)
+    return () => {
+      this.videoMetaListeners = this.videoMetaListeners.filter((l) => l !== cb)
+    }
+  }
+
   public onConnectionChange(cb: ConnectionCallback): () => void {
     this.connectionListeners.push(cb)
     cb(this.isConnected)
@@ -403,6 +452,14 @@ class BridgeService {
     this.pyBridge?.toggleValidationMode?.(enabled)
   }
 
+  public saveScenario(name: string, jsonStr: string): void {
+    this.pyBridge?.saveScenario?.(name, jsonStr)
+  }
+
+  public generateAiScenario(prompt: string): void {
+    this.pyBridge?.generateAiScenario?.(prompt)
+  }
+
   public getSubsystemDiagnostics(): void {
     this.pyBridge?.getSubsystemDiagnostics?.()
   }
@@ -417,6 +474,14 @@ class BridgeService {
 
   public runBenchmarkMatrix(subset: string): void {
     this.pyBridge?.runBenchmarkMatrix?.(subset)
+  }
+
+  public stopBenchmarkMatrix(): void {
+    this.pyBridge?.stopBenchmarkMatrix?.()
+  }
+
+  public saveTextFile(filename: string, content: string): void {
+    this.pyBridge?.saveTextFile?.(filename, content)
   }
 
   public getResultsAnalysisData(runId: string = ''): void {
@@ -435,6 +500,30 @@ class BridgeService {
 
   public firstFramePresented(decodeMs: number, drawMs: number): void {
     this.pyBridge?.firstFramePresented?.(decodeMs, drawMs)
+  }
+
+  public loadBenchmarkVideo(filePath?: string): void {
+    this.pyBridge?.loadBenchmarkVideo?.(filePath || 'BROWSE')
+  }
+
+  public loadBenchmarkVideoByName(name: string): void {
+    this.pyBridge?.loadBenchmarkVideoByName?.(name)
+  }
+
+  public uploadBenchmarkVideoData(fileName: string, base64Data: string): void {
+    this.pyBridge?.uploadBenchmarkVideoData?.(fileName, base64Data)
+  }
+
+  public playBenchmarkVideo(): void {
+    this.pyBridge?.playBenchmarkVideo?.()
+  }
+
+  public pauseBenchmarkVideo(): void {
+    this.pyBridge?.pauseBenchmarkVideo?.()
+  }
+
+  public resetBenchmarkVideo(): void {
+    this.pyBridge?.resetBenchmarkVideo?.()
   }
 
   public getConnected(): boolean {

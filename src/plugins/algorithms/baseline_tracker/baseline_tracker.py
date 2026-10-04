@@ -272,16 +272,19 @@ class BaselineTracker(ITrackingAlgorithm):
             )
             classifications = self._learned_classifier.classify(features)
             scores_by_id = {
-                classification.candidate_id: classification.beacon_probability
+                classification.candidate_id: classification
                 for classification in classifications
             }
-            candidates = [
-                replace(
-                    candidate,
-                    detection_score=scores_by_id.get(candidate.candidate_id, candidate.detection_score),
-                )
-                for candidate in candidates
-            ]
+            has_beacon = any(c.is_beacon for c in classifications)
+            updated_candidates = []
+            for candidate in candidates:
+                clf = scores_by_id.get(candidate.candidate_id)
+                score = clf.beacon_probability if clf is not None else candidate.detection_score
+                is_b = clf.is_beacon if clf is not None else True
+                if not has_beacon or is_b:
+                    updated_candidates.append(replace(candidate, detection_score=score))
+            if updated_candidates:
+                candidates = updated_candidates
         ident_res = self._identifier.identify(
             candidates,
             predicted_position=pred_pos,

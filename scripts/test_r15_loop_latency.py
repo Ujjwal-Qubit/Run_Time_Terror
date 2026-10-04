@@ -150,4 +150,10 @@ def benchmark_loop_latency():
     return latency_data
 
 if __name__ == "__main__":
-    benchmark_loop_latency()
+    res = benchmark_loop_latency()
+    fps = res.get("sustained_fps", 0.0)
+    if fps < 20.0:
+        print(f"\n[FAIL] Sustained loop FPS ({fps:.1f}) is below minimum requirement (20.0 FPS)!")
+        sys.exit(1)
+    print(f"\n[SUCCESS] R15 loop latency benchmark passed ({fps:.1f} FPS >= 20.0 FPS).")
+    sys.exit(0)

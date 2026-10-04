@@ -38,14 +38,16 @@ class VisualizationStateManager:
         Pushes a VisualizationState into the queue.
         Discards the oldest state if the queue is full (drop-oldest backpressure).
         """
-        try:
-            self._queue.put_nowait(state)
-        except queue.Full:
+        while True:
             try:
-                self._queue.get_nowait()
                 self._queue.put_nowait(state)
-            except queue.Empty:
-                pass
+                break
+            except queue.Full:
+                try:
+                    self._queue.get_nowait()
+                except queue.Empty:
+                    # Queue drained concurrently; retry putting on next iteration
+                    pass
 
     def get_latest_state(self) -> Optional[VisualizationState]:
         """Drains the queue and returns the freshest VisualizationState."""

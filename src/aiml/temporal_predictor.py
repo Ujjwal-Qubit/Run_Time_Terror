@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from collections import deque
 import json
 import os
+import sys
 import time
 from typing import Deque, List, Optional, Tuple
 import numpy as np
@@ -180,8 +181,16 @@ class ResidualCorrectionPredictor(ITemporalPredictor):
         self._load_weights()
 
     def _load_weights(self) -> None:
-        model_path = os.path.join(self.model_dir, "model.json")
-        if os.path.exists(model_path):
+        candidate_paths = [
+            os.path.join(self.model_dir, "model.json"),
+        ]
+        if hasattr(sys, "_MEIPASS"):
+            candidate_paths.append(os.path.join(getattr(sys, "_MEIPASS"), self.model_dir, "model.json"))
+        if hasattr(sys, "executable") and not sys.executable.endswith("python.exe"):
+            candidate_paths.append(os.path.join(os.path.dirname(sys.executable), self.model_dir, "model.json"))
+
+        model_path = next((p for p in candidate_paths if os.path.exists(p)), None)
+        if model_path:
             try:
                 with open(model_path, "r") as f:
                     data = json.load(f)
@@ -242,7 +251,7 @@ class ResidualCorrectionPredictor(ITemporalPredictor):
 
             if self._weights_h is not None and self._weights_o is not None:
                 feat = np.array(
-                    [base_res.predicted_vx, base_res.predicted_vy, float(len(valid_obs))],
+                    [base_res.predicted_vx, base_res.predicted_vy, min(1.0, float(len(valid_obs)) / 20.0)],
                     dtype=np.float32,
                 )
                 feat = (feat - self._input_mean) / self._input_std

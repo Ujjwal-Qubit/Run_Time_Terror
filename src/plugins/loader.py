@@ -361,7 +361,7 @@ class PluginLoader:
         # Use a unique module name to avoid collision across plugins with identical file names
         sanitized_name = "".join(c if c.isalnum() or c == "_" else "_" for c in manifest.name)
         sanitized_mod = mod_name.replace(".", "_")
-        unique_mod_name = f"_lumitrack_plugin_{sanitized_name}_{sanitized_mod}"
+        unique_mod_name = f"_sanket_plugin_{sanitized_name}_{sanitized_mod}"
 
         try:
             spec = importlib.util.spec_from_file_location(unique_mod_name, file_path)

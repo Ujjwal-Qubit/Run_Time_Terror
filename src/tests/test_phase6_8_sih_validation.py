@@ -396,15 +396,15 @@ class TestEntryPoint:
             f"--validate exited with {result.returncode}:\nSTDOUT: {result.stdout[-500:]}\nSTDERR: {result.stderr[-500:]}"
         )
 
-    def test_run_lumitrack_bat_exists(self):
+    def test_run_sanket_bat_exists(self):
         """Standalone launcher script exists."""
-        bat = (PROJECT_ROOT / "run_sanket.bat") if (PROJECT_ROOT / "run_sanket.bat").exists() else (PROJECT_ROOT / "run_lumitrack.bat")
-        assert bat.exists(), "Standalone launcher script (run_sanket.bat / run_lumitrack.bat) not found"
+        bat = PROJECT_ROOT / "run_sanket.bat"
+        assert bat.exists(), "Standalone launcher script (run_sanket.bat) not found"
 
     def test_pyinstaller_spec_exists(self):
         """PyInstaller packaging specification exists."""
-        spec = (PROJECT_ROOT / "sanket.spec") if (PROJECT_ROOT / "sanket.spec").exists() else (PROJECT_ROOT / "lumitrack.spec")
-        assert spec.exists(), "Packaging specification (sanket.spec / lumitrack.spec) not found"
+        spec = PROJECT_ROOT / "sanket.spec"
+        assert spec.exists(), "Packaging specification (sanket.spec) not found"
 
     def test_requirements_resolvable(self):
         """Core dependencies (cv2, numpy, PySide6) are importable."""

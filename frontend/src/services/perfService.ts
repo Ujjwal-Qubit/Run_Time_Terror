@@ -1,5 +1,5 @@
 /**
- * LumiTrack — Browser-Side Performance Instrumentation Service
+ * SANKET — Browser-Side Performance Instrumentation Service
  * Measures actual requestAnimationFrame UI rendering rate, canvas draw latency,
  * and telemetry arrival intervals directly inside the Chromium V8 environment.
  */

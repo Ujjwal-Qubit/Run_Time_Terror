@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2.5 Multi-Workspace Browser FPS & Frame Pipeline Benchmark
+SANKET — Phase 2.5 Multi-Workspace Browser FPS & Frame Pipeline Benchmark
 Evaluates UI render performance across all 5 active screens:
   1. Developer Workspace
   2. Evaluator Workspace
@@ -31,13 +31,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from PySide6.QtWidgets import QApplication
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow
 
 
 def run_browser_fps_benchmark():
     print("=" * 80)
-    print("LUMITRACK — PHASE 2.5 BROWSER FPS & PIPELINE BENCHMARK")
+    print("SANKET — PHASE 2.5 BROWSER FPS & PIPELINE BENCHMARK")
     print("=" * 80)
 
     qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
@@ -46,7 +46,7 @@ def run_browser_fps_benchmark():
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    window = LumiTrackWebWindow(ctrl)
+    window = SanketWebWindow(ctrl)
     bridge = window.bridge
 
     # Start simulation to generate real telemetry & frames
@@ -77,19 +77,23 @@ def run_browser_fps_benchmark():
         elif screen_id == "diagnostics":
             bridge.getSubsystemDiagnostics()
 
-        # Collect 100 frame intervals
+        # Collect real frame intervals from bridge & event loop
         samples = []
         t0 = time.perf_counter()
-        while len(samples) < 100 and (time.perf_counter() - t0) < 3.0:
+        last_tick = time.perf_counter()
+        while len(samples) < 60 and (time.perf_counter() - t0) < 3.0:
+            ctrl.get_next_frame()
+            bridge._on_poll_tick()
             qapp.processEvents()
-            f_start = time.perf_counter()
-            time.sleep(0.016)
-            f_time = (time.perf_counter() - f_start) * 1000.0
-            samples.append(f_time)
+            now = time.perf_counter()
+            dt_ms = (now - last_tick) * 1000.0
+            last_tick = now
+            if dt_ms > 0.1:
+                samples.append(dt_ms)
+            time.sleep(0.005)
 
         # In 3D workspace, simulate orbit/zoom camera manipulation
         if screen_id == "3d":
-            # Simulate 3D orbit updates and live telemetry updates
             ctrl.get_next_frame()
             bridge._on_poll_tick()
             qapp.processEvents()

@@ -468,9 +468,10 @@ class ProportionalDeadbandPTZController(IPTZController):
         # in_deadband is True ONLY when BOTH axes are within deadband
         in_deadband = bool(abs(err_x) <= deadband and abs(err_y) <= deadband)
 
-        # Commands are independently deadbanded on each axis
-        err_x_db = 0.0 if abs(err_x) <= deadband else err_x
-        err_y_db = 0.0 if abs(err_y) <= deadband else err_y
+        # Continuous linear deadband transition: e_db = sign(e) * (|e| - deadband)
+        # Eliminates step torque impulses when crossing the deadband boundary (DEF-19)
+        err_x_db = 0.0 if abs(err_x) <= deadband else math.copysign(abs(err_x) - deadband, err_x)
+        err_y_db = 0.0 if abs(err_y) <= deadband else math.copysign(abs(err_y) - deadband, err_y)
 
         # -------------------------------------------------------------------
         # 5. Angular Error Conversion via ProjectionModel

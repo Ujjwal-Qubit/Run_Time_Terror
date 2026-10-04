@@ -1,5 +1,5 @@
 /**
- * LumiTrack — 3D Scene Graph Contracts (Developer Workspace Integrated Sub-Views)
+ * SANKET — 3D Scene Graph Contracts (Developer Workspace Integrated Sub-Views)
  */
 
 export type ThreeDSceneMode = 'LIVE' | 'VALIDATION'

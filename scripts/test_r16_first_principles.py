@@ -164,5 +164,14 @@ def run_r16_acquisition_test():
               f"Metric A Pass (<=2.0s): {pass_a}/{len(cat_items)} (Mean: {mean_a:.2f}s) | "
               f"Metric B Pass (<=2.0s): {pass_b}/{len(cat_items)} (Mean: {mean_b:.2f}s)")
 
+    return results
+
 if __name__ == "__main__":
-    run_r16_acquisition_test()
+    results = run_r16_acquisition_test()
+    in_fov_items = [r for r in results if r["category"] == "IN_FOV"]
+    in_fov_passed = sum(1 for r in in_fov_items if r["metric_b_pass"])
+    if in_fov_passed < len(in_fov_items):
+        print(f"\n[FAIL] In-FOV acquisition failed ({in_fov_passed}/{len(in_fov_items)} passed Metric B <= 2.0s)!")
+        sys.exit(1)
+    print(f"\n[SUCCESS] R16 first principles acquisition benchmark passed ({in_fov_passed}/{len(in_fov_items)} In-FOV passed).")
+    sys.exit(0)

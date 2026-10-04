@@ -77,3 +77,29 @@ class TestEvaluatorFix:
         panel.load_results(matrix_res, metadata_path=None)
         assert panel.summary_table.rowCount() > 0
 
+    def test_bridge_save_text_file_and_cancel(self, tmp_path):
+        """Verify saveTextFile and stopBenchmarkMatrix on SanketBridge."""
+        try:
+            from PySide6.QtWidgets import QApplication
+            from src.app.gui.web_bridge import SanketBridge
+        except ImportError:
+            pytest.skip("PySide6 not available in this test environment")
+
+        app = QApplication.instance() or QApplication([])
+        mock_app = MagicMock()
+        bridge = SanketBridge(mock_app)
+
+        saved_signals = []
+        bridge.fileSaved.connect(lambda p: saved_signals.append(p))
+
+        bridge.saveTextFile("test_export.csv", "col1,col2\nval1,val2")
+        assert len(saved_signals) == 1
+        assert "test_export.csv" in saved_signals[0]
+
+        progress_signals = []
+        bridge.benchmarkProgress.connect(lambda p: progress_signals.append(p))
+        bridge.stopBenchmarkMatrix()
+        assert bridge._cancel_benchmark is True
+        assert len(progress_signals) == 1
+        assert "stopped by operator" in progress_signals[0].lower()
+

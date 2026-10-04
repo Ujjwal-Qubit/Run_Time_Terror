@@ -1,45 +1,56 @@
 # Deliverable 06: Demonstration Video (Optional)
 
-**Problem Statement:** SIH 2026 Problem Statement 26169  
-**Deliverable:** 06_Optional_Demo_Video  
-**Status:** NOT AVAILABLE IN BUILD ENVIRONMENT (READY FOR LIVE PRESENTATION / EXTERNAL CAPTURE)  
+**Problem Statement:** SIH 2026 Problem Statement 26169 (Department of Space / ISRO)  
+**System Name:** SANKET — AI-Assisted Free-Space Optical Communication (FSOC) Tracking System  
+**Deliverable Number:** Deliverable 06 — Demonstration Video (Optional)  
+**Video File:** `SANKET_Launch_Demo.mp4`  
+**Status:** COMPLETE & PACKAGED IN SUBMISSION DIRECTORY  
 
 ---
 
-## Status & Clarification
+## 1. Video Specifications & Metadata
 
-Under SIH Problem Statement 26169, Deliverable 6 (3–5 minute demonstration video) is designated as **OPTIONAL** ("A 3–5 minutes video may also be provided as an optional deliverable for demonstration of the application").
-
-In the automated build, test, and packaging environment, physical microphone audio capture and GPU desktop video recording software (e.g. OBS Studio, Windows Game Bar) are not present. To adhere strictly to the **NO FABRICATION RULE** and deliverable truthfulness:
-- No synthetic or mock video file has been fabricated.
-- The live executable application is provided in **Deliverable 01 (`deliverables/01_Software_Application/`)** and verified ready for live evaluation.
+| Property | Value |
+| :--- | :--- |
+| **File Name** | `SANKET_Launch_Demo.mp4` |
+| **File Location** | `deliverables/06_Optional_Demo_Video/SANKET_Launch_Demo.mp4` |
+| **Secondary Location** | `docs/assets/SANKET_Launch_Demo.mp4` |
+| **Video Resolution** | **1920 × 1080 (Full HD 1080p)** |
+| **Frame Rate** | **30.0 FPS** |
+| **Frame Count** | 660 Frames |
+| **Duration** | **22.0 Seconds** |
+| **Video Codec** | H.264 (AVC) Baseline Profile |
+| **File Size** | **4,602,005 Bytes (4.60 MB)** |
+| **Visual Preview** | `docs/assets/demo_preview.gif` (10.2 MB animated GIF) |
+| **Poster Frame** | `docs/assets/demo_poster.png` (694.8 KB PNG) |
 
 ---
 
-## Recommended Live Demonstration Flow (3–5 Minutes)
+## 2. Video Content & Workflow Sequence
 
-For evaluators conducting live functional verification:
+The demonstration video highlights the core operational capabilities of SANKET:
 
-1. **Launch SANKET (0:00 - 0:30):**
-   - Run `SANKET.exe`. The 5-workspace workstation opens immediately with official branding.
-   - Point out the air-gap compliance indicator and offline status in the footer.
+1. **System Introduction & Launch:** Official SANKET branding, air-gapped SIL architecture verification, and workspace initialization.
+2. **Developer Workspace — 2D Sensor Tracking:** Live 640×480 monochrome FPA detector feed, sub-pixel centroiding reticle, optical boresight crosshair alignment, and real-time bounding box tracking.
+3. **Developer Workspace — 3D Pedestal Frustum:** Interactive Three.js 3D gimbal model showing real-time pan/tilt mechanical articulation and optical beam cone projection.
+4. **Developer Workspace — 2000×2000 World Canvas:** Wide-area spatial monitoring illustrating beacon orbital transit and moving camera sensor footprint with ground-truth firewall verification.
+5. **Evaluator Console & Benchmark Execution:** Overview of Benchmark-1 (19-Scenario Matrix) and Benchmark-2 (External Video Evaluator in PTZ Bypass Mode).
 
-2. **Developer Workspace — 2D Sensor View (0:30 - 1:30):**
-   - Click **RUN** to initiate circular beacon tracking.
-   - Observe real-time sub-pixel centroiding (green crosshair), bounding box, and boresight vector.
-   - Adjust disturbance sliders in real time: inject **Gaussian Noise ($\sigma = 15$)**, **Salt & Pepper (8%)**, and **Atmospheric Fog**.
-   - Observe tracking continuity and closed-loop PTZ centering.
+---
 
-3. **Developer Workspace — 3D Pedestal Frustum (1:30 - 2:30):**
-   - Switch to the **3D Pedestal Frustum** sub-view.
-   - Observe real-time 3D camera gimbal articulation (pan/tilt) and optical beam cone intersecting the target plane.
+## 3. Alternative Verification Options for Evaluators
 
-4. **Developer Workspace — 2000×2000 World Canvas (2:30 - 3:15):**
-   - Switch to the **World Canvas** sub-view.
-   - Observe the 2000×2000 global terrain coordinate system, target orbit, and moving 640×480 camera FOV footprint.
-   - Note the **LIVE OPERATIONAL: WORLD GT STRIPPED** indicator verifying the architectural firewall.
+In addition to viewing the bundled MP4 video file, evaluators can experience the live interactive software directly:
 
-5. **Evaluator & Diagnostics Workspaces (3:15 - 4:00):**
-   - Navigate to **Evaluator Workspace** to show Benchmark-1 and Benchmark-2 execution consoles.
-   - Navigate to **Diagnostics & Subsystem Audit** to verify 492 passing unit tests and system health telemetry.
-   - Navigate to **Results & Analysis** to inspect automatically generated performance logs, latency percentiles, and SIH compliance scorecards.
+- **Launch Interactive GUI:**
+  ```powershell
+  .\SANKET.exe
+  ```
+- **Run Automated Headless Simulation:**
+  ```powershell
+  .\SANKET.exe --headless --scenario scenario_2_circular --duration 30
+  ```
+- **Execute Automated Benchmark Matrix:**
+  ```powershell
+  .\SANKET.exe --matrix SMOKE
+  ```

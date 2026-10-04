@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 1 Performance & Architectural Verification Script
+SANKET — Phase 1 Performance & Architectural Verification Script
 
 Measures and records:
   - Startup times (Baseline vs Frontend POC)
@@ -86,7 +86,7 @@ def measure_directory_size_mb(path: str) -> float:
 
 def run_benchmark():
     print("=" * 70)
-    print("LumiTrack — Phase 1 Performance & Architecture Audit Benchmark")
+    print("SANKET — Phase 1 Performance & Architecture Audit Benchmark")
     print("=" * 70)
 
     # --------------------------------------------------------------------------
@@ -131,15 +131,15 @@ def run_benchmark():
     # --------------------------------------------------------------------------
     print("\n[2/5] Measuring Frontend POC & IPC Pipeline (100 frames)...")
     from PySide6.QtWidgets import QApplication
-    from src.app.gui.web_bridge import LumiTrackBridge
-    from src.app.gui.web_window import resolve_frontend_dist, LumiTrackWebWindow
+    from src.app.gui.web_bridge import SanketBridge
+    from src.app.gui.web_window import resolve_frontend_dist, SanketWebWindow
 
     qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
 
     t_frontend_init_start = time.perf_counter()
     app_poc = AppController()
     app_poc.initialize()
-    web_win = LumiTrackWebWindow(app_poc)
+    web_win = SanketWebWindow(app_poc)
     bridge = web_win.bridge
     bridge._timer.stop()  # Manual control for accurate frame-by-frame measurement
     startup_poc_s = time.perf_counter() - t_frontend_init_start
@@ -270,7 +270,7 @@ def run_benchmark():
 
     app_bg_poc = AppController()
     app_bg_poc.initialize()
-    bridge_bg = LumiTrackBridge(app_bg_poc)
+    bridge_bg = SanketBridge(app_bg_poc)
     app_bg_poc.start_background_loop()
     time.sleep(1.0)
     f0_poc = app_bg_poc._frame_count

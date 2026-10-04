@@ -102,11 +102,14 @@ def run_firewall_verification():
         dt = 1.0 / 30.0
 
         for f in range(60):
+            pkt = app.get_next_frame()
+            if pkt is None:
+                break
+
             # If poison is True, we actively corrupt the ground truth provider's history & current truth
+            # AFTER frame generation so it is not overwritten, ensuring genuine adversarial poisoning (DEF-42)
             if poison and f >= 5:
-                # Corrupt ground truth state maliciously
                 if hasattr(app, "ground_truth_provider") and app.ground_truth_provider is not None:
-                    # Overwrite internal state with impossible adversarial values
                     app.ground_truth_provider._history[f] = GroundTruth(
                         frame_number=f,
                         timestamp=f * dt,
@@ -120,10 +123,6 @@ def run_firewall_verification():
                         camera_pan_deg=0.0,
                         camera_tilt_deg=0.0,
                     )
-
-            pkt = app.get_next_frame()
-            if pkt is None:
-                break
 
             pub, lat, trk, st, cent, det = app.step_algorithm(pkt)
             cmd = app.ptz_controller.compute(
@@ -206,4 +205,7 @@ def run_firewall_verification():
     return firewall_results
 
 if __name__ == "__main__":
-    run_firewall_verification()
+    res = run_firewall_verification()
+    if not (res.get("static_import_audit_passed") and res.get("bitwise_identical")):
+        sys.exit(1)
+    sys.exit(0)

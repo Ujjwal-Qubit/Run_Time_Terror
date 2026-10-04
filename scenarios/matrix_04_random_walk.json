@@ -1,0 +1,74 @@
+{
+  "scene": {
+    "width": 2000,
+    "height": 2000,
+    "background_intensity": 30
+  },
+  "camera": {
+    "width": 640,
+    "height": 480,
+    "fov_h_deg": 4.0,
+    "fov_v_deg": 3.0,
+    "update_rate_hz": 30,
+    "initial_x": null,
+    "initial_y": null
+  },
+  "target": {
+    "count": 1,
+    "size": 10,
+    "shape": "square",
+    "intensity": 220,
+    "initial_position": "center",
+    "initial_x": 1000.0,
+    "initial_y": 1000.0,
+    "speed": 45.0
+  },
+  "motion": {
+    "motion_type": "RANDOM",
+    "circle_radius": 200.0,
+    "figure8_radius_x": 250.0,
+    "figure8_radius_y": 150.0,
+    "random_max_displacement": 12.0,
+    "straight_line_angle_deg": 45.0
+  },
+  "ptz": {
+    "max_pan_speed_deg_s": 5.0,
+    "max_tilt_speed_deg_s": 5.0,
+    "update_rate_hz": 20,
+    "proportional_gain": 8.0,
+    "integral_gain": 2.0,
+    "deadband_px": 1.0
+  },
+  "noise": {
+    "sp_enabled": false,
+    "sp_density": 0.0,
+    "gaussian_enabled": false,
+    "gaussian_sigma": 0.0,
+    "poisson_enabled": false
+  },
+  "atmospheric": {
+    "condition": "CLEAR",
+    "contrast_factor": null,
+    "brightness_offset": null
+  },
+  "jitter": {
+    "enabled": false,
+    "max_px_per_frame": 0.0
+  },
+  "platform_motion": {
+    "enabled": false,
+    "motion_type": "LINEAR",
+    "max_px_per_frame": 0.0
+  },
+  "simulation": {
+    "duration_s": 30.0,
+    "random_seed": 42,
+    "mode": "SIMULATION",
+    "mp4_path": null
+  },
+  "logging": {
+    "csv_enabled": false,
+    "json_summary_enabled": false,
+    "output_dir": "output"
+  }
+}

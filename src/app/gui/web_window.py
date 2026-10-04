@@ -1,5 +1,5 @@
 """
-LumiTrack — QWebEngine Host Window (Phase 1 POC)
+SANKET — QWebEngine Host Window (Phase 1 POC)
 
 Embeds the production React/TypeScript/Vite static bundle inside a native PySide6
 desktop window via QWebEngineView and connects it to the Python core engine via QtWebChannel.
@@ -21,7 +21,7 @@ from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
 
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
+from src.app.gui.web_bridge import SanketBridge
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ def resolve_frontend_dist() -> str:
     if hasattr(sys, "executable"):
         exe_dir = os.path.dirname(os.path.abspath(sys.executable))
         candidates.append(os.path.join(exe_dir, "frontend", "dist", "index.html"))
+        candidates.append(os.path.join(exe_dir, "frontend", "index.html"))
         candidates.append(os.path.join(exe_dir, "_internal", "frontend", "dist", "index.html"))
 
     # 3. Development workspace paths
@@ -53,13 +54,13 @@ def resolve_frontend_dist() -> str:
 
     for path in candidates:
         if os.path.isfile(path):
-            logger.info(f"[LumiTrackWebWindow] Found frontend bundle at: {path}")
+            logger.info(f"[SanketWebWindow] Found frontend bundle at: {path}")
             return os.path.abspath(path)
 
     return ""
 
 
-class LumiTrackWebWindow(QMainWindow):
+class SanketWebWindow(QMainWindow):
     """Native desktop host window containing embedded QWebEngineView and QtWebChannel."""
 
     def __init__(self, app_controller: AppController, parent: Optional[QWidget] = None) -> None:
@@ -104,15 +105,21 @@ class LumiTrackWebWindow(QMainWindow):
 
         # 2. Setup QtWebChannel Bridge
         self.channel = QWebChannel(self.web_view.page())
-        self.bridge = LumiTrackBridge(self.app, self)
+        self.bridge = SanketBridge(self.app, self)
         self.channel.registerObject("pyBridge", self.bridge)
         self.web_view.page().setWebChannel(self.channel)
+
+        # Wire up native file download handling for standalone desktop WebEngine
+        try:
+            self.web_view.page().profile().downloadRequested.connect(self._on_download_requested)
+        except Exception as e:
+            logger.warning(f"[SanketWebWindow] Failed to connect downloadRequested: {e}")
 
         # 3. Locate & Load Frontend
         dist_path = resolve_frontend_dist()
         if not dist_path:
             error_msg = (
-                "LumiTrack production frontend bundle was not found!\n\n"
+                "SANKET production frontend bundle was not found!\n\n"
                 "Expected location: frontend/dist/index.html\n"
                 "Please run 'npm run build' inside the frontend directory, "
                 "or launch with --legacy-gui for the native PySide6 UI."
@@ -122,12 +129,28 @@ class LumiTrackWebWindow(QMainWindow):
             return
 
         file_url = QUrl.fromLocalFile(dist_path)
-        logger.info(f"[LumiTrackWebWindow] Loading URL: {file_url.toString()}")
+        logger.info(f"[SanketWebWindow] Loading URL: {file_url.toString()}")
         self.web_view.load(file_url)
+
+    def _on_download_requested(self, download_item) -> None:
+        """Handle browser file downloads (CSV, MD, JSON) inside desktop QWebEngineView."""
+        try:
+            suggested_filename = download_item.suggestedFileName() or "sanket_artifact"
+            downloads_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+            if not os.path.isdir(downloads_dir):
+                downloads_dir = os.path.abspath("output")
+                os.makedirs(downloads_dir, exist_ok=True)
+            target_path = os.path.join(downloads_dir, suggested_filename)
+            download_item.setDownloadDirectory(downloads_dir)
+            download_item.setDownloadFileName(suggested_filename)
+            download_item.accept()
+            logger.info(f"[SanketWebWindow] Desktop download accepted and saved to: {target_path}")
+        except Exception as e:
+            logger.error(f"[SanketWebWindow] Error handling downloadRequested: {e}")
 
     def closeEvent(self, event) -> None:
         """Ensure clean shutdown of simulation and WebEngine on window close."""
-        logger.info("[LumiTrackWebWindow] Closing window; stopping simulation...")
+        logger.info("[SanketWebWindow] Closing window; stopping simulation...")
         if hasattr(self, "bridge") and self.bridge:
             self.bridge._timer.stop()
         self.app.stop()
@@ -149,6 +172,7 @@ def launch_web_gui(app: AppController) -> None:
             qt_app.setWindowIcon(QIcon(icon_path))
             break
 
-    window = LumiTrackWebWindow(app)
+    window = SanketWebWindow(app)
     window.show()
     sys.exit(qt_app.exec())
+

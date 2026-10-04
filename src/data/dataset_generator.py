@@ -105,7 +105,7 @@ class SyntheticDatasetGenerator:
 
                     # Enable sensor noise
                     cfg.noise.gaussian_enabled = True
-                    cfg.noise.gaussian_std = float(rng.uniform(4.0, 10.0))
+                    cfg.noise.gaussian_sigma = float(rng.uniform(4.0, 10.0))
                     cfg.noise.poisson_enabled = True
 
                     sm = SceneManager(cfg.scene)

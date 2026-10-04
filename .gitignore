@@ -1,13 +1,17 @@
-# Python
+# =============================================================================
+# Python & Bytecode
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.pyd
 .Python
-env/
+
+# Distribution / Packaging / Builds
 build/
-develop-eggs/
 dist/
+develop-eggs/
 downloads/
 eggs/
 .eggs/
@@ -16,49 +20,139 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+*.manifest
+
+# PyInstaller / Inno Setup Packaging
+installer/Output/
+Output/
+
+# Large generated binary deliverables (exceeds GitHub 100MB limit)
+deliverables/01_Software_Application/SANKET/
+deliverables/01_Software_Application/installer/*.exe
+deliverables/01_Software_Application/installer/*.msi
+deliverables/01_Software_Application/portable/*.zip
+deliverables/01_Software_Application/portable/*.7z
+deliverables/01_Software_Application/portable/*.tar.gz
+
+# =============================================================================
+# Testing, Coverage & Linters
+# =============================================================================
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
+*.cover
 htmlcov/
 .tox/
 .nox/
 .hypothesis/
 .cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+pip-log.txt
+pip-delete-this-directory.txt
 
+# =============================================================================
 # Virtual Environments
+# =============================================================================
 venv/
 .venv/
 env/
 ENV/
+env.bak/
+venv.bak/
 
-# IDE / OS
+# =============================================================================
+# Node, Web & Frontend
+# =============================================================================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+.npm/
+.pnpm-store/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =============================================================================
+# IDEs, Editors & OS Files
+# =============================================================================
+# VS Code
 .vscode/
+*.code-workspace
+
+# JetBrains
 .idea/
+*.iws
+*.iml
+out/
+
+# Visual Studio / Windows Dev
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Editors
 *.swp
 *.swo
+*~
+*.bak
+*.tmp
+*.temp
+
+# Operating System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+ehthumbs_vista.db
 Thumbs.db
+[Dd]esktop.ini
 
-# Project Specific
-output/
-scratch/
-graphify-out/
-verification_results_raw.json
+# =============================================================================
+# AI Agents, Tools & Scratch Workspaces
+# =============================================================================
+.agent/
+.agents/
 .agentic-awesome-skills/
+.aas-catalog/
+.stitch_reference/
+.gemini/
+.claude/
+.cursor/
+.copilot/
+brag-output/
+graphify-out/
+scratch/
+verification_results_raw.json
+AGENTS.md
 
-# Large generated binary deliverables (exceeds GitHub 100MB limit)
-deliverables/01_Software_Application/SANKET/
-deliverables/01_Software_Application/installer/*.exe
-deliverables/01_Software_Application/portable/*.zip
+# =============================================================================
+# Project Runtime & Benchmark Simulation Logs
+# =============================================================================
+output/
 
-# Node
-node_modules/
-.npm/
-
-# Local configurations / Secrets
+# =============================================================================
+# Local Environment Variables & Secrets
+# =============================================================================
 .env
 *.env
-
-AGENTS.md
+.env.local
+.env.*.local
+*.local
+!.env.example

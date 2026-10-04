@@ -1,5 +1,5 @@
 /**
- * LumiTrack — Browser-Side Performance Instrumentation Contracts
+ * SANKET — Browser-Side Performance Instrumentation Contracts
  */
 
 export interface BrowserPerformanceMetrics {

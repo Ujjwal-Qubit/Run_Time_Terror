@@ -71,7 +71,7 @@
     "tn": 757.0,
     "fn": 6.0,
     "threshold": 0.85,
-    "latency_per_candidate_ms": 0.00649
+    "latency_per_candidate_ms": 0.00395
   },
   "test_metrics": {
     "accuracy": 0.9895,
@@ -85,9 +85,9 @@
     "tn": 781.0,
     "fn": 15.0,
     "threshold": 0.85,
-    "latency_per_candidate_ms": 0.00649
+    "latency_per_candidate_ms": 0.00395
   },
-  "created_at": "2026-09-28T13:05:01Z",
+  "created_at": "2026-10-03T09:02:40Z",
   "layers": [
     {
       "weights": [

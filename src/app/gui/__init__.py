@@ -23,7 +23,7 @@ def launch_gui(app: AppController) -> None:
 def launch_web_gui(app: AppController) -> None:
     """Entry point for the modern React / WebEngine UI with automatic fallback."""
     try:
-        from src.app.gui.web_window import LumiTrackWebWindow, resolve_frontend_dist
+        from src.app.gui.web_window import SanketWebWindow, resolve_frontend_dist
         dist = resolve_frontend_dist()
         if not dist:
             logger.warning("[GUI] Modern frontend dist not found. Falling back to native PySide6 GUI.")
@@ -33,8 +33,8 @@ def launch_web_gui(app: AppController) -> None:
         qt_app = QApplication.instance()
         if not qt_app:
             qt_app = QApplication(sys.argv)
-        qt_app.setApplicationName("LumiTrack - FSOC Virtual Camera Tracker")
-        window = LumiTrackWebWindow(app)
+        qt_app.setApplicationName("SANKET — Virtual Camera Tracking System")
+        window = SanketWebWindow(app)
         window.show()
         sys.exit(qt_app.exec())
     except Exception as e:

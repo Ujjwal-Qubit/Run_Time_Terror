@@ -20,13 +20,14 @@ added_files = [
     ('models', 'models'),
     ('frontend/dist', 'frontend/dist'),
     ('App_Logo_Assets_Final', 'App_Logo_Assets_Final'),
+    ('Videos', 'Videos'),
 ]
 
 # Explicitly bundle Microsoft Visual C++ runtime DLLs into _internal root to guarantee clean-machine immunity
 windir = os.environ.get('WINDIR', 'C:\\Windows')
 sys32 = os.path.join(windir, 'System32')
 extra_binaries = []
-for dll_name in ['msvcp140.dll', 'msvcp140_1.dll', 'msvcp140_2.dll']:
+for dll_name in ['msvcp140.dll', 'msvcp140_1.dll', 'msvcp140_2.dll', 'vcruntime140.dll', 'vcruntime140_1.dll']:
     p = os.path.join(sys32, dll_name)
     if os.path.exists(p):
         extra_binaries.append((p, '.'))
@@ -71,7 +72,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,  # Set to True: ensures console/CLI visibility and avoids WDAC runw.exe blocking
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

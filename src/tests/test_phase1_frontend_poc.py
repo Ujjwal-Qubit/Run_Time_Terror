@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 1 Frontend POC Test Suite
+SANKET — Phase 1 Frontend POC Test Suite
 
 Verifies:
   1. Frontend static bundle exists and has zero CDN/external network dependencies.
@@ -29,8 +29,8 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QCoreApplication
 
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow, resolve_frontend_dist
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow, resolve_frontend_dist
 from src.app.gui.main_window import MainWindow
 from src.frame.data_contracts import VisualizationState, ROI, TrackingState
 from src.main import parse_args
@@ -74,8 +74,8 @@ class TestPhase1FrontendPOC:
         assert "Content-Security-Policy" in content, "Missing Content-Security-Policy meta tag in index.html"
 
     def test_bridge_initialization(self, qapp, app_controller):
-        """2. Verify LumiTrackBridge initializes with correct signals and timer."""
-        bridge = LumiTrackBridge(app_controller)
+        """2. Verify SanketBridge initializes with correct signals and timer."""
+        bridge = SanketBridge(app_controller)
         assert bridge is not None
         assert bridge._timer.isActive()
         assert bridge._timer.interval() == 40  # 25 Hz
@@ -83,7 +83,7 @@ class TestPhase1FrontendPOC:
 
     def test_telemetry_serialization_and_firewall(self, qapp, app_controller):
         """3 & 4. Verify telemetry serialization and STRICT Ground-Truth Firewall enforcement."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_telemetry = []
@@ -134,7 +134,7 @@ class TestPhase1FrontendPOC:
 
     def test_system_status_serialization(self, qapp, app_controller):
         """5. Verify SystemStatus serialization contract."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_status = []
@@ -153,7 +153,7 @@ class TestPhase1FrontendPOC:
 
     def test_sensor_frame_serialization(self, qapp, app_controller):
         """6. Verify sensor frame JPEG encoding and Base64 payload reconstruction."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_frames = []
@@ -200,7 +200,7 @@ class TestPhase1FrontendPOC:
 
     def test_command_dispatch_lifecycle(self, qapp, app_controller):
         """7. Verify RUN, PAUSE, RESUME, STEP, STOP, RESET lifecycle via bridge slots."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         # Step once (processes frame 0)
@@ -235,7 +235,7 @@ class TestPhase1FrontendPOC:
 
     def test_algorithm_and_scenario_selection(self, qapp, app_controller):
         """8. Verify selectAlgorithm and selectScenario bridge slots."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         # Select algorithm
@@ -274,7 +274,7 @@ class TestPhase1FrontendPOC:
     def test_web_window_and_legacy_window_instantiation(self, qapp, app_controller):
         """10. Verify both modern WebWindow and legacy MainWindow instantiate cleanly."""
         # 1. Test Modern WebWindow
-        web_win = LumiTrackWebWindow(app_controller)
+        web_win = SanketWebWindow(app_controller)
         assert web_win is not None
         assert web_win.web_view is not None
         assert web_win.bridge is not None
@@ -289,7 +289,7 @@ class TestPhase1FrontendPOC:
 
     def test_pyinstaller_spec_packaging_compatibility(self):
         """11. Verify spec includes frontend bundle and WebEngine hidden imports."""
-        spec_path = "sanket.spec" if os.path.isfile("sanket.spec") else "lumitrack.spec"
+        spec_path = "sanket.spec"
         assert os.path.isfile(spec_path), f"PyInstaller spec file {spec_path} missing!"
 
         with open(spec_path, "r", encoding="utf-8") as f:

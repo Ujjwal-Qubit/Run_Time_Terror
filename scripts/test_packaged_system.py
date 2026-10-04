@@ -1,6 +1,6 @@
 """
-LumiTrack — Comprehensive Packaged Application Verification Suite
-Tests the PyInstaller ONEDIR package in dist/LumiTrack/ and embedded WebEngine runtime.
+SANKET — Comprehensive Packaged Application Verification Suite
+Tests the PyInstaller ONEDIR package in dist/SANKET/ and embedded WebEngine runtime.
 SIH 2026 Problem Statement PS-26169 Deliverable Verification.
 """
 
@@ -15,8 +15,10 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DIST_DIR = PROJECT_ROOT / "dist" / "LumiTrack"
-EXE_PATH = DIST_DIR / "LumiTrack.exe"
+_sanket_dir = PROJECT_ROOT / "dist" / "SANKET"
+_lumi_dir = PROJECT_ROOT / "dist" / "SANKET"
+DIST_DIR = _sanket_dir if _sanket_dir.exists() else _lumi_dir
+EXE_PATH = DIST_DIR / ("SANKET.exe" if (DIST_DIR / "SANKET.exe").exists() else "SANKET.exe")
 INTERNAL_DIR = DIST_DIR / "_internal"
 FRONTEND_DIST = INTERNAL_DIR / "frontend" / "dist"
 
@@ -30,8 +32,8 @@ def verify_file_tree() -> Dict[str, Any]:
     # Check executable
     checks["exe_exists"] = EXE_PATH.is_file()
     checks["exe_size_bytes"] = EXE_PATH.stat().st_size if checks["exe_exists"] else 0
-    print(f"  - LumiTrack.exe: {'EXISTS' if checks['exe_exists'] else 'MISSING'} ({checks['exe_size_bytes']:,} bytes)")
-    assert checks["exe_exists"], "LumiTrack.exe missing from dist/LumiTrack"
+    print(f"  - {EXE_PATH.name}: {'EXISTS' if checks['exe_exists'] else 'MISSING'} ({checks['exe_size_bytes']:,} bytes)")
+    assert checks["exe_exists"], f"{EXE_PATH.name} missing from {DIST_DIR}"
 
     # Check internal frontend dist
     index_html = FRONTEND_DIST / "index.html"
@@ -101,7 +103,7 @@ def test_cli_foundation_and_benchmark() -> Dict[str, Any]:
     results["validate_time_s"] = round(time.perf_counter() - t0, 3)
     results["validate_exit_code"] = p1.returncode
     results["validate_passed"] = (p1.returncode == 0 and "FOUNDATION VALIDATION: ALL PASSED" in p1.stdout)
-    print(f"  - LumiTrack.exe --validate: Exit code {p1.returncode} in {results['validate_time_s']}s (Passed: {results['validate_passed']})")
+    print(f"  - SANKET.exe --validate: Exit code {p1.returncode} in {results['validate_time_s']}s (Passed: {results['validate_passed']})")
     assert results["validate_passed"], f"Packaged --validate failed: {p1.stdout}\n{p1.stderr}"
 
     # Test 2: --matrix SMOKE
@@ -116,7 +118,7 @@ def test_cli_foundation_and_benchmark() -> Dict[str, Any]:
     results["smoke_time_s"] = round(time.perf_counter() - t0, 3)
     results["smoke_exit_code"] = p2.returncode
     results["smoke_passed"] = (p2.returncode == 0 and "SIH PS 26169 Threshold Verdict: PASS" in p2.stdout)
-    print(f"  - LumiTrack.exe --matrix SMOKE: Exit code {p2.returncode} in {results['smoke_time_s']}s (Passed: {results['smoke_passed']})")
+    print(f"  - SANKET.exe --matrix SMOKE: Exit code {p2.returncode} in {results['smoke_time_s']}s (Passed: {results['smoke_passed']})")
     assert results["smoke_passed"], f"Packaged --matrix SMOKE failed: {p2.stdout}\n{p2.stderr}"
 
     # Test 3: --benchmark-cold-start
@@ -135,7 +137,7 @@ def test_cli_foundation_and_benchmark() -> Dict[str, Any]:
             cold_start_json = json.loads(line.replace("PACKAGED_COLD_START_JSON:", ""))
             break
     results["cold_start_metrics"] = cold_start_json
-    print(f"  - LumiTrack.exe --benchmark-cold-start: Exit code {p3.returncode}")
+    print(f"  - SANKET.exe --benchmark-cold-start: Exit code {p3.returncode}")
     if cold_start_json:
         print(f"    T1 Python Init: {cold_start_json.get('T1_python_init_ms')} ms")
         print(f"    T2 PySide6 Host Ready: {cold_start_json.get('T2_pyside6_host_ready_ms')} ms")
@@ -158,7 +160,7 @@ def test_packaged_web_gui_runtime() -> Dict[str, Any]:
     from PySide6.QtWidgets import QApplication
     from PySide6.QtCore import QEventLoop, QTimer, Qt
     from src.app.app_controller import AppController
-    from src.app.gui.web_window import LumiTrackWebWindow
+    from src.app.gui.web_window import SanketWebWindow
 
     results = {}
 
@@ -167,7 +169,7 @@ def test_packaged_web_gui_runtime() -> Dict[str, Any]:
         QTimer.singleShot(ms, loop.quit)
         loop.exec()
 
-    def eval_sync(win: LumiTrackWebWindow, js: str) -> Any:
+    def eval_sync(win: SanketWebWindow, js: str) -> Any:
         res = []
         loop = QEventLoop()
         def cb(v):
@@ -183,7 +185,7 @@ def test_packaged_web_gui_runtime() -> Dict[str, Any]:
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    win = LumiTrackWebWindow(ctrl)
+    win = SanketWebWindow(ctrl)
     win.setWindowFlags(Qt.WindowType.FramelessWindowHint)
     win.resize(1920, 1080)
     win.show()
@@ -329,7 +331,7 @@ def test_packaged_web_gui_runtime() -> Dict[str, Any]:
 
 
 def main():
-    print(f"Starting LumiTrack Packaged System Verification...")
+    print(f"Starting SANKET Packaged System Verification...")
     print(f"Project Root: {PROJECT_ROOT}")
     print(f"Executable:   {EXE_PATH}")
 

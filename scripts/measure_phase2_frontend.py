@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2 Comprehensive Performance, Concurrency & Instrumentation Script
+SANKET — Phase 2 Comprehensive Performance, Concurrency & Instrumentation Script
 
 Measures and records:
   1. Concurrency isolation: Backend simulation loop rate (FPS) with modern Phase 2 bridge vs baseline.
@@ -33,8 +33,8 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QTimer, QUrl
 
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow, resolve_frontend_dist
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow, resolve_frontend_dist
 
 
 class PROCESS_MEMORY_COUNTERS(ctypes.Structure):
@@ -86,7 +86,7 @@ def measure_directory_size_mb(path: str) -> float:
 
 def run_phase2_measurements():
     print("=" * 80)
-    print("LUMITRACK — PHASE 2 SCREEN EXPANSION & INSTRUMENTATION BENCHMARK")
+    print("SANKET — PHASE 2 SCREEN EXPANSION & INSTRUMENTATION BENCHMARK")
     print("=" * 80)
 
     results: Dict[str, Any] = {
@@ -132,14 +132,14 @@ def run_phase2_measurements():
     fps_no_fe = frames_no_fe / 2.0
     print(f"    Backend Loop Rate (No Frontend): {fps_no_fe:.2f} FPS")
 
-    # Start background loop WITH active LumiTrackBridge polling at 25 Hz
+    # Start background loop WITH active SanketBridge polling at 25 Hz
     qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
     ctrl_fe = AppController()
     if ctrl_fe.config_manager and ctrl_fe.config_manager.config:
         ctrl_fe.config_manager.config.simulation.duration_s = None
     ctrl_fe.initialize()
 
-    bridge = LumiTrackBridge(ctrl_fe)
+    bridge = SanketBridge(ctrl_fe)
     ctrl_fe.start_background_loop()
 
     # Run for 3.0 seconds, actively invoking all Phase 2 slots
@@ -245,7 +245,7 @@ def run_phase2_measurements():
     dist_path = resolve_frontend_dist()
     assert os.path.isfile(dist_path), f"Bundle not found at {dist_path}"
 
-    web_window = LumiTrackWebWindow(ctrl_fe)
+    web_window = SanketWebWindow(ctrl_fe)
     # Start bridge timer
     web_window.bridge.reportBrowserMetrics(60.0, 58.2, 16.5, 0.45, 25.0)
 
@@ -288,7 +288,7 @@ def run_phase2_measurements():
     }
 
     # 6. Standalone Executable Verification
-    exe_path = PROJECT_ROOT / "dist" / "LumiTrack" / "LumiTrack.exe"
+    exe_path = PROJECT_ROOT / "dist" / "SANKET" / "SANKET.exe"
     if exe_path.exists():
         exe_size_mb = exe_path.stat().st_size / (1024.0 * 1024.0)
         # Measure true packaged cold start

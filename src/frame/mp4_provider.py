@@ -88,22 +88,38 @@ class MP4FrameProvider(IFrameProvider):
 
     def reset(self) -> None:
         """Seek back to frame 0 and reset playback state."""
-        if self._cap.isOpened():
-            self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        if hasattr(self, "_cap") and self._cap is not None and self._cap.isOpened():
+            rewound = self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            if not rewound:
+                # Seek failed (common on exhausted/streaming MP4 containers); re-open cleanly
+                self._cap.release()
+                self._cap = cv2.VideoCapture(self._file_path)
+        else:
+            # Handle was released or not opened; re-open from file path
+            self._cap = cv2.VideoCapture(self._file_path)
+
+        if self._cap is None or not self._cap.isOpened():
+            raise RuntimeError(f"Failed to open/rewind video file on reset: {self._file_path}")
+
         self._frame_count = 0
         self._exhausted = False
 
     def close(self) -> None:
         """Release OpenCV video capture handle."""
-        if hasattr(self, "_cap") and self._cap.isOpened():
-            self._cap.release()
+        if hasattr(self, "_cap") and self._cap is not None:
+            if self._cap.isOpened():
+                self._cap.release()
+            self._cap = None
+
+    def __del__(self) -> None:
+        self.close()
 
     def get_next_frame(self) -> Optional[FramePacket]:
         """
         Decode and return the next sequential video frame as an immutable FramePacket.
         Returns None on end-of-stream or decode failure.
         """
-        if self._exhausted or not self._cap.isOpened():
+        if self._exhausted or self._cap is None or not self._cap.isOpened():
             return None
 
         # Capture container timestamp before decoding

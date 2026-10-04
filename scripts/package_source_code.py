@@ -45,10 +45,13 @@ INCLUDE_DIRS = [
     "installer",
     "models",
     "docs",
+    "datasets",
     "App_Logo_Assets_Final",
+    "Videos",
 ]
 
 INCLUDE_ROOT_FILES = [
+    "README.md",
     "requirements.txt",
     "pytest.ini",
     "pyrefly.toml",

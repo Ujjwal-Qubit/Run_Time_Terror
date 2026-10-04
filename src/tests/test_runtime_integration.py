@@ -24,7 +24,7 @@ import numpy as np
 from src.app.app_controller import AppController
 from src.config.config_manager import ConfigManager
 from src.frame.data_contracts import TrackingState, PTZCommand
-from src.app.gui.web_bridge import LumiTrackBridge, resolve_project_root
+from src.app.gui.web_bridge import SanketBridge, resolve_project_root
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ class TestScrollContainmentDEF01:
         app_tsx = (root / "frontend" / "src" / "App.tsx").read_text(encoding="utf-8")
 
         # Must have bounded main scroll container id
-        assert 'id="lumitrack-main-scroll-container"' in app_tsx
+        assert 'id="sanket-main-scroll-container"' in app_tsx
         # Must have overflow-y-auto and bounded height
         assert "overflow-y-auto" in app_tsx
         assert "calc(100vh-68px)" in app_tsx
@@ -108,7 +108,7 @@ class TestTrackingOnOffPipelineDEF05:
         assert cmd.tilt_velocity_deg_s == 0.0
 
     def test_bridge_slot_set_tracking_enabled(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setTrackingEnabled(False)
         assert initialized_app.tracking_enabled is False
         bridge.setTrackingEnabled(True)
@@ -120,7 +120,7 @@ class TestPtzActuationToggleDEF06:
 
     def test_ptz_toggle_in_app_and_bridge(self, initialized_app):
         app = initialized_app
-        bridge = LumiTrackBridge(app)
+        bridge = SanketBridge(app)
 
         assert app._ptz_enabled is True
         bridge.setPtzEnabled(False)
@@ -193,34 +193,34 @@ class TestDeveloperControlMatrixDEF07:
     """Verify parameter propagation across motion, divergence, atmosphere, noise, and PID gains."""
 
     def test_motion_pattern_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setMotionPattern("CIRCULAR")
         assert initialized_app._config_manager.config.motion.motion_type == "CIRCULAR"
 
     def test_target_speed_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setTargetSpeed(55.0)
         assert initialized_app._config_manager.config.target.speed == 55.0
 
     def test_target_size_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setTargetSize(18)
         assert initialized_app._config_manager.config.target.size == 18
 
     def test_atmospheric_condition_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setAtmosphericCondition("RAIN")
         assert initialized_app._config_manager.config.atmospheric.condition == "RAIN"
 
     def test_noise_toggle_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setNoiseEnabled("gaussian", False)
         assert initialized_app._config_manager.config.noise.gaussian_enabled is False
         bridge.setNoiseEnabled("poisson", False)
         assert initialized_app._config_manager.config.noise.poisson_enabled is False
 
     def test_ptz_gains_propagation(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         bridge.setPtzGains(11.5, 3.2, 0.8)
         cfg = initialized_app._config_manager.config.ptz
         assert cfg.proportional_gain == 11.5
@@ -232,7 +232,7 @@ class TestDiagnosticsSubsystemsDEF03:
     """Verify diagnostics subsystem health contract emission."""
 
     def test_diagnostics_emission_contract(self, initialized_app):
-        bridge = LumiTrackBridge(initialized_app)
+        bridge = SanketBridge(initialized_app)
         emitted_payload = None
 
         def on_diagnostics(payload_str):
@@ -311,3 +311,66 @@ class TestPathResolutionDEF13:
         root = resolve_project_root()
         assert (root / "scenarios").is_dir()
         assert (root / "src").is_dir()
+
+
+class TestBenchmark2VideoEvaluation:
+    """Verify Benchmark 2 video loading, preview generation, and tracking loop integration."""
+
+    def test_benchmark2_video_load_and_preview(self, initialized_app, tmp_path):
+        import cv2
+        import numpy as np
+        from src.app.gui.web_bridge import SanketBridge
+
+        # 1. Create a synthetic test video
+        video_path = str(tmp_path / "test_bm2.mp4")
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        out = cv2.VideoWriter(video_path, fourcc, 30.0, (640, 480), isColor=True)
+        for i in range(10):
+            frame = np.full((480, 640, 3), 20, dtype=np.uint8)
+            cv2.circle(frame, (320 + i * 5, 240 + i * 3), 8, (255, 255, 255), -1)
+            out.write(frame)
+        out.release()
+
+        bridge = SanketBridge(initialized_app)
+        loaded_meta = None
+        frame_emitted = None
+
+        def on_video_loaded(json_str):
+            nonlocal loaded_meta
+            loaded_meta = json.loads(json_str)
+
+        def on_frame_ready(json_str):
+            nonlocal frame_emitted
+            frame_emitted = json.loads(json_str)
+
+        bridge.benchmarkVideoLoaded.connect(on_video_loaded)
+        bridge.sensorFrameReady.connect(on_frame_ready)
+
+        # 2. Load the benchmark video
+        bridge.loadBenchmarkVideo(video_path)
+
+        # Verify metadata
+        assert loaded_meta is not None
+        assert loaded_meta["fileName"] == "test_bm2.mp4"
+        assert loaded_meta["width"] == 640
+        assert loaded_meta["height"] == 480
+        assert loaded_meta["totalFrames"] == 10
+
+        # Verify frame 0 was stepped and emitted immediately (no black frame)
+        assert frame_emitted is not None
+        assert frame_emitted["data"].startswith("data:image/jpeg;base64,")
+
+        # Verify mode switched to MP4
+        assert initialized_app.config_manager.config.simulation.mode == "MP4"
+
+        # 3. Test play, pause, reset controls
+        bridge.playBenchmarkVideo()
+        assert initialized_app.is_running or initialized_app._frame_count > 0
+        bridge.pauseBenchmarkVideo()
+        assert initialized_app.is_paused or not initialized_app.is_running
+        bridge.resetBenchmarkVideo()
+
+        # 4. Verify selecting a scenario restores mode to SIMULATION
+        bridge.selectScenario("matrix_01_linear_nominal")
+        assert initialized_app.config_manager.config.simulation.mode == "SIMULATION"
+

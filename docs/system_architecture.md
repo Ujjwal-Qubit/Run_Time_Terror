@@ -636,6 +636,13 @@ If tracker processing exceeds `sim_dt`:
 - **Units:** Degrees.
 - **Used by:** PTZController (speed limits are in °/s).
 
+### 6.1.1 Architectural Clarification: 2D Planar Viewport Projection Testbed (DEF-24)
+
+The SANKET simulation and tracking testbed models the virtual camera and target kinematics strictly within a **2D planar viewport projection testbed**:
+- **Planar World Arena**: The simulation space is modeled as a continuous 2D planar canvas $[0, W_{\text{scene}}] \times [0, H_{\text{scene}}]$ ($2000 \times 2000\text{ pixels}$).
+- **Orthographic Viewport Extraction**: The PTZ camera extracts an orthographic 2D sub-region viewport ($640 \times 480\text{ pixels}$) whose optical center translates linearly across the planar scene with calibrated angular sensitivities ($k_h = 160.0\text{ px/deg}$, $k_v = 160.0\text{ px/deg}$).
+- **Kinematic Abstraction**: Full 3D spherical gimbal kinematics, 6-DOF mechanical dynamics (inertia tensors, harmonic resonance, motor back-EMF), Earth-centered coordinates (ECEF/NED), and physical orbital slant ranges are deliberately abstracted as a fast, deterministic 2D planar projection testbed per PRD §3.1 Out of Scope.
+
 ## 6.2 Coordinate Transforms
 
 ### WCS → IPC (World to Image)

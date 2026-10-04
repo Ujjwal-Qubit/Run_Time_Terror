@@ -24,7 +24,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QEventLoop, QTimer, Qt
 from src.app.app_controller import AppController
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_window import SanketWebWindow
 
 
 def wait_ms(ms: int) -> None:
@@ -33,7 +33,7 @@ def wait_ms(ms: int) -> None:
     loop.exec()
 
 
-def eval_sync(win: LumiTrackWebWindow, js_body: str) -> Any:
+def eval_sync(win: SanketWebWindow, js_body: str) -> Any:
     res = []
     loop = QEventLoop()
     def cb(v):
@@ -65,7 +65,7 @@ def main():
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    win = LumiTrackWebWindow(ctrl)
+    win = SanketWebWindow(ctrl)
     win.setWindowFlags(Qt.WindowType.FramelessWindowHint)
     win.resize(1920, 1080)
     win.web_view.resize(1920, 1080)

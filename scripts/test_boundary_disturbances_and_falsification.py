@@ -385,7 +385,11 @@ def run_boundary_and_falsification():
     with open(out_file, "w") as f:
         json.dump(results, f, indent=2)
 
-    return results
-
 if __name__ == "__main__":
-    run_boundary_and_falsification()
+    res = run_boundary_and_falsification()
+    c_mean = res.get("centroid_truth_analysis", {}).get("discrete_rendered_mean_err_px", 999.0)
+    if c_mean > 5.0:
+        print(f"\n[FAIL] Discrete rendered centroid mean error {c_mean:.3f} px exceeds 5.0 px threshold!")
+        sys.exit(1)
+    print("\n[SUCCESS] Boundary disturbances and falsification matrix passed.")
+    sys.exit(0)

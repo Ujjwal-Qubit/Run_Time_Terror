@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2.5 Comprehensive Ground-Truth Firewall Final Audit Script
+SANKET — Phase 2.5 Comprehensive Ground-Truth Firewall Final Audit Script
 Executes:
   1. Static Code & Production Bundle Audit (frontend/src/, frontend/dist/, src/app/gui/web_bridge.py)
      Searches for: ground_truth_x, ground_truth_y, target_x, target_y, seed, hidden_world_x, hidden_world_y, trajectory truth, unblinded error.
@@ -14,6 +14,7 @@ Executes:
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import sys
@@ -21,20 +22,22 @@ import time
 from pathlib import Path
 from typing import Dict, Any, List, Set
 
+import numpy as np
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from PySide6.QtWidgets import QApplication
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow
 from src.frame.data_contracts import VisualizationState, ROI, TrackingState
 
 
 def run_firewall_audit():
     print("=" * 80)
-    print("LUMITRACK — PHASE 2.5 GROUND-TRUTH FIREWALL FINAL AUDIT")
+    print("SANKET — PHASE 2.5 GROUND-TRUTH FIREWALL FINAL AUDIT")
     print("=" * 80)
 
     forbidden_tokens = [
@@ -98,7 +101,7 @@ def run_firewall_audit():
         ctrl.config_manager.config.simulation.duration_s = None
     ctrl.initialize()
 
-    window = LumiTrackWebWindow(ctrl)
+    window = SanketWebWindow(ctrl)
     bridge = window.bridge
 
     captured_packets: List[Dict[str, Any]] = []

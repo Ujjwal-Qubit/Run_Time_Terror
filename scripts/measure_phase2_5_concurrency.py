@@ -1,11 +1,11 @@
 """
-LumiTrack — Phase 2.5 Concurrency Benchmark Script
+SANKET — Phase 2.5 Concurrency Benchmark Script
 Performs:
   1. 10 Independent Baseline Trials (Headless Backend)
   2. 10 Independent Full-Frontend Trials (Backend + Phase 2 Bridge + Active WebEngine)
   3. Four-way Concurrency Comparison Matrix:
      - Condition A: Backend only
-     - Condition B: Backend + LumiTrackBridge
+     - Condition B: Backend + SanketBridge
      - Condition C: Backend + full React WebEngine UI
      - Condition D: Backend + full React WebEngine UI + active 3D Workspace
   4. Statistics: Mean, Standard Deviation, Min, Max for each distribution.
@@ -30,8 +30,8 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from PySide6.QtWidgets import QApplication
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
-from src.app.gui.web_window import LumiTrackWebWindow
+from src.app.gui.web_bridge import SanketBridge
+from src.app.gui.web_window import SanketWebWindow
 
 
 class PROCESS_MEMORY_COUNTERS(ctypes.Structure):
@@ -80,9 +80,9 @@ def run_trial(trial_type: str, duration_s: float = 3.0, warmup_s: float = 0.5) -
 
     if trial_type in ("frontend", "bridge", "3d"):
         qapp = QApplication.instance() or QApplication(["--platform", "offscreen"])
-        bridge = LumiTrackBridge(ctrl)
+        bridge = SanketBridge(ctrl)
         if trial_type in ("frontend", "3d"):
-            web_window = LumiTrackWebWindow(ctrl)
+            web_window = SanketWebWindow(ctrl)
 
     ctrl.start_background_loop()
 
@@ -117,7 +117,7 @@ def run_trial(trial_type: str, duration_s: float = 3.0, warmup_s: float = 0.5) -
 
 def run_concurrency_validation():
     print("=" * 80)
-    print("LUMITRACK — PHASE 2.5 CONCURRENCY VALIDATION BENCHMARK")
+    print("SANKET — PHASE 2.5 CONCURRENCY VALIDATION BENCHMARK")
     print("=" * 80)
 
     num_trials = 10
@@ -166,7 +166,7 @@ def run_concurrency_validation():
     fps_a = run_trial("baseline", duration_s=4.0)
     ram_a_post = get_process_memory_mb()
 
-    # Condition B: Backend + LumiTrackBridge
+    # Condition B: Backend + SanketBridge
     ram_b = get_process_memory_mb()
     fps_b = run_trial("bridge", duration_s=4.0)
     ram_b_post = get_process_memory_mb()
@@ -191,7 +191,7 @@ def run_concurrency_validation():
             "isolation_status": "BASELINE",
         },
         "Condition_B_Backend_Plus_Bridge": {
-            "description": "Backend + QtWebChannel LumiTrackBridge polling @ 25 Hz",
+            "description": "Backend + QtWebChannel SanketBridge polling @ 25 Hz",
             "backend_fps": round(fps_b, 2),
             "backend_frame_latency_ms": round(1000.0 / fps_b if fps_b > 0 else 0, 2),
             "frontend_fps": None,

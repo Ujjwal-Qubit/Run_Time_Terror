@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2.5 Offline Air-Gap Security Audit Script
+SANKET — Phase 2.5 Offline Air-Gap Security Audit Script
 Scans production distribution bundle for external network calls and CDN references.
 Distinguishes:
   - 'No external application network dependency detected' (Accurate, validated)

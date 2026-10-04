@@ -1,5 +1,5 @@
 """
-LumiTrack — Phase 2 Workspace Expansion & Ground-Truth Firewall Test Suite
+SANKET — Phase 2 Workspace Expansion & Ground-Truth Firewall Test Suite
 
 Verifies:
   1. All Phase 2 QtWebChannel signals exist and emit valid JSON schemas.
@@ -27,7 +27,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QApplication
 
 from src.app.app_controller import AppController
-from src.app.gui.web_bridge import LumiTrackBridge
+from src.app.gui.web_bridge import SanketBridge
 from src.app.gui.web_window import resolve_frontend_dist
 from src.main import parse_args
 
@@ -78,8 +78,8 @@ class TestPhase2WorkspaceExpansion:
         assert "Results & Analysis" in js_content or "resultsAnalysisLoaded" in js_content
 
     def test_bridge_phase2_signals_exist(self, qapp, app_controller):
-        """2. Verify that all Phase 2 signals exist on LumiTrackBridge."""
-        bridge = LumiTrackBridge(app_controller)
+        """2. Verify that all Phase 2 signals exist on SanketBridge."""
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         assert hasattr(bridge, "subsystemDiagnosticsUpdated")
@@ -91,7 +91,7 @@ class TestPhase2WorkspaceExpansion:
 
     def test_subsystem_diagnostics_slot(self, qapp, app_controller):
         """3. Verify getSubsystemDiagnostics emits 12 software subsystems with valid schema."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_diag = []
@@ -130,7 +130,7 @@ class TestPhase2WorkspaceExpansion:
 
     def test_run_history_slot(self, qapp, app_controller):
         """4. Verify getRunHistory scans real output/ directory and returns valid catalog items."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_history = []
@@ -155,7 +155,7 @@ class TestPhase2WorkspaceExpansion:
 
     def test_run_artifact_loader_and_path_containment(self, qapp, app_controller):
         """5. Verify getRunArtifact loads real file and blocks directory traversal attempts."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_artifacts = []
@@ -179,7 +179,7 @@ class TestPhase2WorkspaceExpansion:
 
     def test_results_analysis_firewall_isolation(self, qapp, app_controller):
         """6. Verify getResultsAnalysisData respects Ground-Truth Firewall."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         received_results = []
@@ -207,7 +207,7 @@ class TestPhase2WorkspaceExpansion:
 
     def test_browser_metrics_reporting(self, qapp, app_controller):
         """7. Verify reportBrowserMetrics slot updates bridge metrics."""
-        bridge = LumiTrackBridge(app_controller)
+        bridge = SanketBridge(app_controller)
         bridge._timer.stop()
 
         bridge.reportBrowserMetrics(59.4, 55.0, 16.8, 0.42, 24.8)

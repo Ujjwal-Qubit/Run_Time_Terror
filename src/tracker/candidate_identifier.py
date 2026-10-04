@@ -18,9 +18,10 @@ FIREWALL ENFORCEMENT:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import math
 import time
-from typing import List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from src.interfaces.strategy_interfaces import IBeaconIdentifier
 from src.frame.data_contracts import (
@@ -31,6 +32,17 @@ from src.frame.data_contracts import (
 )
 from src.config.config_manager import IdentifierConfig
 from src.config import defaults
+
+
+@dataclass
+class _SpatialTrack:
+    """Persistent spatial track representation for nearest-neighbor tracking (DEF-14)."""
+    track_id: Any
+    pos: Tuple[float, float]
+    age: int = 1
+    hits: int = 1
+    missed_frames: int = 0
+    score: float = 0.0
 
 
 class CandidateIdentifier(IBeaconIdentifier):
@@ -60,12 +72,18 @@ class CandidateIdentifier(IBeaconIdentifier):
         self._switch_confirm_frames = int(getattr(
             cfg, "switch_confirmation_frames", defaults.IDENTIFIER_SWITCH_CONFIRMATION_FRAMES
         ))
-        # ID of the current tracked candidate (by candidate_id or None)
-        self._current_candidate_id: Optional[str] = None
+        # Persistent spatial track store (DEF-14)
+        self._tracks: Dict[Any, _SpatialTrack] = {}
+        self._next_track_id: int = 0
+        self._max_staleness: int = 5
+        # ID of the current tracked candidate (by persistent candidate_id or None)
+        self._current_candidate_id: Optional[Any] = None
+        # Spatial position of current track (persistent across raster candidate_id swaps) (DEF-14)
+        self._current_track_pos: Optional[Tuple[float, float]] = None
         # Current track's score in the most recent valid TRACKING frame
         self._current_track_score: float = 0.0
         # Challenger tracking (hysteresis buffer)
-        self._challenger_id: Optional[str] = None
+        self._challenger_id: Optional[Any] = None
         self._challenger_frames: int = 0
 
     @property
@@ -75,9 +93,37 @@ class CandidateIdentifier(IBeaconIdentifier):
     def get_name(self) -> str:
         return "CandidateIdentifier"
 
+    @staticmethod
+    def _get_candidate_pos(cand: Any) -> Tuple[float, float]:
+        """Extract subpixel centroid coordinates with bounding box fallback (DEF-14)."""
+        bx = float(getattr(cand, "bbox_x", 0.0))
+        by = float(getattr(cand, "bbox_y", 0.0))
+        bw = float(getattr(cand, "bbox_w", 0.0))
+        bh = float(getattr(cand, "bbox_h", 0.0))
+        default_cx = bx + bw / 2.0
+        default_cy = by + bh / 2.0
+
+        cx = getattr(cand, "raw_centroid_x", None)
+        if cx is None:
+            cx = getattr(cand, "centroid_x", None)
+        cy = getattr(cand, "raw_centroid_y", None)
+        if cy is None:
+            cy = getattr(cand, "centroid_y", None)
+
+        if cx is not None and cy is not None:
+            # If centroid is within or reasonably close to bbox, use it;
+            # otherwise (e.g. default 0.0, 0.0 when bbox is at 200, 200), fallback to bbox center
+            if (bx - 1.0 <= cx <= bx + bw + 1.0) and (by - 1.0 <= cy <= by + bh + 1.0):
+                return (float(cx), float(cy))
+
+        return (default_cx, default_cy)
+
     def reset(self) -> None:
-        """Reset hysteresis state. Call between benchmark runs for clean slate."""
+        """Reset hysteresis state and persistent tracks. Call between benchmark runs for clean slate."""
+        self._tracks.clear()
+        self._next_track_id = 0
         self._current_candidate_id = None
+        self._current_track_pos = None
         self._current_track_score = 0.0
         self._challenger_id = None
         self._challenger_frames = 0
@@ -114,9 +160,8 @@ class CandidateIdentifier(IBeaconIdentifier):
 
         if is_tracking_mode and predicted_position is not None:
             pred_x, pred_y = predicted_position
-            # Candidate geometric center
-            cand_cx = float(candidate.bbox_x + candidate.bbox_w / 2.0)
-            cand_cy = float(candidate.bbox_y + candidate.bbox_h / 2.0)
+            # Candidate geometric center (using subpixel accuracy where available)
+            cand_cx, cand_cy = self._get_candidate_pos(candidate)
             dist = math.hypot(cand_cx - pred_x, cand_cy - pred_y)
 
             sigma_dist = max(10.0, self._gate_distance / 2.0)
@@ -195,6 +240,70 @@ class CandidateIdentifier(IBeaconIdentifier):
             else:
                 raise TypeError(f"Expected CandidateRegion or ScoredCandidate, got {type(item)}")
 
+        # ------------------------------------------------------------------
+        # Spatial Nearest-Neighbor Candidate Association (DEF-14)
+        # ------------------------------------------------------------------
+        # Re-tag candidates with persistent track IDs based on subpixel Euclidean
+        # proximity to existing active tracks, immune to ephemeral raster scan swaps.
+        cand_positions = [self._get_candidate_pos(c) for c in raw_candidates]
+        active_track_ids = list(self._tracks.keys())
+
+        # Pairwise distance matrix between active tracks and raw candidates
+        pair_distances: List[Tuple[float, Any, int]] = []
+        for tid in active_track_ids:
+            t_pos = self._tracks[tid].pos
+            for c_idx, c_pos in enumerate(cand_positions):
+                d = math.hypot(t_pos[0] - c_pos[0], t_pos[1] - c_pos[1])
+                if d <= self._gate_distance:
+                    pair_distances.append((d, tid, c_idx))
+
+        pair_distances.sort(key=lambda x: x[0])
+        matched_tracks: set = set()
+        matched_cands: set = set()
+
+        for d, tid, c_idx in pair_distances:
+            if tid not in matched_tracks and c_idx not in matched_cands:
+                matched_tracks.add(tid)
+                matched_cands.add(c_idx)
+                trk = self._tracks[tid]
+                trk.pos = cand_positions[c_idx]
+                trk.hits += 1
+                trk.age += 1
+                trk.missed_frames = 0
+                # Re-tag candidate with persistent track ID
+                raw_candidates[c_idx].candidate_id = trk.track_id
+
+        # Allocate new persistent tracks for unassociated candidates
+        for c_idx, cand in enumerate(raw_candidates):
+            if c_idx not in matched_cands:
+                cid = getattr(cand, "candidate_id", None)
+                if cid is None or cid in self._tracks:
+                    while self._next_track_id in self._tracks:
+                        self._next_track_id += 1
+                    new_id = self._next_track_id
+                    self._next_track_id += 1
+                else:
+                    new_id = cid
+                    if isinstance(new_id, int) and new_id >= self._next_track_id:
+                        self._next_track_id = new_id + 1
+                cand.candidate_id = new_id
+                self._tracks[new_id] = _SpatialTrack(
+                    track_id=new_id,
+                    pos=cand_positions[c_idx],
+                    age=1,
+                    hits=1,
+                    missed_frames=0,
+                )
+
+        # Track staleness and pruning for unmatched active tracks
+        unmatched_tracks = set(active_track_ids) - matched_tracks
+        for tid in unmatched_tracks:
+            trk = self._tracks[tid]
+            trk.missed_frames += 1
+            trk.age += 1
+            if trk.missed_frames > self._max_staleness:
+                del self._tracks[tid]
+
         # Score and rank all candidates
         scored_list: List[ScoredCandidate] = []
         for cand in raw_candidates:
@@ -211,21 +320,32 @@ class CandidateIdentifier(IBeaconIdentifier):
         )
 
         # ------------------------------------------------------------------
-        # Hysteresis anti-switching logic (TRACKING mode only)
+        # Hysteresis anti-switching logic on persistent track IDs (TRACKING mode only)
         # ------------------------------------------------------------------
-        if is_tracking and self._current_candidate_id is not None and len(scored_list) > 1:
-            # Find the current tracked candidate in scored list
+        if is_tracking and (self._current_candidate_id is not None or self._current_track_pos is not None) and len(scored_list) > 1:
             current_in_list = next(
                 (sc for sc in scored_list
                  if getattr(sc.candidate, "candidate_id", None) == self._current_candidate_id),
                 None,
             )
+
+            # Spatial fallback if ID lookup misses but candidate is within gate
+            if current_in_list is None and self._current_track_pos is not None:
+                cand_dists = [
+                    (math.hypot(self._get_candidate_pos(sc.candidate)[0] - self._current_track_pos[0],
+                                self._get_candidate_pos(sc.candidate)[1] - self._current_track_pos[1]), sc)
+                    for sc in scored_list
+                ]
+                cand_dists.sort(key=lambda item: item[0])
+                if cand_dists and cand_dists[0][0] <= self._gate_distance:
+                    current_in_list = cand_dists[0][1]
+
             top_challenger = scored_list[0]
             top_challenger_id = getattr(top_challenger.candidate, "candidate_id", None)
 
             if (
                 current_in_list is not None
-                and top_challenger_id != self._current_candidate_id
+                and top_challenger is not current_in_list
             ):
                 # A challenger is trying to take over. Apply hysteresis.
                 required_margin = self._switch_margin
@@ -259,7 +379,8 @@ class CandidateIdentifier(IBeaconIdentifier):
                 # Top candidate IS the current tracked one — reset challenge counter
                 self._challenger_id = None
                 self._challenger_frames = 0
-                self._current_track_score = top_challenger.score
+                if current_in_list is not None:
+                    self._current_track_score = current_in_list.score
 
         # Update current candidate ID on successful identification
         is_valid = bool(best_scored.score >= self._min_confidence)
@@ -268,10 +389,15 @@ class CandidateIdentifier(IBeaconIdentifier):
 
         if is_valid:
             self._current_candidate_id = selected_id
+            if selected_cand is not None:
+                self._current_track_pos = self._get_candidate_pos(selected_cand)
+                if selected_id in self._tracks:
+                    self._tracks[selected_id].score = best_scored.score
         elif not is_tracking:
             # In SEARCHING/REACQUIRING, clear hysteresis so it does not
             # lock onto a stale candidate from a previous tracking session.
             self._current_candidate_id = None
+            self._current_track_pos = None
             self._current_track_score = 0.0
             self._challenger_id = None
             self._challenger_frames = 0

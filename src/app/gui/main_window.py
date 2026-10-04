@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
     def __init__(self, app_controller: AppController):
         super().__init__()
         self.app = app_controller
-        self.setWindowTitle("LumiTrack — Virtual Camera Tracking & Algorithm Evaluation Platform")
+        self.setWindowTitle("SANKET — Virtual Camera Tracking & Algorithm Evaluation Platform")
         self.resize(1440, 900)
         
         self.setStyleSheet(DARK_THEME_QSS)
@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
         sidebar_layout.setSpacing(5)
         
         # Logo / Title
-        title = QLabel(" LumiTrack")
+        title = QLabel(" SANKET")
         title_font = QFont()
         title_font.setPointSize(18)
         title_font.setBold(True)

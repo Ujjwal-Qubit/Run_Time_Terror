@@ -7,3 +7,10 @@ scratch/
 graphify-out/
 .pytest_cache/
 node_modules/
+.App_Logo_Assets_Final/
+.audit/
+.deliverables/
+.screenshots/
+.stitch_reference/
+.agent/
+.aas-catalog/

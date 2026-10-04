@@ -1,0 +1,21 @@
+{
+  "name": "custom1",
+  "description": "User-saved configuration with linear trajectory and clear atmosphere.",
+  "target": {
+    "speed": 50,
+    "motion_type": "linear"
+  },
+  "atmospheric": {
+    "condition": "clear"
+  },
+  "noise": {
+    "gaussian_enabled": false,
+    "poisson_enabled": false,
+    "sp_enabled": false
+  },
+  "ptz": {
+    "proportional_gain": 8,
+    "integral_gain": 2,
+    "deadband_px": 1
+  }
+}

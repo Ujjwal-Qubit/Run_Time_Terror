@@ -646,6 +646,12 @@ Deliver a complete, evaluation-ready software system that:
 | **Dependencies** | FEAT-PTZ-001 |
 | **Benchmark Relevance** | Benchmark-1 |
 
+### 4.10.1 Kinematic Model Clarification: 2D Planar Viewport Projection (DEF-24)
+
+The virtual PTZ camera operates as a **2D planar viewport projection testbed**:
+- Pan and tilt control inputs linearly translate a $640 \times 480$ pixel sensor viewport across the $2000 \times 2000$ pixel planar scene at calibrated scale factors of $160.0\text{ px/deg}$ ($4^\circ \text{ FOV}_H / 640\text{ px}$) and $160.0\text{ px/deg}$ ($3^\circ \text{ FOV}_V / 480\text{ px}$).
+- 6-DOF physical gimbal hardware dynamics, 3D spherical line-of-sight Euler angle singularities (gimbal lock at $\theta_{el} \to 90^\circ$), and orbital ECEF/NED coordinates are outside the scope of the software-based testbed per §3.1 Out of Scope.
+
 ---
 
 ## 4.11 Simulation Engine

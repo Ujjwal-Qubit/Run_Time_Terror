@@ -1,7 +1,7 @@
 """
 Phase 4 Clean-Machine / Standalone Executable Validation Suite.
 Executes the 12 required standalone runtime verification steps against:
-  dist/LumiTrack/LumiTrack.exe
+  dist/SANKET/SANKET.exe
 
 Tests:
   1. Launch & Foundation Validation (--validate)
@@ -32,7 +32,9 @@ def run_exe_validation():
     print("PHASE 4 STANDALONE WINDOWS EXECUTABLE VALIDATION SUITE")
     print("=" * 80)
 
-    exe_path = os.path.abspath("dist/LumiTrack/LumiTrack.exe")
+    _sanket = os.path.abspath("dist/SANKET/SANKET.exe")
+    _lumi = os.path.abspath("dist/SANKET/SANKET.exe")
+    exe_path = _sanket if os.path.isfile(_sanket) else _lumi
     assert os.path.isfile(exe_path), f"Executable not found at {exe_path}"
     print(f"Target Executable: {exe_path}")
     print(f"Executable File Size: {os.path.getsize(exe_path) / (1024*1024):.2f} MB")
@@ -64,8 +66,8 @@ def run_exe_validation():
     # -------------------------------------------------------------------------
     # STEP 3: Bundled Asset Inventory
     # -------------------------------------------------------------------------
-    print("\n[Step 3] Checking Bundled Assets in dist/LumiTrack/...")
     dist_dir = os.path.dirname(exe_path)
+    print(f"\n[Step 3] Checking Bundled Assets in {dist_dir}...")
     
     # Check internal or root for scenarios
     scenarios_found = False

@@ -61,6 +61,7 @@ class TargetManager:
     ) -> None:
         self._target_cfg = target_config or TargetConfig()
         self._motion_cfg = motion_config or MotionConfig()
+        self._motion_cfg.motion_type = self._normalize_motion_type(self._motion_cfg.motion_type)
         self._scene_w = scene_width
         self._scene_h = scene_height
         self._seed = seed
@@ -132,6 +133,31 @@ class TargetManager:
             patch.fill(intensity)
         return patch
 
+    @staticmethod
+    def _normalize_motion_type(m_type: Any) -> str:
+        """Normalize motion type string and map common frontend/test aliases (DEF-15)."""
+        if m_type is None:
+            return "STRAIGHT_LINE"
+        if hasattr(m_type, "value"):
+            raw_val = m_type.value
+        elif hasattr(m_type, "name"):
+            raw_val = m_type.name
+        else:
+            raw_val = m_type
+        raw = str(raw_val).strip().upper().replace("-", "_").replace(" ", "_")
+        if "." in raw:
+            raw = raw.split(".")[-1]
+        if raw in ("STRAIGHT_LINE", "LINEAR", "STRAIGHT"):
+            return "STRAIGHT_LINE"
+        if raw in ("CIRCULAR", "CIRCLE"):
+            return "CIRCULAR"
+        if raw in ("FIGURE_8", "FIGURE8", "FIG8"):
+            return "FIGURE_8"
+        if raw in ("RANDOM", "BROWNIAN"):
+            return "RANDOM"
+        return "STRAIGHT_LINE"  # Safe fallback for unrecognized or invalid motion strings
+
+
     def _init_kinematics(self) -> None:
         """Initialize position and velocity for the selected motion pattern."""
         self._time = 0.0
@@ -174,12 +200,12 @@ class TargetManager:
         self._x = self._init_x
         self._y = self._init_y
 
-        m_type = self._motion_cfg.motion_type.upper()
-        if m_type == MotionType.STRAIGHT_LINE.value or m_type == "STRAIGHT_LINE":
+        m_type = self._normalize_motion_type(self._motion_cfg.motion_type)
+        if m_type == "STRAIGHT_LINE":
             angle_rad = math.radians(self._motion_cfg.straight_line_angle_deg)
             self._vx = self._speed * math.cos(angle_rad)
             self._vy = self._speed * math.sin(angle_rad)
-        elif m_type == MotionType.CIRCULAR.value or m_type == "CIRCULAR":
+        elif m_type == "CIRCULAR":
             self._circle_r = max(10.0, self._motion_cfg.circle_radius)
             self._omega = self._speed / self._circle_r
             # Center chosen so (init_x, init_y) is on the circle at phi=0
@@ -199,7 +225,7 @@ class TargetManager:
             self._y = self._circle_cy
             self._vx = 0.0
             self._vy = self._speed
-        elif m_type == MotionType.FIGURE_8.value or m_type == "FIGURE_8":
+        elif m_type == "FIGURE_8":
             self._fig8_rx = max(10.0, self._motion_cfg.figure8_radius_x)
             self._fig8_ry = max(10.0, self._motion_cfg.figure8_radius_y)
             denom = math.sqrt(self._fig8_rx ** 2 + self._fig8_ry ** 2)
@@ -218,49 +244,16 @@ class TargetManager:
             self._y = self._fig8_cy
             self._vx = self._fig8_rx * self._fig8_omega
             self._vy = 2.0 * self._fig8_ry * self._fig8_omega
-        elif m_type == MotionType.RANDOM.value or m_type == "RANDOM":
+        elif m_type == "RANDOM":
             self._vx = float(self._rng.uniform(-self._speed, self._speed))
             self._vy = float(self._rng.uniform(-self._speed, self._speed))
         else:
             self._vx = self._speed
             self._vy = 0.0
 
-    @property
-    def speed(self) -> float:
-        """Current target speed in pixels/second."""
-        return self._speed
-
-    def set_speed(self, speed: float) -> None:
-        """Dynamically update beacon speed and rescale velocity components."""
-        self._speed = max(0.0, float(speed))
-        self._target_cfg.speed = self._speed
-        m_type = self._motion_cfg.motion_type.upper()
-        if m_type in (MotionType.STRAIGHT_LINE.value, "STRAIGHT_LINE"):
-            current_norm = math.hypot(self._vx, self._vy)
-            if current_norm > 1e-6:
-                self._vx = (self._vx / current_norm) * self._speed
-                self._vy = (self._vy / current_norm) * self._speed
-            else:
-                angle = math.radians(self._motion_cfg.straight_line_angle_deg)
-                self._vx = self._speed * math.cos(angle)
-                self._vy = self._speed * math.sin(angle)
-        elif m_type in (MotionType.CIRCULAR.value, "CIRCULAR"):
-            if hasattr(self, "_circle_r") and self._circle_r > 0:
-                self._omega = self._speed / self._circle_r
-        elif m_type in (MotionType.FIGURE_8.value, "FIGURE_8"):
-            rx = getattr(self, "_fig8_rx", 100.0)
-            ry = getattr(self, "_fig8_ry", 100.0)
-            denom = math.sqrt(rx ** 2 + ry ** 2)
-            self._fig8_omega = self._speed / denom if denom > 0 else 0.1
-        elif m_type in (MotionType.RANDOM.value, "RANDOM"):
-            current_norm = math.hypot(self._vx, self._vy)
-            if current_norm > 1e-6:
-                self._vx = (self._vx / current_norm) * self._speed
-                self._vy = (self._vy / current_norm) * self._speed
-
-    def set_motion_type(self, motion_type: str) -> None:
-        """Dynamically update beacon motion pattern."""
-        self._motion_cfg.motion_type = motion_type
+    def set_motion_type(self, motion_type: Any) -> None:
+        """Dynamically update beacon motion pattern (DEF-15)."""
+        self._motion_cfg.motion_type = self._normalize_motion_type(motion_type)
         self._init_x = self._x
         self._init_y = self._y
         self._init_kinematics()
@@ -290,9 +283,9 @@ class TargetManager:
             Updated TargetState
         """
         self._time += dt
-        m_type = self._motion_cfg.motion_type.upper()
+        m_type = self._normalize_motion_type(self._motion_cfg.motion_type)
 
-        if m_type in (MotionType.STRAIGHT_LINE.value, "STRAIGHT_LINE"):
+        if m_type == "STRAIGHT_LINE":
             self._x += self._vx * dt
             self._y += self._vy * dt
 
@@ -316,21 +309,21 @@ class TargetManager:
                 self._y = max_bound_y - (self._y - max_bound_y)
                 self._vy = -self._vy
 
-        elif m_type in (MotionType.CIRCULAR.value, "CIRCULAR"):
+        elif m_type == "CIRCULAR":
             theta = self._omega * self._time
             self._x = self._circle_cx + self._circle_r * math.cos(theta)
             self._y = self._circle_cy + self._circle_r * math.sin(theta)
             self._vx = -self._circle_r * self._omega * math.sin(theta)
             self._vy = self._circle_r * self._omega * math.cos(theta)
 
-        elif m_type in (MotionType.FIGURE_8.value, "FIGURE_8"):
+        elif m_type == "FIGURE_8":
             theta = self._fig8_omega * self._time
             self._x = self._fig8_cx + self._fig8_rx * math.sin(theta)
             self._y = self._fig8_cy + self._fig8_ry * math.sin(2.0 * theta)
             self._vx = self._fig8_rx * self._fig8_omega * math.cos(theta)
             self._vy = 2.0 * self._fig8_ry * self._fig8_omega * math.cos(2.0 * theta)
 
-        elif m_type in (MotionType.RANDOM.value, "RANDOM"):
+        elif m_type == "RANDOM":
             # Temporally coherent random motion (stochastic acceleration)
             # random_max_displacement is repurposed here as max delta_v per frame
             max_dv = self._motion_cfg.random_max_displacement
@@ -369,6 +362,10 @@ class TargetManager:
             elif self._y >= max_bound_y:
                 self._y = max_bound_y - (self._y - max_bound_y)
                 self._vy = -self._vy
+        else:
+            # Fallback to linear displacement to prevent target freeze (DEF-15)
+            self._x += self._vx * dt
+            self._y += self._vy * dt
 
         return self.target_state
 
@@ -380,12 +377,9 @@ class TargetManager:
         """Dynamically update beacon speed and rescale velocity components."""
         self._speed = max(0.0, float(speed))
         self._target_cfg.speed = self._speed
-        m_type = self._motion_cfg.motion_type
-        if isinstance(m_type, MotionType):
-            m_type = m_type.value
-        m_type = str(m_type).upper()
+        m_type = self._normalize_motion_type(self._motion_cfg.motion_type)
 
-        if m_type in (MotionType.STRAIGHT_LINE.value, "STRAIGHT_LINE"):
+        if m_type == "STRAIGHT_LINE":
             current_norm = math.hypot(self._vx, self._vy)
             if current_norm > 1e-6:
                 self._vx = (self._vx / current_norm) * self._speed
@@ -394,15 +388,15 @@ class TargetManager:
                 angle = math.radians(self._motion_cfg.straight_line_angle_deg)
                 self._vx = self._speed * math.cos(angle)
                 self._vy = self._speed * math.sin(angle)
-        elif m_type in (MotionType.CIRCULAR.value, "CIRCULAR"):
+        elif m_type == "CIRCULAR":
             if hasattr(self, "_circle_r") and self._circle_r > 0:
                 self._omega = self._speed / self._circle_r
-        elif m_type in (MotionType.FIGURE_8.value, "FIGURE_8"):
+        elif m_type == "FIGURE_8":
             rx = getattr(self, "_fig8_rx", 100.0)
             ry = getattr(self, "_fig8_ry", 100.0)
             denom = math.sqrt(rx ** 2 + ry ** 2)
             self._fig8_omega = self._speed / denom if denom > 0 else 0.1
-        elif m_type in (MotionType.RANDOM.value, "RANDOM"):
+        elif m_type == "RANDOM":
             current_norm = math.hypot(self._vx, self._vy)
             if current_norm > 1e-6:
                 self._vx = (self._vx / current_norm) * self._speed
@@ -588,6 +582,18 @@ class MultiBeaconManager:
         if 0 <= index < len(self._secondaries):
             self._secondaries[index].set_speed(speed)
 
+    def set_motion_type(self, motion_type: Any, beacon_index: Optional[int] = None) -> None:
+        """Dynamically update motion pattern for primary or secondary beacons (DEF-15)."""
+        norm = TargetManager._normalize_motion_type(motion_type)
+        if beacon_index is None:
+            self._primary_manager.set_motion_type(norm)
+            for kin in self._secondaries:
+                kin.set_motion_type(norm)
+        elif beacon_index == 0:
+            self._primary_manager.set_motion_type(norm)
+        elif 1 <= beacon_index <= len(self._secondaries):
+            self._secondaries[beacon_index - 1].set_motion_type(norm)
+
     def reset(self, seed: Optional[int] = None) -> None:
         """Reset all beacons to initial conditions."""
         if seed is not None:
@@ -680,7 +686,7 @@ class _SecondaryBeaconKinematics:
         self._init_y = self._y
 
         # Use beacon-specific motion type or fall back to primary's motion config
-        motion_type = (self._cfg.motion_type or self._motion_cfg.motion_type).upper()
+        motion_type = TargetManager._normalize_motion_type(self._cfg.motion_type or self._motion_cfg.motion_type)
 
         if motion_type in ("STRAIGHT_LINE",):
             angle_rad = math.radians(self._motion_cfg.straight_line_angle_deg + 30.0)
@@ -779,7 +785,7 @@ class _SecondaryBeaconKinematics:
         """Dynamically update secondary beacon speed and rescale velocity components."""
         self._speed = max(0.0, float(speed))
         self._cfg.speed = self._speed
-        motion_type = (self._cfg.motion_type or self._motion_cfg.motion_type).upper()
+        motion_type = TargetManager._normalize_motion_type(self._cfg.motion_type or self._motion_cfg.motion_type)
         if motion_type in ("STRAIGHT_LINE",):
             current_norm = math.hypot(self._vx, self._vy)
             if current_norm > 1e-6:
@@ -802,6 +808,13 @@ class _SecondaryBeaconKinematics:
             if current_norm > 1e-6:
                 self._vx = (self._vx / current_norm) * self._speed
                 self._vy = (self._vy / current_norm) * self._speed
+
+    def set_motion_type(self, motion_type: Any) -> None:
+        """Dynamically update secondary beacon motion pattern (DEF-15)."""
+        norm = TargetManager._normalize_motion_type(motion_type)
+        self._cfg.motion_type = norm
+        self._motion_type = norm
+        self._init_kinematics()
 
     def reset(self, seed: Optional[int] = None) -> None:
         if seed is not None:

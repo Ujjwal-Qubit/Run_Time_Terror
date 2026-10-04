@@ -1,5 +1,5 @@
 /**
- * LumiTrack — Run History & Artifact Catalog Data Contracts (Screen 4)
+ * SANKET — Run History & Artifact Catalog Data Contracts (Screen 4)
  */
 
 export interface RunCatalogItem {
